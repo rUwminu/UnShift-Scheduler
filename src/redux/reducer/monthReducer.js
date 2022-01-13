@@ -1,5 +1,6 @@
 import {
   GET_MONTH_LIST,
+  SET_SELECTED_DATE,
   RESET_MONTH_INDEX,
   TOGGLE_MONTH_INDEX,
   JUMP_MONTH_INDEX,
@@ -19,6 +20,8 @@ export const calenderInfoReducer = (state = {}, action) => {
         monthIndex: action.payload.currentMonthIndex,
         daySelected: action.payload.day,
       }
+    case SET_SELECTED_DATE:
+      return { ...state, daySelected: action.payload }
     default:
       return state
   }

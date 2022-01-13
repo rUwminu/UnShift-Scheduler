@@ -1,0 +1,5 @@
+export const TOGGLE_MODEL_OPEN = 'TOGGLE_MODEL_OPEN'
+
+export const CREATE_EVENT = 'CREATE_EVENT'
+export const UPDATE_EVENT = 'UPDATE_EVENT'
+export const REMOVE_EVENT = 'REMOVE_EVENT'

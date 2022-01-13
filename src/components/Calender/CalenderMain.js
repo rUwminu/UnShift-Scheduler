@@ -11,9 +11,15 @@ import CalenderSidebar from './CalenderSidebar/CalenderSidebar'
 // Utils
 import { getMonth } from '../../utils/GlobalUtils'
 
+// Global Components
+import { EventAdd } from '../index'
+
 const CalenderMain = () => {
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { monthIndex } = calenderInfo
+
+  const eventInfo = useSelector((state) => state.eventInfo)
+  const { isAddOpen } = eventInfo
 
   const [currentMonth, setCurrentMonth] = useState(getMonth(monthIndex))
 
@@ -23,6 +29,7 @@ const CalenderMain = () => {
 
   return (
     <CalenderSection>
+      {isAddOpen && <EventAdd />}
       <CalenderHeader />
       <div className="body-container">
         <CalenderSidebar />
@@ -34,6 +41,7 @@ const CalenderMain = () => {
 
 const CalenderSection = styled.div`
   ${tw`
+    relative
     flex
     flex-col
     w-full

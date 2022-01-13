@@ -1,14 +1,22 @@
 import React from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
+import { useDispatch } from 'react-redux'
+import { toggleEventCardOpen } from '../../../../redux/action/eventAction'
 
 // mui icons
 import { Add } from '@mui/icons-material'
 
 const CreateEventButton = () => {
+  const dispatch = useDispatch()
+
+  const handleToggleOpenEventCard = () => {
+    dispatch(toggleEventCardOpen())
+  }
+
   return (
     <BoxContainer>
-      <div className="create-btn">
+      <div className="create-btn" onClick={() => handleToggleOpenEventCard()}>
         <Add className="icon" />
         <span>Create</span>
       </div>

@@ -203,8 +203,13 @@ const BoxContainer = styled.div`
             font-semibold
             text-gray-600
             rounded-full
-            pointer-events-none
         `}
+
+        &:hover {
+          ${tw`
+            bg-gray-300
+          `}
+        }
       }
 
       span.active {

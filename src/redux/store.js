@@ -9,6 +9,7 @@ import {
   userDetailsReducer,
 } from './reducer/userReducer'
 import { calenderInfoReducer } from './reducer/monthReducer'
+import { eventsReducer } from './reducer/eventReducer'
 
 const decodeLocalUser = () => {
   if (localStorage.getItem('user')) {
@@ -35,6 +36,7 @@ const initialState = {
   },
   calenderInfo: {
     monthIndex: getCurrentMonthIndex(),
+    daySelected: dayjs(),
   },
 }
 
@@ -43,6 +45,7 @@ const reducer = combineReducers({
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,
   calenderInfo: calenderInfoReducer,
+  eventInfo: eventsReducer,
 })
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose

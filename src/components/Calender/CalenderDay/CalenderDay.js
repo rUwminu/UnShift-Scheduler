@@ -2,10 +2,18 @@ import React from 'react'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
+import { useDispatch } from 'react-redux'
+import { setSelectedDate } from '../../../redux/action/monthAction'
 
 const CalenderDay = ({ day, rowIdx }) => {
+  const dispatch = useDispatch()
+
   const getCurrentDay = () => {
     return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY') && 'active'
+  }
+
+  const handleSelectDateAndCreateEvent = () => {
+    dispatch(setSelectedDate(day))
   }
 
   return (
@@ -14,7 +22,12 @@ const CalenderDay = ({ day, rowIdx }) => {
         {rowIdx === 0 && (
           <p className={`date-weekday`}>{day.format('ddd').toUpperCase()}</p>
         )}
-        <p className={`date-day ${getCurrentDay()}`}>{day.format('DD')}</p>
+        <p
+          className={`date-day ${getCurrentDay()}`}
+          onClick={() => handleSelectDateAndCreateEvent()}
+        >
+          {day.format('DD')}
+        </p>
       </div>
     </BoxContainer>
   )
@@ -64,6 +77,12 @@ const BoxContainer = styled.div`
         font-semibold
         rounded-full
       `}
+
+      &:hover {
+        ${tw`
+          bg-gray-300
+        `}
+      }
     }
 
     .date-day.active {
