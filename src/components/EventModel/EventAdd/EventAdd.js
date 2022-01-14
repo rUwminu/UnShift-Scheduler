@@ -3,37 +3,56 @@ import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  toggleEventCardOpen,
+  toggleEventCardClose,
   createEvent,
 } from '../../../redux/action/eventAction'
 
 // MUi icons
-import { PlaylistAdd, Close, AccessTime, Notes } from '@mui/icons-material'
+import {
+  PlaylistAdd,
+  Close,
+  AccessTime,
+  Notes,
+  PinDrop,
+  AddTask,
+  ArrowDropDown,
+} from '@mui/icons-material'
 
 const EventAdd = () => {
   const dispatch = useDispatch()
 
+  const [isDropOpen, setIsDropOpen] = useState(false)
+  const [isCompleted, setIsCompleted] = useState(false)
   const [inputValue, setInputValue] = useState({
     title: '',
+    location: '',
     description: '',
+    isCompleted: false,
   })
 
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { daySelected } = calenderInfo
 
   const handleCloseWindow = () => {
-    dispatch(toggleEventCardOpen())
+    dispatch(toggleEventCardClose())
   }
 
   const handleCreateEvent = () => {
-    var randomId = new RegExp(/^[0-9,A-Z]{12}$/, {
-      extractSetAverage: true,
-    })
-    dispatch(createEvent({ id: randomId, ...inputValue }))
+    if (inputValue.title !== '' && inputValue.description !== '') {
+      const randomId = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(
+        /[018]/g,
+        (c) =>
+          (
+            c ^
+            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+          ).toString(16)
+      )
+      dispatch(createEvent({ id: randomId, ...inputValue, day: daySelected }))
+    }
   }
 
   const autoGrowHeight = (e) => {
-    setInputValue({ ...inputValue, description: e.target.value })
+    //setInputValue({ ...inputValue, description: e.target.value })
     e.target.style.height = '0px'
     e.target.style.height = e.target.scrollHeight + 'px'
   }
@@ -67,6 +86,22 @@ const EventAdd = () => {
           <span>{daySelected.format('MMM DD, YYYY')}</span>
         </div>
         <div className="card-item items-start">
+          <PinDrop className="icon" />
+          <div className="input-box">
+            <textarea
+              type="text"
+              className="card-desc"
+              value={inputValue.location}
+              onInput={(e) => autoGrowHeight(e)}
+              onChange={(e) =>
+                setInputValue({ ...inputValue, location: e.target.value })
+              }
+              placeholder="Location"
+              required
+            />
+          </div>
+        </div>
+        <div className="card-item items-start">
           <Notes className="icon" />
           <div className="input-box">
             <textarea
@@ -74,9 +109,49 @@ const EventAdd = () => {
               className="card-desc"
               value={inputValue.description}
               onInput={(e) => autoGrowHeight(e)}
+              onChange={(e) =>
+                setInputValue({ ...inputValue, description: e.target.value })
+              }
               placeholder="What about?"
               required
             />
+          </div>
+        </div>
+        <div className="card-item items-center">
+          <AddTask className="icon" />
+          <div className="drop-info">
+            <span>{isCompleted ? 'Completed' : 'Forecast'}</span>
+            <div
+              className="drop-icon-box"
+              onClick={() => setIsDropOpen(!isDropOpen)}
+            >
+              <ArrowDropDown className="drop-icon" />
+            </div>
+            <div
+              className={`drop-box ${isDropOpen && 'active'}`}
+              onMouseLeave={() => setIsDropOpen(false)}
+            >
+              <div
+                className="drop-option"
+                onClick={() => {
+                  setIsCompleted(false)
+                  setInputValue({ ...inputValue, isCompleted: false })
+                  setIsDropOpen(false)
+                }}
+              >
+                Forecast
+              </div>
+              <div
+                className="drop-option"
+                onClick={() => {
+                  setIsCompleted(true)
+                  setInputValue({ ...inputValue, isCompleted: true })
+                  setIsDropOpen(false)
+                }}
+              >
+                Completed
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -100,7 +175,10 @@ const BoxContainer = styled.div`
     max-h-[28rem]
     max-w-sm
     bg-gray-50
-    rounded-md  
+    rounded-md 
+    overflow-y-scroll
+    scrollbar-hide
+    z-30 
 
     transition-all
     duration-500
@@ -166,6 +244,7 @@ const BoxContainer = styled.div`
 
   .card-body {
     ${tw`
+      flex-grow
       flex
       flex-col
       items-center
@@ -229,10 +308,19 @@ const BoxContainer = styled.div`
           }
         }
 
-        input {
+        .title-input {
           ${tw`
+            w-full
             py-[0.5px]
             text-2xl
+            outline-none
+          `}
+        }
+
+        .location-input {
+          ${tw`
+            w-full
+            py-[0.5px]
             outline-none
           `}
         }
@@ -247,6 +335,7 @@ const BoxContainer = styled.div`
 
       textarea {
         resize: none;
+        margin-top: -2.5px;
         overflow-y: scroll;
         min-height: 2.5rem;
         max-height: 13rem;
@@ -257,6 +346,105 @@ const BoxContainer = styled.div`
 
           scrollbar-hide
         `}
+      }
+
+      .drop-info {
+        ${tw`
+          relative
+          flex
+          items-center
+          justify-start
+        `}
+
+        .drop-icon-box {
+          ${tw`
+            flex
+            items-center
+            justify-center
+            w-7
+            h-7
+            p-1
+            ml-1
+            rounded-full
+            cursor-pointer
+
+            transition
+            duration-200
+            ease-in-out
+          `}
+
+          .drop-icon {
+            ${tw`
+              mt-[2px]
+              h-full
+              w-full
+              text-gray-600
+              pointer-events-none
+            `}
+          }
+
+          &:hover {
+            ${tw`
+              bg-gray-300
+            `}
+          }
+        }
+
+        .drop-box {
+          ${tw`
+            absolute
+            bottom-0
+            right-0
+            flex
+            flex-col
+            items-end
+            justify-start
+            w-0
+            bg-white
+            rounded-md
+            overflow-hidden
+            scrollbar-hide
+            pointer-events-none
+
+            transition-all
+            duration-500
+            ease-in-out
+          `}
+          transform: translate(104%, 55%);
+
+          .drop-option {
+            ${tw`
+              w-full
+              py-1
+              px-3
+              text-gray-600
+              font-semibold
+              cursor-pointer
+              rounded-md
+
+              transition
+              duration-200
+              ease-in-out
+            `}
+
+            &:hover {
+              ${tw`
+                bg-gray-300
+                text-gray-800
+              `}
+            }
+          }
+        }
+
+        .drop-box.active {
+          ${tw`
+            p-1
+            w-36
+            overflow-auto
+            pointer-events-auto
+          `}
+          box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.5);
+        }
       }
     }
   }

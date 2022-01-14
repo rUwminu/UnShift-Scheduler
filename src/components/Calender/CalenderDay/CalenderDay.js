@@ -1,12 +1,18 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setSelectedDate } from '../../../redux/action/monthAction'
+import { setSelectEvent } from '../../../redux/action/eventAction'
 
 const CalenderDay = ({ day, rowIdx }) => {
   const dispatch = useDispatch()
+
+  const [todayEvt, setTodayEvt] = useState([])
+
+  const eventInfo = useSelector((state) => state.eventInfo)
+  const { eventList } = eventInfo
 
   const getCurrentDay = () => {
     return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY') && 'active'
@@ -15,6 +21,24 @@ const CalenderDay = ({ day, rowIdx }) => {
   const handleSelectDateAndCreateEvent = () => {
     dispatch(setSelectedDate(day))
   }
+
+  const handleSelectedEventAndShowModel = (data) => {
+    dispatch(setSelectEvent(data))
+  }
+
+  const filterThisDayEvent = () => {
+    const event = eventList.filter(
+      (evt) => dayjs(evt.day).format('DD-MM-YY') === day.format('DD-MM-YY')
+    )
+
+    setTodayEvt(event)
+  }
+
+  useEffect(() => {
+    if (eventList && eventList.length > 0) {
+      filterThisDayEvent()
+    }
+  }, [eventList, day])
 
   return (
     <BoxContainer>
@@ -28,6 +52,18 @@ const CalenderDay = ({ day, rowIdx }) => {
         >
           {day.format('DD')}
         </p>
+        <div className="evt-container">
+          {todayEvt &&
+            todayEvt.map((x, idx) => (
+              <div
+                key={idx}
+                className="evt-dot"
+                onClick={() => handleSelectedEventAndShowModel(x)}
+              >
+                <div className="evt-note-box">{x.title}</div>
+              </div>
+            ))}
+        </div>
       </div>
     </BoxContainer>
   )
@@ -54,6 +90,7 @@ const BoxContainer = styled.div`
         flex
         flex-col
         items-center
+        h-full
     `}
 
     .date-weekday {
@@ -90,6 +127,73 @@ const BoxContainer = styled.div`
         bg-blue-500
         text-gray-50
       `}
+    }
+  }
+
+  .evt-container {
+    ${tw`
+      flex
+      items-center
+      justify-start
+      w-full
+      px-2
+      pt-2
+      pb-4
+      mt-auto
+    `}
+
+    .evt-dot {
+      ${tw`
+        relative
+        w-4
+        h-4
+        mr-1
+        bg-green-400
+        rounded-full
+        cursor-pointer
+
+        transition-all
+        duration-200
+        ease-in-out
+      `}
+
+      .evt-note-box {
+        ${tw`
+          absolute
+          bottom-0
+          left-0
+          py-1
+          px-2
+          min-w-[6rem]
+          max-w-[8rem]
+          text-sm
+          opacity-0
+          bg-green-600
+          text-gray-50
+          pointer-events-none
+          rounded-md
+
+          transition-all
+          duration-200
+          ease-in-out
+        `}
+      }
+
+      &:hover {
+        ${tw`
+          bg-green-500
+          z-10
+        `}
+        transform: scale(1.4);
+
+        .evt-note-box {
+          ${tw`
+            opacity-100
+            z-30
+          `}
+          transform: translateX(18px);
+        }
+      }
     }
   }
 `
