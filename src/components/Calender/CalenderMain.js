@@ -12,7 +12,7 @@ import CalenderSidebar from './CalenderSidebar/CalenderSidebar'
 import { getMonth } from '../../utils/GlobalUtils'
 
 // Global Components
-import { EventAdd, EventCard } from '../index'
+import { EventAdd, EventCard, EventList } from '../index'
 
 const CalenderMain = () => {
   const calenderInfo = useSelector((state) => state.calenderInfo)

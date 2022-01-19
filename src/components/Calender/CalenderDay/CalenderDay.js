@@ -10,7 +10,7 @@ import {
 } from '../../../redux/action/eventAction'
 
 const CalenderDay = ({ day, rowIdx }) => {
-  const ref = useRef()
+  //const elementRef = useRef()
   const dispatch = useDispatch()
 
   const [todayEvt, setTodayEvt] = useState([])
@@ -24,13 +24,6 @@ const CalenderDay = ({ day, rowIdx }) => {
 
   const handleSelectDateAndCreateEvent = () => {
     dispatch(setSelectedDate(day))
-  }
-
-  const handleSelectedEventAndShowModel = (evtInfo) => {
-    const bounding = ref.current.getBoundingClientRect()
-
-    dispatch(setEventBoxPosition(bounding))
-    dispatch(setSelectEvent(evtInfo))
   }
 
   const filterThisDayEvent = () => {
@@ -60,36 +53,49 @@ const CalenderDay = ({ day, rowIdx }) => {
           {day.format('DD')}
         </p>
         <div className="evt-container">
-          {todayEvt &&
-            todayEvt.map((x, idx) => (
-              <div
-                ref={ref}
-                key={idx}
-                className={`evt-dot ${
-                  x.isCompleted
-                    ? 'bg-green-400'
-                    : x.isCancelled
-                    ? 'bg-red-400'
-                    : 'bg-purple-400'
-                }`}
-                onClick={() => handleSelectedEventAndShowModel(x)}
-              >
-                <div
-                  className={`evt-note-box ${
-                    x.isCompleted
-                      ? 'bg-green-600'
-                      : x.isCancelled
-                      ? 'bg-red-600'
-                      : 'bg-purple-600'
-                  }`}
-                >
-                  {x.title}
-                </div>
-              </div>
-            ))}
+          {todayEvt && todayEvt.map((x, idx) => <EvtDot key={idx} x={x} />)}
         </div>
       </div>
     </BoxContainer>
+  )
+}
+
+const EvtDot = ({ x }) => {
+  const elementRef = useRef()
+  const dispatch = useDispatch()
+
+  const handleSelectedEventAndShowModel = (evtInfo) => {
+    const bounding = elementRef.current.getBoundingClientRect()
+
+    console.log(bounding)
+    dispatch(setEventBoxPosition(bounding))
+    dispatch(setSelectEvent(evtInfo))
+  }
+
+  return (
+    <div
+      ref={elementRef}
+      className={`evt-dot ${
+        x.isCompleted
+          ? 'bg-green-400'
+          : x.isCancelled
+          ? 'bg-red-400'
+          : 'bg-purple-400'
+      }`}
+      onClick={() => handleSelectedEventAndShowModel(x)}
+    >
+      <div
+        className={`evt-note-box ${
+          x.isCompleted
+            ? 'bg-green-600'
+            : x.isCancelled
+            ? 'bg-red-600'
+            : 'bg-purple-600'
+        }`}
+      >
+        {x.title}
+      </div>
+    </div>
   )
 }
 
@@ -156,21 +162,22 @@ const BoxContainer = styled.div`
 
   .evt-container {
     ${tw`
+      relative
       flex
       items-center
       justify-start
+      py-2
+      px-3
       w-full
-      px-2
-      pt-2
-      pb-4
       mt-auto
     `}
+    white-space: nowrap;
 
     .evt-dot {
       ${tw`
         relative
-        w-4
-        h-4
+        w-[1rem]
+        h-[1rem]
         mr-1
         rounded-full
         cursor-pointer

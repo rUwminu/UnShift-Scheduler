@@ -7,6 +7,7 @@ import {
   SET_SELECTED_EVENT,
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
+  TOGGLE_EVENT_LIST_OPEN,
 } from '../constant/eventConstants'
 
 export const toggleEventCardOpen = () => (dispatch) => {
@@ -35,6 +36,10 @@ export const setSelectEvent = (data) => (dispatch) => {
 
 export const closeSelectedEvent = () => (dispatch) => {
   dispatch({ type: CLOSE_SELECTED_EVENT })
+}
+
+export const toggleEventListOpen = () => (dispatch) => {
+  dispatch({ type: TOGGLE_EVENT_LIST_OPEN })
 }
 
 export const setEventBoxPosition = (position, evtId) => (dispatch) => {

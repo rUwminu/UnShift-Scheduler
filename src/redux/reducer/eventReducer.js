@@ -8,10 +8,16 @@ import {
   SET_SELECTED_EVENT,
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
+  TOGGLE_EVENT_LIST_OPEN,
 } from '../constant/eventConstants'
 
 export const eventsReducer = (
-  state = { eventList: [], isAddOpen: false, isViewOpen: false },
+  state = {
+    eventList: [],
+    isAddOpen: false,
+    isViewOpen: false,
+    isListOpen: false,
+  },
   action
 ) => {
   switch (action.type) {
@@ -48,6 +54,8 @@ export const eventsReducer = (
       return { ...state, isViewOpen: true, selectedEvent: action.payload }
     case CLOSE_SELECTED_EVENT:
       return { ...state, isViewOpen: false, selectedEvent: {} }
+    case TOGGLE_EVENT_LIST_OPEN:
+      return { ...state, isListOpen: !state.isListOpen }
     case SET_EVENT_BOX_POSITION:
       return { ...state, position: action.payload }
     default:
