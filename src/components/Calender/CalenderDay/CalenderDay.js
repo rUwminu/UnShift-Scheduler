@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSelectedDate } from '../../../redux/action/monthAction'
-import { setSelectEvent } from '../../../redux/action/eventAction'
+import {
+  setSelectEvent,
+  setEventBoxPosition,
+} from '../../../redux/action/eventAction'
 
 const CalenderDay = ({ day, rowIdx }) => {
+  const ref = useRef()
   const dispatch = useDispatch()
 
   const [todayEvt, setTodayEvt] = useState([])
@@ -22,13 +26,16 @@ const CalenderDay = ({ day, rowIdx }) => {
     dispatch(setSelectedDate(day))
   }
 
-  const handleSelectedEventAndShowModel = (data) => {
-    dispatch(setSelectEvent(data))
+  const handleSelectedEventAndShowModel = (evtInfo) => {
+    const bounding = ref.current.getBoundingClientRect()
+
+    dispatch(setEventBoxPosition(bounding))
+    dispatch(setSelectEvent(evtInfo))
   }
 
   const filterThisDayEvent = () => {
     const event = eventList.filter(
-      (evt) => dayjs(evt.day).format('DD-MM-YY') === day.format('DD-MM-YY')
+      (evt) => dayjs(evt.planDate).format('DD-MM-YY') === day.format('DD-MM-YY')
     )
 
     setTodayEvt(event)
@@ -56,11 +63,28 @@ const CalenderDay = ({ day, rowIdx }) => {
           {todayEvt &&
             todayEvt.map((x, idx) => (
               <div
+                ref={ref}
                 key={idx}
-                className="evt-dot"
+                className={`evt-dot ${
+                  x.isCompleted
+                    ? 'bg-green-400'
+                    : x.isCancelled
+                    ? 'bg-red-400'
+                    : 'bg-purple-400'
+                }`}
                 onClick={() => handleSelectedEventAndShowModel(x)}
               >
-                <div className="evt-note-box">{x.title}</div>
+                <div
+                  className={`evt-note-box ${
+                    x.isCompleted
+                      ? 'bg-green-600'
+                      : x.isCancelled
+                      ? 'bg-red-600'
+                      : 'bg-purple-600'
+                  }`}
+                >
+                  {x.title}
+                </div>
               </div>
             ))}
         </div>
@@ -148,7 +172,6 @@ const BoxContainer = styled.div`
         w-4
         h-4
         mr-1
-        bg-green-400
         rounded-full
         cursor-pointer
 
@@ -168,7 +191,6 @@ const BoxContainer = styled.div`
           max-w-[8rem]
           text-sm
           opacity-0
-          bg-green-600
           text-gray-50
           pointer-events-none
           rounded-md
@@ -191,7 +213,7 @@ const BoxContainer = styled.div`
             opacity-100
             z-30
           `}
-          transform: translateX(18px);
+          transform: translateX(calc(-100% + -3px));
         }
       }
     }

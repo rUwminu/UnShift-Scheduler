@@ -6,10 +6,12 @@ import {
   UPDATE_EVENT,
   REMOVE_EVENT,
   SET_SELECTED_EVENT,
+  CLOSE_SELECTED_EVENT,
+  SET_EVENT_BOX_POSITION,
 } from '../constant/eventConstants'
 
 export const eventsReducer = (
-  state = { eventList: [], isAddOpen: false },
+  state = { eventList: [], isAddOpen: false, isViewOpen: false },
   action
 ) => {
   switch (action.type) {
@@ -36,9 +38,18 @@ export const eventsReducer = (
         eventList: state.eventList.filter((evt) => evt.id !== action.payload),
       }
     case SET_SELECTED_DATE:
-      return { ...state, isAddOpen: true, selectedDate: action.payload }
+      return {
+        ...state,
+        isAddOpen: true,
+        isViewOpen: false,
+        selectedDate: action.payload,
+      }
     case SET_SELECTED_EVENT:
-      return { ...state, isAddOpen: true, selectedEvent: action.payload }
+      return { ...state, isViewOpen: true, selectedEvent: action.payload }
+    case CLOSE_SELECTED_EVENT:
+      return { ...state, isViewOpen: false, selectedEvent: {} }
+    case SET_EVENT_BOX_POSITION:
+      return { ...state, position: action.payload }
     default:
       return state
   }

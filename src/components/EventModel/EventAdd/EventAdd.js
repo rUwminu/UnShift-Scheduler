@@ -25,9 +25,9 @@ const EventAdd = () => {
   const [isCompleted, setIsCompleted] = useState(false)
   const [inputValue, setInputValue] = useState({
     title: '',
-    location: '',
     description: '',
     isCompleted: false,
+    isCancelled: false,
   })
 
   const calenderInfo = useSelector((state) => state.calenderInfo)
@@ -47,7 +47,26 @@ const EventAdd = () => {
             (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
           ).toString(16)
       )
-      dispatch(createEvent({ id: randomId, ...inputValue, day: daySelected }))
+
+      if (!isCompleted) {
+        dispatch(
+          createEvent({
+            id: randomId,
+            ...inputValue,
+            planDate: daySelected,
+            compDate: '',
+          })
+        )
+      } else {
+        dispatch(
+          createEvent({
+            id: randomId,
+            ...inputValue,
+            planDate: daySelected,
+            compDate: daySelected,
+          })
+        )
+      }
     }
   }
 
@@ -84,22 +103,6 @@ const EventAdd = () => {
         <div className="card-item items-center">
           <AccessTime className="icon" />
           <span>{daySelected.format('MMM DD, YYYY')}</span>
-        </div>
-        <div className="card-item items-start">
-          <PinDrop className="icon" />
-          <div className="input-box">
-            <textarea
-              type="text"
-              className="card-desc"
-              value={inputValue.location}
-              onInput={(e) => autoGrowHeight(e)}
-              onChange={(e) =>
-                setInputValue({ ...inputValue, location: e.target.value })
-              }
-              placeholder="Location"
-              required
-            />
-          </div>
         </div>
         <div className="card-item items-start">
           <Notes className="icon" />
