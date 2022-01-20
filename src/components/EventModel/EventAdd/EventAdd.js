@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
@@ -38,7 +39,7 @@ const EventAdd = () => {
   }
 
   const handleCreateEvent = () => {
-    if (inputValue.title !== '' && inputValue.description !== '') {
+    if (inputValue.title !== '') {
       const randomId = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(
         /[018]/g,
         (c) =>
@@ -53,7 +54,7 @@ const EventAdd = () => {
           createEvent({
             id: randomId,
             ...inputValue,
-            planDate: daySelected,
+            planDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
             compDate: '',
           })
         )
@@ -62,8 +63,8 @@ const EventAdd = () => {
           createEvent({
             id: randomId,
             ...inputValue,
-            planDate: daySelected,
-            compDate: daySelected,
+            planDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
+            compDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
           })
         )
       }
@@ -113,10 +114,12 @@ const EventAdd = () => {
               value={inputValue.description}
               onInput={(e) => autoGrowHeight(e)}
               onChange={(e) =>
-                setInputValue({ ...inputValue, description: e.target.value })
+                setInputValue({
+                  ...inputValue,
+                  description: e.target.value.replace(/^\s+|\s+$/gm, ''),
+                })
               }
               placeholder="What about?"
-              required
             />
           </div>
         </div>

@@ -11,15 +11,7 @@ import {
   TOGGLE_EVENT_LIST_OPEN,
 } from '../constant/eventConstants'
 
-export const eventsReducer = (
-  state = {
-    eventList: [],
-    isAddOpen: false,
-    isViewOpen: false,
-    isListOpen: false,
-  },
-  action
-) => {
+export const eventsReducer = (state = {}, action) => {
   switch (action.type) {
     case TOGGLE_MODEL_OPEN:
       return { ...state, isAddOpen: true }
@@ -55,7 +47,14 @@ export const eventsReducer = (
     case CLOSE_SELECTED_EVENT:
       return { ...state, isViewOpen: false, selectedEvent: {} }
     case TOGGLE_EVENT_LIST_OPEN:
-      return { ...state, isListOpen: !state.isListOpen }
+      return {
+        ...state,
+        listListener: {
+          ...state.listListener,
+          isListOpen: !state.listListener.isListOpen,
+          isSelectedDate: action.payload,
+        },
+      }
     case SET_EVENT_BOX_POSITION:
       return { ...state, position: action.payload }
     default:

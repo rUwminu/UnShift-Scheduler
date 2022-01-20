@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import dayjs from 'dayjs'
+import moment from 'moment'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
@@ -22,13 +23,20 @@ const CalenderDay = ({ day, rowIdx }) => {
     return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY') && 'active'
   }
 
-  const handleSelectDateAndCreateEvent = () => {
+  const handleSelectDateAndCreateEvent = (e) => {
+    e.stopPropagation()
     dispatch(setSelectedDate(day))
+  }
+
+  const handleDayBoxClick = (e) => {
+    e.stopPropagation()
+    console.log('box clicked')
   }
 
   const filterThisDayEvent = () => {
     const event = eventList.filter(
-      (evt) => dayjs(evt.planDate).format('DD-MM-YY') === day.format('DD-MM-YY')
+      (evt) =>
+        moment(evt.planDate).format('DD-MM-YY') === day.format('DD-MM-YY')
     )
 
     setTodayEvt(event)
@@ -41,14 +49,14 @@ const CalenderDay = ({ day, rowIdx }) => {
   }, [eventList, day])
 
   return (
-    <BoxContainer>
+    <BoxContainer onClick={(e) => handleDayBoxClick(e)}>
       <div className="header-container">
         {rowIdx === 0 && (
           <p className={`date-weekday`}>{day.format('ddd').toUpperCase()}</p>
         )}
         <p
           className={`date-day ${getCurrentDay()}`}
-          onClick={() => handleSelectDateAndCreateEvent()}
+          onClick={(e) => handleSelectDateAndCreateEvent(e)}
         >
           {day.format('DD')}
         </p>
@@ -64,10 +72,11 @@ const EvtDot = ({ x }) => {
   const elementRef = useRef()
   const dispatch = useDispatch()
 
-  const handleSelectedEventAndShowModel = (evtInfo) => {
+  const handleSelectedEventAndShowModel = (e, evtInfo) => {
+    e.stopPropagation()
+
     const bounding = elementRef.current.getBoundingClientRect()
 
-    console.log(bounding)
     dispatch(setEventBoxPosition(bounding))
     dispatch(setSelectEvent(evtInfo))
   }
@@ -82,7 +91,7 @@ const EvtDot = ({ x }) => {
           ? 'bg-red-400'
           : 'bg-purple-400'
       }`}
-      onClick={() => handleSelectedEventAndShowModel(x)}
+      onClick={(e) => handleSelectedEventAndShowModel(e, x)}
     >
       <div
         className={`evt-note-box ${
@@ -101,8 +110,8 @@ const EvtDot = ({ x }) => {
 
 const BoxContainer = styled.div`
   ${tw`
+    relative
     border
-    cursor-pointer
 
     transition
     duration-200
@@ -117,9 +126,11 @@ const BoxContainer = styled.div`
 
   .header-container {
     ${tw`
+        inline-block
         flex
         flex-col
         items-center
+        bg-none
         h-full
     `}
 

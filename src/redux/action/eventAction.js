@@ -38,8 +38,8 @@ export const closeSelectedEvent = () => (dispatch) => {
   dispatch({ type: CLOSE_SELECTED_EVENT })
 }
 
-export const toggleEventListOpen = () => (dispatch) => {
-  dispatch({ type: TOGGLE_EVENT_LIST_OPEN })
+export const toggleEventListOpen = (date) => (dispatch) => {
+  dispatch({ type: TOGGLE_EVENT_LIST_OPEN, payload: date })
 }
 
 export const setEventBoxPosition = (position, evtId) => (dispatch) => {

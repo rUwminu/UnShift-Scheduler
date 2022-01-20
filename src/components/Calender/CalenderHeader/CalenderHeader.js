@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
+
+// Redux Action
 import {
   resetCurrentMonth,
   toggleNextPrevMonth,
 } from '../../../redux/action/monthAction'
+import { toggleEventListOpen } from '../../../redux/action/eventAction'
 
 import EventList from '../../EventModel/EventList/EventList'
 
@@ -18,6 +21,9 @@ const CalenderHeader = () => {
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { monthIndex } = calenderInfo
 
+  const eventInfo = useSelector((state) => state.eventInfo)
+  const { listListener } = eventInfo
+
   const handleResetMonth = () => {
     dispatch(resetCurrentMonth())
   }
@@ -28,6 +34,10 @@ const CalenderHeader = () => {
 
   const handleNextMonth = () => {
     dispatch(toggleNextPrevMonth(monthIndex + 1))
+  }
+
+  const handleToggleListOpen = () => {
+    dispatch(toggleEventListOpen(null))
   }
 
   return (
@@ -57,6 +67,22 @@ const CalenderHeader = () => {
           </h1>
         </div>
       </div>
+      <div
+        className={`right-container ${
+          listListener && listListener.isListOpen && 'active'
+        }`}
+      >
+        <Burger
+          className={`${
+            listListener && listListener.isListOpen && 'line-active'
+          }`}
+          onClick={() => handleToggleListOpen()}
+        >
+          <div className={`line-1`} />
+          <div className={`line-2`} />
+          <div className={`line-3`} />
+        </Burger>
+      </div>
     </BoxContainer>
   )
 }
@@ -65,6 +91,7 @@ const BoxContainer = styled.div`
   ${tw`
     flex
     items-center
+    justify-between
     px-4
     py-3
   `}
@@ -191,6 +218,68 @@ const BoxContainer = styled.div`
         font-semibold
       `}
     }
+  }
+
+  .right-container {
+    .line-active {
+      .line-1 {
+        transform: rotate(-45deg) translate(-6px, 6px);
+      }
+
+      .line-2 {
+        opacity: 0;
+        transform: translate(100%);
+      }
+
+      .line-3 {
+        width: 1.5rem;
+        transform: rotate(45deg) translate(-5px, -5px);
+      }
+    }
+  }
+
+  .right-container.active {
+    ${tw`
+      z-30
+    `}
+  }
+`
+
+const Burger = styled.div`
+  ${tw`
+    ml-2
+    h-10
+    w-10
+    p-2
+    flex
+    flex-col
+    items-start
+    justify-around
+    cursor-pointer
+    bg-opacity-90
+    hover:bg-gray-200
+    rounded-full
+    transition
+    duration-200
+    ease-in-out
+    z-30
+  `}
+
+  div {
+    ${tw`
+      w-6
+      h-[2px]
+      bg-gray-900
+      transition
+      duration-200
+      ease-in-out
+    `}
+  }
+
+  div:nth-child(3) {
+    ${tw`
+      w-4
+    `}
   }
 `
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
+import moment from 'moment'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { closeSelectedEvent } from '../../../redux/action/eventAction'
@@ -83,22 +84,33 @@ const EventCard = () => {
               <div className="info-box">
                 <h1>{selectedEvent.title}</h1>
                 <span className="date">
-                  {selectedEvent.planDate.format('MMM DD, YYYY')}
+                  {moment(selectedEvent.planDate).format('dddd, MMMM D')}
                 </span>
               </div>
             </div>
-            <div className="card-item items-start">
-              <Notes className="icon" />
-              <span className="info-box">{selectedEvent.description}</span>
-            </div>
+            {selectedEvent.description !== '' &&
+              selectedEvent.description !== null && (
+                <div className="card-item items-start">
+                  <Notes className="icon" />
+                  <span className="info-box">{selectedEvent.description}</span>
+                </div>
+              )}
             <div className="card-item items-center">
               <AddTask className="icon" />
               <span
                 className={`status-tag ${
-                  selectedEvent.isCompleted ? 'comp-tag' : 'fore-tag'
+                  selectedEvent.isCancelled
+                    ? 'cancel-tag'
+                    : selectedEvent.isCompleted
+                    ? 'comp-tag'
+                    : 'fore-tag'
                 }`}
               >
-                {selectedEvent.isCompleted ? 'Completed' : 'Forecast'}
+                {selectedEvent.isCancelled
+                  ? 'Cancelled'
+                  : selectedEvent.isCompleted
+                  ? 'Completed'
+                  : 'Forecast'}
               </span>
             </div>
           </div>
@@ -298,6 +310,13 @@ const BoxContainer = styled.div`
           border-2
           font-semibold
           rounded-md
+        `}
+      }
+
+      .cancel-tag {
+        ${tw`
+          text-red-600
+          border-red-500
         `}
       }
 
