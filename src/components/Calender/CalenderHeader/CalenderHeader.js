@@ -7,6 +7,8 @@ import {
   toggleNextPrevMonth,
 } from '../../../redux/action/monthAction'
 
+import EventList from '../../EventModel/EventList/EventList'
+
 import { EventNote, ChevronLeft, ChevronRight } from '@mui/icons-material'
 import dayjs from 'dayjs'
 
@@ -30,6 +32,7 @@ const CalenderHeader = () => {
 
   return (
     <BoxContainer>
+      <EventList />
       <div className="left-container">
         <div className="logo-box">
           <EventNote className="logo-icon" />

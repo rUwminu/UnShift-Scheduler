@@ -171,7 +171,6 @@ const BoxContainer = styled.div`
       w-full
       mt-auto
     `}
-    white-space: nowrap;
 
     .evt-dot {
       ${tw`
