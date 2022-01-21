@@ -101,6 +101,8 @@ const EventCard = () => {
                 className={`status-tag ${
                   selectedEvent.isCancelled
                     ? 'cancel-tag'
+                    : selectedEvent.isRescheduled
+                    ? 'resc-tag'
                     : selectedEvent.isCompleted
                     ? 'comp-tag'
                     : 'fore-tag'
@@ -108,6 +110,8 @@ const EventCard = () => {
               >
                 {selectedEvent.isCancelled
                   ? 'Cancelled'
+                  : selectedEvent.isRescheduled
+                  ? 'Reshcduled'
                   : selectedEvent.isCompleted
                   ? 'Completed'
                   : 'Forecast'}
@@ -317,6 +321,13 @@ const BoxContainer = styled.div`
         ${tw`
           text-red-600
           border-red-500
+        `}
+      }
+
+      .resc-tag {
+        ${tw`
+          text-yellow-600
+          border-yellow-500
         `}
       }
 

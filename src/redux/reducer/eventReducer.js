@@ -9,6 +9,8 @@ import {
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
   TOGGLE_EVENT_LIST_OPEN,
+  TOGGLE_EVENT_LIST_CLOSE,
+  ADD_EVENT_FILTER_TYPE,
 } from '../constant/eventConstants'
 
 export const eventsReducer = (state = {}, action) => {
@@ -49,11 +51,36 @@ export const eventsReducer = (state = {}, action) => {
     case TOGGLE_EVENT_LIST_OPEN:
       return {
         ...state,
+        isViewOpen: false,
         listListener: {
           ...state.listListener,
-          isListOpen: !state.listListener.isListOpen,
+          isListOpen: true,
           isSelectedDate: action.payload,
         },
+      }
+    case TOGGLE_EVENT_LIST_CLOSE:
+      return {
+        ...state,
+        listListener: {
+          ...state.listListener,
+          isListOpen: false,
+        },
+      }
+    case ADD_EVENT_FILTER_TYPE:
+      if (state.eventFilterType.includes(action.payload)) {
+        return {
+          ...state,
+          isViewOpen: false,
+          eventFilterType: state.eventFilterType.filter(
+            (x) => x !== action.payload
+          ),
+        }
+      } else {
+        return {
+          ...state,
+          isViewOpen: false,
+          eventFilterType: [...state.eventFilterType, action.payload],
+        }
       }
     case SET_EVENT_BOX_POSITION:
       return { ...state, position: action.payload }

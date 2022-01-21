@@ -7,6 +7,7 @@ export const evtList = [
     planDate: '2022-01-07T16:00:00.000',
     compDate: '2022-01-07T16:00:00.000',
     isCompleted: true,
+    isRescheduled: false,
     isCancelled: false,
   },
   {
@@ -17,6 +18,7 @@ export const evtList = [
     planDate: '2022-01-09T16:00:00.000',
     compDate: '2022-01-09T16:00:00.000',
     isCompleted: false,
+    isRescheduled: false,
     isCancelled: true,
   },
   {
@@ -26,7 +28,8 @@ export const evtList = [
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     planDate: '2022-01-12T16:00:00.000',
     compDate: '2022-01-13T16:00:00.000',
-    isCompleted: true,
+    isCompleted: false,
+    isRescheduled: true,
     isCancelled: false,
   },
   {
@@ -37,6 +40,7 @@ export const evtList = [
     planDate: '2022-01-13T16:00:00.000',
     compDate: '2022-01-13T16:00:00.000',
     isCompleted: true,
+    isRescheduled: false,
     isCancelled: false,
   },
   {
@@ -46,6 +50,7 @@ export const evtList = [
     planDate: '2022-01-13T16:00:00.000',
     compDate: '2022-01-13T16:00:00.000',
     isCompleted: true,
+    isRescheduled: false,
     isCancelled: false,
   },
   {
@@ -56,6 +61,7 @@ export const evtList = [
     planDate: '2022-01-25T16:00:00.000',
     compDate: '',
     isCompleted: false,
+    isRescheduled: false,
     isCancelled: false,
   },
   {
@@ -66,6 +72,7 @@ export const evtList = [
     planDate: '2022-01-25T16:00:00.000',
     compDate: '',
     isCompleted: false,
+    isRescheduled: false,
     isCancelled: false,
   },
 ]

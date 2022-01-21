@@ -8,7 +8,10 @@ import {
   resetCurrentMonth,
   toggleNextPrevMonth,
 } from '../../../redux/action/monthAction'
-import { toggleEventListOpen } from '../../../redux/action/eventAction'
+import {
+  toggleEventListOpen,
+  toggleEventListClose,
+} from '../../../redux/action/eventAction'
 
 import EventList from '../../EventModel/EventList/EventList'
 
@@ -36,8 +39,12 @@ const CalenderHeader = () => {
     dispatch(toggleNextPrevMonth(monthIndex + 1))
   }
 
-  const handleToggleListOpen = () => {
-    dispatch(toggleEventListOpen(null))
+  const handleToggleListOpenNCose = () => {
+    if (!listListener.isListOpen) {
+      dispatch(toggleEventListOpen(null))
+    } else {
+      dispatch(toggleEventListClose())
+    }
   }
 
   return (
@@ -76,7 +83,7 @@ const CalenderHeader = () => {
           className={`${
             listListener && listListener.isListOpen && 'line-active'
           }`}
-          onClick={() => handleToggleListOpen()}
+          onClick={() => handleToggleListOpenNCose()}
         >
           <div className={`line-1`} />
           <div className={`line-2`} />

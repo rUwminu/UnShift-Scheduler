@@ -8,6 +8,8 @@ import {
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
   TOGGLE_EVENT_LIST_OPEN,
+  TOGGLE_EVENT_LIST_CLOSE,
+  ADD_EVENT_FILTER_TYPE,
 } from '../constant/eventConstants'
 
 export const toggleEventCardOpen = () => (dispatch) => {
@@ -42,6 +44,14 @@ export const toggleEventListOpen = (date) => (dispatch) => {
   dispatch({ type: TOGGLE_EVENT_LIST_OPEN, payload: date })
 }
 
-export const setEventBoxPosition = (position, evtId) => (dispatch) => {
+export const toggleEventListClose = () => (dispatch) => {
+  dispatch({ type: TOGGLE_EVENT_LIST_CLOSE })
+}
+
+export const addEventFilterType = (type) => (dispatch) => {
+  dispatch({ type: ADD_EVENT_FILTER_TYPE, payload: type })
+}
+
+export const setEventBoxPosition = (position) => (dispatch) => {
   dispatch({ type: SET_EVENT_BOX_POSITION, payload: position })
 }

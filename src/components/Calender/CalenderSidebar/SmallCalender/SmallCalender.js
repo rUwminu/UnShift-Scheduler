@@ -105,6 +105,7 @@ const SmallCalender = () => {
 
 const BoxContainer = styled.div`
   ${tw`
+    mb-4
     w-full
   `}
 

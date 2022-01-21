@@ -5,6 +5,7 @@ import styled from 'styled-components'
 // Child Components
 import CreateEventButton from './CreateEventButton/CreateEventButton'
 import SmallCalender from './SmallCalender/SmallCalender'
+import EventFilterCheckBox from './EventFilterCheckbox/EventFilterCheckBox'
 
 const CalenderSidebar = () => {
   return (
@@ -12,6 +13,7 @@ const CalenderSidebar = () => {
       <CreateEventButton />
       <div className="scroll-container">
         <SmallCalender />
+        <EventFilterCheckBox />
       </div>
     </BoxContainer>
   )
@@ -20,6 +22,7 @@ const CalenderSidebar = () => {
 const BoxContainer = styled.div`
   ${tw`
     flex-grow
+    h-full
     w-full
     max-w-[16.5rem]
   `}
@@ -28,8 +31,6 @@ const BoxContainer = styled.div`
     ${tw`
       px-4
       w-full
-      overflow-y-scroll
-      scrollbar-hide
     `}
   }
 `

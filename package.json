@@ -20,6 +20,7 @@
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.3",
     "tailwind-scrollbar-hide": "^1.1.7",
+    "tailwind-styled-components": "^2.1.1",
     "twin.macro": "^2.8.2",
     "web-vitals": "^2.1.3"
   },

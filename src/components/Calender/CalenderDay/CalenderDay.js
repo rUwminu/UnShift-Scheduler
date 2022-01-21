@@ -8,16 +8,16 @@ import { setSelectedDate } from '../../../redux/action/monthAction'
 import {
   setSelectEvent,
   setEventBoxPosition,
+  toggleEventListOpen,
 } from '../../../redux/action/eventAction'
 
 const CalenderDay = ({ day, rowIdx }) => {
-  //const elementRef = useRef()
   const dispatch = useDispatch()
 
   const [todayEvt, setTodayEvt] = useState([])
 
   const eventInfo = useSelector((state) => state.eventInfo)
-  const { eventList } = eventInfo
+  const { eventList, eventFilterType } = eventInfo
 
   const getCurrentDay = () => {
     return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY') && 'active'
@@ -28,9 +28,9 @@ const CalenderDay = ({ day, rowIdx }) => {
     dispatch(setSelectedDate(day))
   }
 
-  const handleDayBoxClick = (e) => {
+  const handleToggleListOpen = (e) => {
     e.stopPropagation()
-    console.log('box clicked')
+    dispatch(toggleEventListOpen(day.format('YYYY-MM-DDTHH:mm:ss')))
   }
 
   const filterThisDayEvent = () => {
@@ -39,17 +39,34 @@ const CalenderDay = ({ day, rowIdx }) => {
         moment(evt.planDate).format('DD-MM-YY') === day.format('DD-MM-YY')
     )
 
-    setTodayEvt(event)
+    if (eventFilterType.length === 3) {
+      setTodayEvt([])
+    } else if (eventFilterType.length > 0 && eventFilterType.length < 3) {
+      var tempArr = event
+      eventFilterType.forEach((type) => {
+        if (type === 'Completed') {
+          tempArr = tempArr.filter((x) => x.isCompleted !== true)
+        } else if (type === 'Forecast') {
+          tempArr = tempArr.filter((x) => x.isCompleted !== false)
+        } else if (type === 'Cancelled') {
+          tempArr = tempArr.filter((x) => x.isCancelled !== true)
+        }
+      })
+
+      setTodayEvt(tempArr)
+    } else {
+      setTodayEvt(event)
+    }
   }
 
   useEffect(() => {
     if (eventList && eventList.length > 0) {
       filterThisDayEvent()
     }
-  }, [eventList, day])
+  }, [eventList, day, eventFilterType])
 
   return (
-    <BoxContainer onClick={(e) => handleDayBoxClick(e)}>
+    <BoxContainer onClick={(e) => handleToggleListOpen(e)}>
       <div className="header-container">
         {rowIdx === 0 && (
           <p className={`date-weekday`}>{day.format('ddd').toUpperCase()}</p>
@@ -85,21 +102,25 @@ const EvtDot = ({ x }) => {
     <div
       ref={elementRef}
       className={`evt-dot ${
-        x.isCompleted
-          ? 'bg-green-400'
-          : x.isCancelled
+        x.isCancelled
           ? 'bg-red-400'
+          : x.isRescheduled
+          ? 'bg-amber-400'
+          : x.isCompleted
+          ? 'bg-green-400'
           : 'bg-purple-400'
       }`}
       onClick={(e) => handleSelectedEventAndShowModel(e, x)}
     >
       <div
         className={`evt-note-box ${
-          x.isCompleted
-            ? 'bg-green-600'
-            : x.isCancelled
+          x.isCancelled
             ? 'bg-red-600'
-            : 'bg-purple-600'
+            : x.isRescheduled
+            ? 'bg-amber-400'
+            : x.isCompleted
+            ? 'bg-green-400'
+            : 'bg-purple-400'
         }`}
       >
         {x.title}

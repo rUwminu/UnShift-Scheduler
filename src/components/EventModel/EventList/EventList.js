@@ -3,7 +3,10 @@ import tw from 'twin.macro'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
 import moment from 'moment'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+
+// Svg
+import { EmptyAmico } from '../../../assets/index'
 
 const EventList = () => {
   const calenderInfo = useSelector((state) => state.calenderInfo)
@@ -16,21 +19,37 @@ const EventList = () => {
   } = eventInfo
 
   const FilterEventAndRender = () => {
+    var tempArr = []
+    var selectedDay
     const currentMonth = dayjs().month(monthIndex).format('MM')
     const currentYear = dayjs().month(monthIndex).format('YYYY')
-    const tempArr = eventList.filter((e) => {
-      var [year, month] = e.planDate.split('-')
 
-      return currentMonth === month && currentYear === year
-    })
+    if (isSelectedDate !== '' && isSelectedDate !== null) {
+      selectedDay = isSelectedDate.split('T')[0].slice(-2)
+
+      tempArr = eventList.filter((e) => {
+        var [year, month, day] = e.planDate.split('-')
+
+        return (
+          currentMonth === month &&
+          currentYear === year &&
+          selectedDay === day.slice(0, 2)
+        )
+      })
+    } else {
+      tempArr = eventList.filter((e) => {
+        var [year, month] = e.planDate.split('-')
+
+        return currentMonth === month && currentYear === year
+      })
+    }
+
     const cancelEvt = tempArr.filter((x) => x.isCancelled !== false)
     const compEvt = tempArr.filter((x) => x.isCompleted !== false)
 
-    console.log(currentMonth + '-' + currentYear)
-
     return (
       <>
-        {tempArr.length > 0 && (
+        {tempArr.length > 0 ? (
           <ListContainer>
             <h2>All Schedule</h2>
             <div className="card-container">
@@ -61,6 +80,13 @@ const EventList = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </ListContainer>
+        ) : (
+          <ListContainer>
+            <h2>Seem Empty</h2>
+            <div className="card-container">
+              <img src={EmptyAmico} alt="empty-placeholder" />
             </div>
           </ListContainer>
         )}
@@ -142,14 +168,20 @@ const EventList = () => {
     <BoxContainer isListOpen={isListOpen}>
       <div className="header-box">
         {isSelectedDate === null ? (
-          <h1>All Scheduled Plan</h1>
+          <h1>
+            All Scheduled Plan
+            <span>For {dayjs().month(monthIndex).format('MMMM YYYY')}</span>
+          </h1>
         ) : (
           <h1>
-            Plan Scheduled On {moment(isSelectedDate).format('dddd, MMMM D')}
+            Plan Scheduled On
+            <span>{moment(isSelectedDate).format('dddd, MMMM D')}</span>
           </h1>
         )}
       </div>
-      <div className="body-box">{FilterEventAndRender()}</div>
+      <div className={`body-box ${!isListOpen && 'opacity-0'}`}>
+        {FilterEventAndRender()}
+      </div>
     </BoxContainer>
   )
 }
@@ -163,7 +195,6 @@ const BoxContainer = styled.div`
     flex-col
     py-4
     px-6
-    w-full
     h-screen
     bg-white
 
@@ -184,11 +215,20 @@ const BoxContainer = styled.div`
 
     h1 {
       ${tw`
+        flex
+        flex-col
         pb-4
         text-2xl
         text-gray-700
         font-semibold
       `}
+
+      span {
+        ${tw`
+          text-lg
+          text-gray-600
+        `}
+      }
     }
   }
 
@@ -208,8 +248,8 @@ const ListContainer = styled.div`
   ${tw`
     flex
     flex-col
-    items-start
-    justify-start
+    items-center
+    justify-center
     h-full
     min-w-[21rem]
     max-w-[21rem]
@@ -219,6 +259,7 @@ const ListContainer = styled.div`
 
   h2 {
     ${tw`
+      self-start
       pb-2
       text-lg
     `}
@@ -238,6 +279,13 @@ const ListContainer = styled.div`
       overflow-y-scroll
       scrollbar-hide
     `}
+
+    img {
+      ${tw`
+        py-14
+        w-full
+      `}
+    }
 
     .card-evt {
       ${tw`

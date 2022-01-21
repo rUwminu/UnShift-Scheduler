@@ -43,6 +43,7 @@ const initialState = {
   },
   eventInfo: {
     eventList: [...evtList],
+    eventFilterType: [],
     isAddOpen: false,
     isViewOpen: false,
     listListener: {
