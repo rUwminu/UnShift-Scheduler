@@ -18,13 +18,13 @@ const LoginForm = () => {
   return (
     <BoxContainer>
       <div className="form-container">
-        <h2>START SCHEDULE YOUR MASTER PLAN</h2>
-        <h1>
+        <h2 className="form-sm-title">START SCHEDULE YOUR MASTER PLAN</h2>
+        <h1 className="form-title">
           {isRegister ? 'Login to your account' : 'Create new account'}
           <span>.</span>
         </h1>
 
-        <h3>
+        <h3 className="form-direct">
           {isRegister ? "Don't Have Account?" : 'Already Have Account?'}
           <span onClick={() => setIsRegister(!isRegister)}>
             {isRegister ? 'Register' : 'Log In'}
@@ -40,7 +40,9 @@ const LoginForm = () => {
             <input type="password" />
             <span>Password</span>
           </div>
-          <div className="login-btn register-btn btn">Login</div>
+          <div className={`${isRegister ? 'login-btn' : 'register-btn'} btn`}>
+            {isRegister ? 'Login' : 'Register'}
+          </div>
         </div>
       </div>
       <div className="banner-container"></div>
@@ -53,6 +55,46 @@ const BoxContainer = styled.div`
 
   .form-container {
     ${tw``}
+
+    .form-sm-title {
+      ${tw``}
+    }
+
+    .form-title {
+      ${tw``}
+    }
+
+    .form-direct {
+      ${tw``}
+    }
+
+    .login-box {
+      ${tw``}
+
+      .input-item {
+        ${tw``}
+
+        input {
+          ${tw``}
+        }
+
+        span {
+          ${tw``}
+        }
+      }
+
+      .btn {
+        ${tw``}
+      }
+
+      .login-btn {
+        ${tw``}
+      }
+
+      .register-btn {
+        ${tw``}
+      }
+    }
   }
 
   .banner-container {
