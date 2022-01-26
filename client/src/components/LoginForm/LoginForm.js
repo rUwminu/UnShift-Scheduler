@@ -3,8 +3,7 @@ import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { gql } from '@apollo/client'
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 
 // Redux Action
 import { signin } from '../../redux/action/userAction'

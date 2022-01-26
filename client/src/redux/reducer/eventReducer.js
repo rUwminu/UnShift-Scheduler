@@ -5,6 +5,8 @@ import {
   CREATE_EVENT,
   UPDATE_EVENT,
   REMOVE_EVENT,
+  PUBSUB_EVENT,
+  GET_SELF_EVENT_LIST,
   SET_SELECTED_EVENT,
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
@@ -19,6 +21,13 @@ export const eventsReducer = (state = {}, action) => {
       return { ...state, isAddOpen: true }
     case TOGGLE_MODEL_CLOSE:
       return { ...state, isAddOpen: false, selectedEvent: {} }
+    case GET_SELF_EVENT_LIST:
+      return { ...state, eventList: action.payload }
+    case PUBSUB_EVENT:
+      return {
+        ...state,
+        eventList: [...state.eventList, action.payload],
+      }
     case CREATE_EVENT:
       return {
         ...state,

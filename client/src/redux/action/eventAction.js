@@ -4,6 +4,8 @@ import {
   CREATE_EVENT,
   UPDATE_EVENT,
   REMOVE_EVENT,
+  PUBSUB_EVENT,
+  GET_SELF_EVENT_LIST,
   SET_SELECTED_EVENT,
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
@@ -18,6 +20,14 @@ export const toggleEventCardOpen = () => (dispatch) => {
 
 export const toggleEventCardClose = () => (dispatch) => {
   dispatch({ type: TOGGLE_MODEL_CLOSE })
+}
+
+export const getSelfEventList = (evtList) => (dispatch) => {
+  dispatch({ type: GET_SELF_EVENT_LIST, payload: evtList })
+}
+
+export const getPubSubEventUpdate = (evt) => (dispatch) => {
+  dispatch({ type: PUBSUB_EVENT, payload: evt })
 }
 
 export const createEvent = (data) => (dispatch) => {

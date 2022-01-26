@@ -11,9 +11,6 @@ import {
 import { calenderInfoReducer } from './reducer/monthReducer'
 import { eventsReducer } from './reducer/eventReducer'
 
-// Dumy Data
-import { evtList } from '../dumy-data/data'
-
 const decodeLocalUser = () => {
   if (localStorage.getItem('user')) {
     const userInfo = JSON.parse(localStorage.getItem('user'))
@@ -42,7 +39,7 @@ const initialState = {
     daySelected: dayjs(),
   },
   eventInfo: {
-    eventList: [...evtList],
+    eventList: [],
     eventFilterType: [],
     isAddOpen: false,
     isViewOpen: false,
