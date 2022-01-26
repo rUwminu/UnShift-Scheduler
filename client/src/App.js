@@ -24,6 +24,7 @@ function App() {
         <MainContainer className="App">
           <Routes path="/" element={<Guestlayout />}>
             <Route path={`login`} element={<LoginPage />} />
+
             <Route
               path={`/`}
               element={
@@ -41,7 +42,11 @@ function App() {
 
 const MainContainer = styled.div`
   ${tw`
-    w-full
+    flex
+    items-center
+    justify-center
+    w-screen
+    h-screen
   `}
 `
 

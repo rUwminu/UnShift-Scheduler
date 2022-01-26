@@ -7,7 +7,7 @@ import {
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_SUCCESS,
   USER_SIGNOUT,
-} from '../constants/userConstant'
+} from '../constant/userConstant'
 
 export const signin = (data) => (dispatch) => {
   dispatch({

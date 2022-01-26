@@ -67,8 +67,6 @@ const CalenderDay = ({ day, rowIdx }) => {
     }
   }
 
-  console.log(todayEvt)
-
   useEffect(() => {
     if (eventList && eventList.length > 0) {
       filterThisDayEvent()
