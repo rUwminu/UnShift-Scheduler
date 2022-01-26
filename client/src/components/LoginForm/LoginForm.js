@@ -108,6 +108,9 @@ const LoginForm = () => {
             />
             <span>Email</span>
           </div>
+          {isError && isError.email && (
+            <div className="err-box">{isError.email}</div>
+          )}
           <div className={`input-item ${!isRegister && 'input-active'}`}>
             <input
               type="text"
@@ -130,6 +133,9 @@ const LoginForm = () => {
             />
             <span>Password</span>
           </div>
+          {isError && isError.password && (
+            <div className="err-box">{isError.password}</div>
+          )}
           <div className={`input-item ${!isRegister && 'input-active'}`}>
             <input
               type="password"
@@ -144,6 +150,9 @@ const LoginForm = () => {
             />
             <span>Confirm Password</span>
           </div>
+          {isError && isError.confirmPassword && (
+            <div className="err-box">{isError.confirmPassword}</div>
+          )}
           {isError && isError.fieldErr && (
             <div className={`err-box`}>! {isError.fieldErr}</div>
           )}
