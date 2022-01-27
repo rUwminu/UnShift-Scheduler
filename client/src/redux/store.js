@@ -10,6 +10,7 @@ import {
 } from './reducer/userReducer'
 import { calenderInfoReducer } from './reducer/monthReducer'
 import { eventsReducer } from './reducer/eventReducer'
+import { notifyReducer } from './reducer/notifyReducer'
 
 const decodeLocalUser = () => {
   if (localStorage.getItem('user')) {
@@ -40,6 +41,7 @@ const initialState = {
   },
   eventInfo: {
     eventList: [],
+    eventOtherList: [],
     eventFilterType: [],
     isAddOpen: false,
     isViewOpen: false,
@@ -47,6 +49,11 @@ const initialState = {
       isListOpen: false,
       isSelectedDate: null,
     },
+  },
+  notifyInfo: {
+    isShow: false,
+    isSuccess: null,
+    info: '',
   },
 }
 
@@ -56,6 +63,7 @@ const reducer = combineReducers({
   userDetails: userDetailsReducer,
   calenderInfo: calenderInfoReducer,
   eventInfo: eventsReducer,
+  notifyInfo: notifyReducer,
 })
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose

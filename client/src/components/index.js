@@ -7,3 +7,6 @@ export { default as EventList } from './EventModel/EventList/EventList'
 
 // Login Page
 export { default as LoginPage } from './LoginForm/LoginForm'
+
+// Notify Tag Component
+export { default as NotifyTag } from './NotifyTag/NotifyTag'

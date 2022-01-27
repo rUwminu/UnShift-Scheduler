@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
+import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
 
+// Utils
+import { getFirstCharaterOfUsername } from '../../../utils/GlobalUtils'
+
 // Redux Action
+import { signout } from '../../../redux/action/userAction'
 import {
   resetCurrentMonth,
   toggleNextPrevMonth,
@@ -15,11 +20,21 @@ import {
 
 import EventList from '../../EventModel/EventList/EventList'
 
-import { EventNote, ChevronLeft, ChevronRight } from '@mui/icons-material'
-import dayjs from 'dayjs'
+import {
+  EventNote,
+  ChevronLeft,
+  ChevronRight,
+  AssignmentInd,
+  Logout,
+} from '@mui/icons-material'
 
 const CalenderHeader = () => {
   const dispatch = useDispatch()
+
+  const [isDropActive, setIsDropActive] = useState(false)
+
+  const userSignIn = useSelector((state) => state.userSignIn)
+  const { user } = userSignIn
 
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { monthIndex } = calenderInfo
@@ -37,6 +52,10 @@ const CalenderHeader = () => {
 
   const handleNextMonth = () => {
     dispatch(toggleNextPrevMonth(monthIndex + 1))
+  }
+
+  const handleUserLogout = () => {
+    dispatch(signout())
   }
 
   const handleToggleListOpenNCose = () => {
@@ -79,8 +98,31 @@ const CalenderHeader = () => {
           listListener && listListener.isListOpen && 'active'
         }`}
       >
+        <UserIcon>
+          <span
+            className="user-name"
+            onClick={() => setIsDropActive(!isDropActive)}
+          >
+            {getFirstCharaterOfUsername(user.username)}
+          </span>
+          <div
+            className={`drop-option ${isDropActive && 'active'}`}
+            onMouseLeave={() => setIsDropActive(false)}
+          >
+            <h2>Option</h2>
+            <div className="option-item">
+              <span>Profile</span>
+              <AssignmentInd className="icon" />
+            </div>
+            <div className="option-item" onClick={() => handleUserLogout()}>
+              <span>Logout</span>
+              <Logout className="icon" />
+            </div>
+          </div>
+        </UserIcon>
+
         <Burger
-          className={`${
+          className={`menu ${
             listListener && listListener.isListOpen && 'line-active'
           }`}
           onClick={() => handleToggleListOpenNCose()}
@@ -228,6 +270,13 @@ const BoxContainer = styled.div`
   }
 
   .right-container {
+    ${tw`
+      flex
+      items-center
+      justify-center
+      z-10
+    `}
+
     .line-active {
       .line-1 {
         transform: rotate(-45deg) translate(-6px, 6px);
@@ -248,6 +297,119 @@ const BoxContainer = styled.div`
   .right-container.active {
     ${tw`
       z-30
+    `}
+  }
+`
+
+const UserIcon = styled.div`
+  ${tw`
+    relative
+    flex
+    items-center
+    justify-center
+    w-11
+    h-11
+    rounded-full
+  `}
+
+  &:hover {
+    .user-name {
+      ${tw`
+        border-gray-300
+      `}
+    }
+  }
+
+  .user-name {
+    ${tw`
+      flex
+      items-center
+      justify-center
+      w-full
+      h-full
+      border-4
+      font-semibold
+      bg-purple-600
+      text-gray-50
+      rounded-full
+      cursor-pointer
+
+      transition
+      duration-200
+      ease-in-out
+    `}
+  }
+
+  .drop-option {
+    ${tw`
+      absolute
+      bottom-0
+      right-0
+      p-2
+      h-0
+      w-0
+      opacity-0
+      font-semibold
+      bg-white
+      rounded-md
+      overflow-hidden
+      pointer-events-none
+
+      transition-all
+      duration-200
+      ease-in-out
+    `}
+    box-shadow: 2px 3px 15px 3px rgba(0,0,0,0.2);
+    transform: translateY(103%);
+
+    h2 {
+      ${tw`
+        mb-1
+        text-lg
+        text-gray-900
+      `}
+    }
+
+    .option-item {
+      ${tw`
+        flex
+        items-center
+        justify-between
+        py-2
+        px-2
+        w-full
+        bg-gray-50
+        text-gray-600
+        rounded-md
+        cursor-pointer
+
+        transition
+        duration-200
+        ease-in-out
+      `}
+
+      .icon {
+        ${tw`
+          h-5
+          w-5
+        `}
+      }
+
+      &:hover {
+        ${tw`
+          bg-gray-200
+          text-gray-800
+        `}
+      }
+    }
+  }
+
+  .drop-option.active {
+    ${tw`
+      w-36
+      h-[8.5rem]
+      opacity-100
+      pointer-events-auto
     `}
   }
 `

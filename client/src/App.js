@@ -18,7 +18,7 @@ import Guestlayout from './utils/GuestLayout'
 import PrivateRoute from './utils/PrivateRoute'
 
 // Components
-import { CalenderMain, LoginPage } from './components/index'
+import { CalenderMain, LoginPage, NotifyTag } from './components/index'
 
 function App() {
   const httpLink = new HttpLink({
@@ -56,6 +56,7 @@ function App() {
     <ApolloProvider client={client}>
       <BrowserRouter>
         <MainContainer className="App">
+          <NotifyTag />
           <Routes path="/" element={<Guestlayout />}>
             <Route path={`login`} element={<LoginPage />} />
 
@@ -76,6 +77,7 @@ function App() {
 
 const MainContainer = styled.div`
   ${tw`
+    relative
     flex
     items-center
     justify-center

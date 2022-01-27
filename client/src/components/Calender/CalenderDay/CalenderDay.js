@@ -10,14 +10,19 @@ import {
   setEventBoxPosition,
   toggleEventListOpen,
 } from '../../../redux/action/eventAction'
+import { getFirstName } from '../../../utils/GlobalUtils'
 
 const CalenderDay = ({ day, rowIdx }) => {
   const dispatch = useDispatch()
 
   const [todayEvt, setTodayEvt] = useState([])
+  const [todayOtherUser, setTodayOtherUser] = useState([])
+
+  const userSignIn = useSelector((state) => state.userSignIn)
+  const { user } = userSignIn
 
   const eventInfo = useSelector((state) => state.eventInfo)
-  const { eventList, eventFilterType } = eventInfo
+  const { eventList, eventOtherList, eventFilterType } = eventInfo
 
   const getCurrentDay = () => {
     return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY') && 'active'
@@ -67,11 +72,38 @@ const CalenderDay = ({ day, rowIdx }) => {
     }
   }
 
+  const filterThisDayOtherUserEvent = () => {
+    const event = eventOtherList
+      .filter(
+        (evt) =>
+          moment(evt.planDate).format('DD-MM-YY') === day.format('DD-MM-YY')
+      )
+      .reduce((acc, obj) => {
+        const {
+          user: { username },
+        } = obj
+
+        if (!acc[username]) {
+          acc[username] = []
+        }
+
+        return acc
+      }, {})
+
+    setTodayOtherUser(Object.keys(event))
+  }
+
   useEffect(() => {
     if (eventList && eventList.length > 0) {
       filterThisDayEvent()
     }
   }, [eventList, day, eventFilterType])
+
+  useEffect(() => {
+    if (eventOtherList && eventOtherList.length > 0) {
+      filterThisDayOtherUserEvent()
+    }
+  }, [eventOtherList, day])
 
   return (
     <BoxContainer onClick={(e) => handleToggleListOpen(e)}>
@@ -85,9 +117,18 @@ const CalenderDay = ({ day, rowIdx }) => {
         >
           {day.format('DD')}
         </p>
-        <div className="evt-container">
-          {todayEvt && todayEvt.map((x, idx) => <EvtDot key={idx} x={x} />)}
+      </div>
+      {user.isManager && todayOtherUser && (
+        <div className="evt-user-container">
+          {todayOtherUser.map((usr, idx) => (
+            <div key={idx} className="evt-user-tag">
+              {getFirstName(usr)}
+            </div>
+          ))}
         </div>
+      )}
+      <div className="evt-container">
+        {todayEvt && todayEvt.map((x, idx) => <EvtDot key={idx} x={x} />)}
       </div>
     </BoxContainer>
   )
@@ -140,6 +181,10 @@ const EvtDot = ({ x }) => {
 const BoxContainer = styled.div`
   ${tw`
     relative
+    flex
+    flex-col
+    items-center
+    justify-center
     border
 
     transition
@@ -155,12 +200,10 @@ const BoxContainer = styled.div`
 
   .header-container {
     ${tw`
-        inline-block
         flex
         flex-col
         items-center
         bg-none
-        h-full
     `}
 
     .date-weekday {
@@ -197,6 +240,41 @@ const BoxContainer = styled.div`
         bg-blue-500
         text-gray-50
       `}
+    }
+  }
+
+  .evt-user-container {
+    ${tw`
+      flex
+      flex-wrap
+      items-center
+      justify-start
+      px-3
+      h-full
+      w-full
+      overflow-y-scroll
+      scrollbar-hide
+    `}
+
+    .evt-user-tag {
+      ${tw`
+        mr-1
+        px-2
+        text-sm
+        font-semibold
+        bg-blue-600
+        text-gray-50
+        rounded-2xl
+        cursor-pointer
+
+        transition-all
+        duration-200
+        ease-in-out
+      `}
+
+      &:hover {
+        transform: scale(1.1);
+      }
     }
   }
 
@@ -249,7 +327,6 @@ const BoxContainer = styled.div`
 
       &:hover {
         ${tw`
-          bg-green-500
           z-10
         `}
         transform: scale(1.4);

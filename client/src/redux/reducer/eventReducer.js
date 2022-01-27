@@ -2,17 +2,17 @@ import { SET_SELECTED_DATE } from '../constant/monthConstants'
 import {
   TOGGLE_MODEL_OPEN,
   TOGGLE_MODEL_CLOSE,
-  CREATE_EVENT,
-  UPDATE_EVENT,
-  REMOVE_EVENT,
   PUBSUB_EVENT,
+  PUBSUB_SELF_EVENT,
   GET_SELF_EVENT_LIST,
+  GET_OTHER_EVENT_LIST,
   SET_SELECTED_EVENT,
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
   TOGGLE_EVENT_LIST_OPEN,
   TOGGLE_EVENT_LIST_CLOSE,
   ADD_EVENT_FILTER_TYPE,
+  RESET_EVENT_DETAIL,
 } from '../constant/eventConstants'
 
 export const eventsReducer = (state = {}, action) => {
@@ -23,28 +23,17 @@ export const eventsReducer = (state = {}, action) => {
       return { ...state, isAddOpen: false, selectedEvent: {} }
     case GET_SELF_EVENT_LIST:
       return { ...state, eventList: action.payload }
+    case GET_OTHER_EVENT_LIST:
+      return { ...state, eventOtherList: action.payload }
     case PUBSUB_EVENT:
       return {
         ...state,
-        eventList: [...state.eventList, action.payload],
+        eventOtherList: [...state.eventOtherList, action.payload],
       }
-    case CREATE_EVENT:
+    case PUBSUB_SELF_EVENT:
       return {
         ...state,
         eventList: [...state.eventList, action.payload],
-        isAddOpen: false,
-      }
-    case UPDATE_EVENT:
-      return {
-        ...state,
-        eventList: state.eventList.map((evt) =>
-          evt.id === action.payload.id ? action.payload : evt
-        ),
-      }
-    case REMOVE_EVENT:
-      return {
-        ...state,
-        eventList: state.eventList.filter((evt) => evt.id !== action.payload),
       }
     case SET_SELECTED_DATE:
       return {
@@ -93,6 +82,13 @@ export const eventsReducer = (state = {}, action) => {
       }
     case SET_EVENT_BOX_POSITION:
       return { ...state, position: action.payload }
+    case RESET_EVENT_DETAIL:
+      return {
+        ...state,
+        eventList: [],
+        eventOtherList: [],
+        eventFilterType: [],
+      }
     default:
       return state
   }

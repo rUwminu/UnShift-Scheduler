@@ -2,11 +2,10 @@ import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
+import { gql, useMutation } from '@apollo/client'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  toggleEventCardClose,
-  createEvent,
-} from '../../../redux/action/eventAction'
+import { toggleEventCardClose } from '../../../redux/action/eventAction'
+import { toggleNotifyTagOpen } from '../../../redux/action/notifyAction'
 
 // MUi icons
 import {
@@ -14,7 +13,6 @@ import {
   Close,
   AccessTime,
   Notes,
-  PinDrop,
   AddTask,
   ArrowDropDown,
 } from '@mui/icons-material'
@@ -28,11 +26,29 @@ const EventAdd = () => {
     title: '',
     description: '',
     isCompleted: false,
-    isCancelled: false,
   })
+
+  const userSignIn = useSelector((state) => state.userSignIn)
+  const { user } = userSignIn
 
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { daySelected } = calenderInfo
+
+  const [createNewEvent] = useMutation(CREATE_NEW_EVENT, {
+    context: {
+      headers: {
+        Authorization: `Bearer${' '}${user.token}`,
+      },
+    },
+    update() {
+      dispatch(
+        toggleNotifyTagOpen({ isSuccess: true, info: 'Schedule Created' })
+      )
+    },
+    onError(err) {
+      console.log(err)
+    },
+  })
 
   const handleCloseWindow = () => {
     dispatch(toggleEventCardClose())
@@ -40,33 +56,21 @@ const EventAdd = () => {
 
   const handleCreateEvent = () => {
     if (inputValue.title !== '') {
-      const randomId = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(
-        /[018]/g,
-        (c) =>
-          (
-            c ^
-            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-          ).toString(16)
-      )
-
       if (!isCompleted) {
-        dispatch(
-          createEvent({
-            id: randomId,
+        createNewEvent({
+          variables: {
             ...inputValue,
             planDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
-            compDate: '',
-          })
-        )
+          },
+        })
       } else {
-        dispatch(
-          createEvent({
-            id: randomId,
+        createNewEvent({
+          variables: {
             ...inputValue,
             planDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
             compDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
-          })
-        )
+          },
+        })
       }
     }
   }
@@ -169,6 +173,29 @@ const EventAdd = () => {
     </BoxContainer>
   )
 }
+
+const CREATE_NEW_EVENT = gql`
+  mutation createNewEvent(
+    $title: String!
+    $description: String
+    $planDate: String!
+    $compDate: String
+    $isCompleted: Boolean!
+  ) {
+    createNewEvent(
+      createEventInput: {
+        title: $title
+        description: $description
+        planDate: $planDate
+        compDate: $compDate
+        isCompleted: $isCompleted
+      }
+    ) {
+      id
+      title
+    }
+  }
+`
 
 const BoxContainer = styled.div`
   ${tw`

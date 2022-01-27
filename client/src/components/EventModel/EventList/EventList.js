@@ -272,6 +272,7 @@ const ListContainer = styled.div`
       items-start
       justify-start
       h-full
+      max-h-[85vh]
       w-full
       pr-3
       pb-20

@@ -8,6 +8,7 @@ import {
   USER_SIGNIN_SUCCESS,
   USER_SIGNOUT,
 } from '../constant/userConstant'
+import { RESET_EVENT_DETAIL } from '../constant/eventConstants'
 
 export const signin = (data) => (dispatch) => {
   dispatch({
@@ -34,6 +35,10 @@ export const signout = () => (dispatch) => {
 
   dispatch({
     type: USER_SIGNOUT,
+  })
+
+  dispatch({
+    type: RESET_EVENT_DETAIL,
   })
 }
 
