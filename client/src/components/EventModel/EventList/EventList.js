@@ -5,10 +5,17 @@ import dayjs from 'dayjs'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
 
+// Child components
+import UserList from './UserList'
+import ManagerList from './ManagerList'
+
 // Svg
 import { EmptyAmico } from '../../../assets/index'
 
 const EventList = () => {
+  const userSignIn = useSelector((state) => state.userSignIn)
+  const { user } = userSignIn
+
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { monthIndex } = calenderInfo
 
@@ -17,152 +24,6 @@ const EventList = () => {
     eventList,
     listListener: { isListOpen, isSelectedDate },
   } = eventInfo
-
-  const FilterEventAndRender = () => {
-    var tempArr = []
-    var selectedDay
-    const currentMonth = dayjs().month(monthIndex).format('MM')
-    const currentYear = dayjs().month(monthIndex).format('YYYY')
-
-    if (isSelectedDate !== '' && isSelectedDate !== null) {
-      selectedDay = isSelectedDate.split('T')[0].slice(-2)
-
-      tempArr = eventList.filter((e) => {
-        var [year, month, day] = e.planDate.split('-')
-
-        return (
-          currentMonth === month &&
-          currentYear === year &&
-          selectedDay === day.slice(0, 2)
-        )
-      })
-    } else {
-      tempArr = eventList.filter((e) => {
-        var [year, month] = e.planDate.split('-')
-
-        return currentMonth === month && currentYear === year
-      })
-    }
-
-    const cancelEvt = tempArr.filter((x) => x.isCancelled !== false)
-    const compEvt = tempArr.filter((x) => x.isCompleted !== false)
-
-    return (
-      <>
-        {tempArr.length > 0 ? (
-          <ListContainer>
-            <h2>All Schedule</h2>
-            <div className="card-container">
-              {tempArr.map((allEvt) => (
-                <div key={allEvt.id} className="card-evt card-all-evt">
-                  <div className="card-left">
-                    <h3>{allEvt.title}</h3>
-                    <span>
-                      {moment(allEvt.planDate).format('dddd, MMMM D')}
-                    </span>
-                  </div>
-                  <div className="card-right">
-                    <div
-                      className={`card-tag ${
-                        allEvt.isCancelled
-                          ? 'cancel-tag'
-                          : allEvt.isCompleted
-                          ? 'comp-tag'
-                          : 'fore-tag'
-                      } `}
-                    >
-                      {allEvt.isCancelled
-                        ? 'Cancelled'
-                        : allEvt.isCompleted
-                        ? 'Completed'
-                        : 'Forecast'}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </ListContainer>
-        ) : (
-          <ListContainer>
-            <h2>Seem Empty</h2>
-            <div className="card-container">
-              <img src={EmptyAmico} alt="empty-placeholder" />
-            </div>
-          </ListContainer>
-        )}
-
-        {compEvt.length > 0 && (
-          <ListContainer>
-            <h2>Completed Schedule</h2>
-            <div className="card-container">
-              {compEvt.map((allEvt) => (
-                <div key={allEvt.id} className="card-evt card-comp-evt">
-                  <div className="card-left">
-                    <h3>{allEvt.title}</h3>
-                    <span>
-                      {moment(allEvt.planDate).format('dddd, MMMM D')}
-                    </span>
-                  </div>
-                  <div className="card-right">
-                    <div
-                      className={`card-tag ${
-                        allEvt.isCancelled
-                          ? 'cancel-tag'
-                          : allEvt.isCompleted
-                          ? 'comp-tag'
-                          : 'fore-tag'
-                      } `}
-                    >
-                      {allEvt.isCancelled
-                        ? 'Cancelled'
-                        : allEvt.isCompleted
-                        ? 'Completed'
-                        : 'Forecast'}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </ListContainer>
-        )}
-
-        {cancelEvt.length > 0 && (
-          <ListContainer>
-            <h2>Cancelled Schedule</h2>
-            <div className="card-container">
-              {cancelEvt.map((allEvt) => (
-                <div key={allEvt.id} className="card-evt card-cancel-evt">
-                  <div className="card-left">
-                    <h3>{allEvt.title}</h3>
-                    <span>
-                      {moment(allEvt.planDate).format('dddd, MMMM D')}
-                    </span>
-                  </div>
-                  <div className="card-right">
-                    <div
-                      className={`card-tag ${
-                        allEvt.isCancelled
-                          ? 'cancel-tag'
-                          : allEvt.isCompleted
-                          ? 'comp-tag'
-                          : 'fore-tag'
-                      } `}
-                    >
-                      {allEvt.isCancelled
-                        ? 'Cancelled'
-                        : allEvt.isCompleted
-                        ? 'Completed'
-                        : 'Forecast'}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </ListContainer>
-        )}
-      </>
-    )
-  }
 
   return (
     <BoxContainer isListOpen={isListOpen}>
@@ -180,7 +41,7 @@ const EventList = () => {
         )}
       </div>
       <div className={`body-box ${!isListOpen && 'opacity-0'}`}>
-        {FilterEventAndRender()}
+        {user.isManager ? <ManagerList /> : <UserList />}
       </div>
     </BoxContainer>
   )
@@ -195,6 +56,7 @@ const BoxContainer = styled.div`
     flex-col
     py-4
     px-6
+    min-w-[26rem]
     h-screen
     bg-white
 

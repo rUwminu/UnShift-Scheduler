@@ -11,14 +11,14 @@ import {
 } from '@apollo/client'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
-import { useSelector } from 'react-redux'
 
 // Route Layout
 import Guestlayout from './utils/GuestLayout'
 import PrivateRoute from './utils/PrivateRoute'
 
-// Components
-import { CalenderMain, LoginPage, NotifyTag } from './components/index'
+// Components & pages
+import { LoginPage, ErrorPage } from './pages/index'
+import { CalenderMain, NotifyTag } from './components/index'
 
 function App() {
   const httpLink = new HttpLink({
@@ -68,6 +68,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </MainContainer>
       </BrowserRouter>

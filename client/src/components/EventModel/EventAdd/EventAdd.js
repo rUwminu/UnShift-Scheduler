@@ -120,7 +120,7 @@ const EventAdd = () => {
               onChange={(e) =>
                 setInputValue({
                   ...inputValue,
-                  description: e.target.value.replace(/^\s+|\s+$/gm, ''),
+                  description: e.target.value,
                 })
               }
               placeholder="What about?"
