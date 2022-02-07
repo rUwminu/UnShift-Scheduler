@@ -1,31 +1,114 @@
 import React, { useState, useEffect } from 'react'
+import moment from 'moment'
 import tw from 'twin.macro'
 import styled from 'styled-components'
-import moment from 'moment'
+import { gql, useMutation } from '@apollo/client'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { closeSelectedEvent } from '../../../redux/action/eventAction'
 
 // MUi icons
-import { Close, Notes, Event, AddTask, MoreVert } from '@mui/icons-material'
+import {
+  Close,
+  Notes,
+  Event,
+  AddTask,
+  MoreVert,
+  NoteAlt,
+} from '@mui/icons-material'
 
 const EventCard = () => {
   const dispatch = useDispatch()
 
+  const [isRescheduleClick, setIsRescheduled] = useState({
+    isReschedule: false,
+    planDate: '',
+  })
+  const [isCancelClick, setIsCancelClick] = useState({
+    isCancel: false,
+    remark: '',
+  })
   const [isDropActive, setIsDropActive] = useState(false)
   const [rePosition, setRePosition] = useState({
     isTooLeft: false,
     isTooBottom: false,
   })
 
+  const userSignIn = useSelector((state) => state.userSignIn)
+  const { user } = userSignIn
+
   const eventInfo = useSelector((state) => state.eventInfo)
   const { isViewOpen, position, selectedEvent } = eventInfo
 
+  const [updateEventComplete] = useMutation(UPDATE_EVENT_COMPLETE, {
+    context: {
+      headers: {
+        Authorization: `Bearer${' '}${user.token}`,
+      },
+    },
+    update(_, { data }) {
+      //console.log(data)
+    },
+    onError(err) {
+      console.log(err)
+    },
+  })
+
+  const [updateEventForecast] = useMutation(UPDATE_EVENT_FORECAST, {
+    context: {
+      headers: {
+        Authorization: `Bearer${' '}${user.token}`,
+      },
+    },
+    update(_, { data }) {
+      //console.log(data)
+    },
+    onError(err) {
+      console.log(err)
+    },
+  })
+
+  const [updateEventReschedule] = useMutation(UPDATE_EVENT_RESCHEDULE, {
+    context: {
+      headers: {
+        Authorization: `Bearer${' '}${user.token}`,
+      },
+    },
+    update(data) {
+      console.log(data)
+    },
+    onError(err) {
+      console.log(err)
+    },
+  })
+
+  const [updateEventCancel] = useMutation(UPDATE_EVENT_CANCEL, {
+    context: {
+      headers: {
+        Authorization: `Bearer${' '}${user.token}`,
+      },
+    },
+    update() {
+      setIsCancelClick({
+        isCancel: false,
+        remark: '',
+      })
+    },
+    onError(err) {
+      console.log(err)
+    },
+  })
+
   const handleCloseWindow = () => {
+    setIsDropActive(false)
+    setIsCancelClick({ isCancel: false, remark: '' })
     dispatch(closeSelectedEvent())
   }
 
   const handleResize = () => {
+    setIsDropActive(false)
+    setIsCancelClick({ isCancel: false, remark: '' })
+
     const { innerWidth: width, innerHeight: height } = window
 
     let leftWidth = width - position.left
@@ -46,6 +129,12 @@ const EventCard = () => {
     }
   }
 
+  const autoGrowHeight = (e) => {
+    //setInputValue({ ...inputValue, description: e.target.value })
+    e.target.style.height = '0px'
+    e.target.style.height = e.target.scrollHeight + 'px'
+  }
+
   useEffect(() => {
     if (position) {
       handleResize()
@@ -57,23 +146,68 @@ const EventCard = () => {
       {isViewOpen && selectedEvent && (
         <BoxContainer position={position} rePosition={rePosition}>
           <div className="card-header">
-            <div
-              className="icon-box btn"
-              onClick={() => setIsDropActive(!isDropActive)}
-            >
-              <MoreVert className="icon" />
+            {!selectedEvent.isCancelled && (
               <div
-                className={`drop-list ${isDropActive && 'active'}`}
-                onMouseLeave={() => setIsDropActive(false)}
+                className="icon-box btn"
+                onClick={() => setIsDropActive(!isDropActive)}
               >
-                {selectedEvent.isCompleted ? (
-                  <div className="drop-item">Mark as forecast</div>
-                ) : (
-                  <div className="drop-item">Mark as done</div>
-                )}
-                <div className="drop-item">Cancel</div>
+                <MoreVert className="icon" />
+                <div
+                  className={`drop-list ${isDropActive && 'active'}`}
+                  onMouseLeave={() => setIsDropActive(false)}
+                >
+                  {!selectedEvent.isCompleted && (
+                    <div
+                      className="drop-item"
+                      onClick={() =>
+                        setIsRescheduled({
+                          ...isRescheduleClick,
+                          isReschedule: !isRescheduleClick.isReschedule,
+                        })
+                      }
+                    >
+                      Reschedule Plan
+                    </div>
+                  )}
+                  {selectedEvent.isCompleted ? (
+                    <div
+                      className="drop-item"
+                      onClick={() =>
+                        updateEventForecast({
+                          variables: { evtId: selectedEvent.id },
+                        })
+                      }
+                    >
+                      Mark as forecast
+                    </div>
+                  ) : (
+                    <div
+                      className="drop-item"
+                      onClick={() =>
+                        updateEventComplete({
+                          variables: { evtId: selectedEvent.id },
+                        })
+                      }
+                    >
+                      Mark as done
+                    </div>
+                  )}
+                  {!selectedEvent.isCompleted && (
+                    <div
+                      className="drop-item"
+                      onClick={() =>
+                        setIsCancelClick({
+                          ...isCancelClick,
+                          isCancel: !isCancelClick.isCancel,
+                        })
+                      }
+                    >
+                      Cancel
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
             <div className="icon-box btn" onClick={() => handleCloseWindow()}>
               <Close className="icon" />
             </div>
@@ -117,13 +251,102 @@ const EventCard = () => {
                   : 'Forecast'}
               </span>
             </div>
+            {!selectedEvent.isCompleted && isCancelClick.isCancel && (
+              <>
+                <div className="card-item items-start">
+                  <NoteAlt className="icon" />
+                  <div className="input-box">
+                    <textarea
+                      type="text"
+                      className="card-desc"
+                      value={isCancelClick.remark}
+                      onInput={(e) => autoGrowHeight(e)}
+                      onChange={(e) =>
+                        setIsCancelClick({
+                          ...isCancelClick,
+                          remark: e.target.value,
+                        })
+                      }
+                      placeholder="So, why is cancel?"
+                    />
+                  </div>
+                </div>
+                <div className="card-item items-center">
+                  <AddTask className="icon hide" />
+                  <div className="cancel-btn-box">
+                    <div
+                      className="cancel-btn btn"
+                      onClick={() => {
+                        if (isCancelClick.remark.trim() !== '') {
+                          updateEventCancel({
+                            variables: {
+                              evtId: selectedEvent.id,
+                              remark: isCancelClick.remark,
+                            },
+                          })
+                        }
+                      }}
+                    >
+                      Cancel Plan
+                    </div>
+                    <div
+                      className="discard-btn btn"
+                      onClick={() =>
+                        setIsCancelClick({ ...isCancelClick, isCancel: false })
+                      }
+                    >
+                      Discard Change
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </BoxContainer>
       )}
-      <div></div>
     </>
   )
 }
+
+const UPDATE_EVENT_COMPLETE = gql`
+  mutation updateCompEvent($evtId: ID!) {
+    updateCompEvent(evtId: $evtId) {
+      id
+      isCompleted
+      isRescheduled
+      isCancelled
+      remark
+    }
+  }
+`
+
+const UPDATE_EVENT_FORECAST = gql`
+  mutation updateForeEvent($evtId: ID!) {
+    updateForeEvent(evtId: $evtId) {
+      id
+      isCompleted
+    }
+  }
+`
+
+const UPDATE_EVENT_RESCHEDULE = gql`
+  mutation updateRescEvent($evtId: ID!, $planDate: String!) {
+    updateRescEvent(evtId: $evtId, planDate: $planDate) {
+      id
+      planDate
+    }
+  }
+`
+
+const UPDATE_EVENT_CANCEL = gql`
+  mutation updateCancelEvent($evtId: ID!, $remark: String!) {
+    updateCancelEvent(evtId: $evtId, remark: $remark) {
+      id
+      remark
+      isCancelled
+    }
+  }
+`
 
 const BoxContainer = styled.div`
   ${tw`
@@ -131,7 +354,7 @@ const BoxContainer = styled.div`
     p-4
     w-full
     max-w-sm
-    h-auto
+    min-h-[14rem]
     max-h-[22rem]
     bg-white
     rounded-md
@@ -344,6 +567,123 @@ const BoxContainer = styled.div`
           text-purple-600
           border-purple-500
         `}
+      }
+
+      .input-box {
+        ${tw`
+          relative
+          w-full
+          border-b
+          border-gray-400
+        `}
+
+        &::after {
+          content: '';
+          ${tw`
+            absolute
+            left-0
+            bottom-0
+            h-[2px]
+            w-0
+            bg-blue-600
+
+            transition-all
+            duration-200
+            ease-in-out
+            z-[1]
+          `};
+        }
+
+        &:focus-within {
+          &::after {
+            ${tw`
+              w-full
+            `}
+          }
+        }
+
+        .title-input {
+          ${tw`
+            w-full
+            py-[0.5px]
+            text-2xl
+            outline-none
+          `}
+        }
+
+        .location-input {
+          ${tw`
+            w-full
+            py-[0.5px]
+            outline-none
+          `}
+        }
+      }
+
+      textarea {
+        resize: none;
+        margin-top: -2.5px;
+        overflow-y: scroll;
+        min-height: 2.5rem;
+        max-height: 13rem;
+        ${tw`
+          w-full
+          font-semibold
+          outline-none
+
+          scrollbar-hide
+        `}
+      }
+
+      .cancel-btn-box {
+        ${tw`
+          flex
+          items-center
+          justify-start
+          w-full
+        `}
+
+        .btn {
+          ${tw`
+            py-1
+            px-3
+            text-sm
+            font-semibold
+            rounded-md
+            cursor-pointer
+
+            transition
+            duration-200
+            ease-in-out
+          `}
+        }
+
+        .cancel-btn {
+          ${tw`
+            bg-red-500
+            text-gray-50
+          `}
+
+          &:hover {
+            ${tw`
+              bg-red-600
+            `}
+          }
+        }
+
+        .discard-btn {
+          ${tw`
+            ml-2
+            text-gray-600
+          `}
+
+          &:hover {
+            ${tw`
+              text-gray-800
+              bg-gray-200
+            `}
+          }
+        }
       }
     }
   }

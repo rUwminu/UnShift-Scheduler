@@ -138,13 +138,13 @@ const EvtDot = ({ x }) => {
   const elementRef = useRef()
   const dispatch = useDispatch()
 
-  const handleSelectedEventAndShowModel = (e, evtInfo) => {
+  const handleSelectedEventAndShowModel = (e) => {
     e.stopPropagation()
 
     const bounding = elementRef.current.getBoundingClientRect()
 
     dispatch(setEventBoxPosition(bounding))
-    dispatch(setSelectEvent(evtInfo))
+    dispatch(setSelectEvent(x))
   }
 
   return (
@@ -159,7 +159,7 @@ const EvtDot = ({ x }) => {
           ? 'bg-green-400'
           : 'bg-purple-400'
       }`}
-      onClick={(e) => handleSelectedEventAndShowModel(e, x)}
+      onClick={(e) => handleSelectedEventAndShowModel(e)}
     >
       <div
         className={`evt-note-box ${

@@ -11,6 +11,8 @@ import {
   getOtherEventList,
   getPubSubEventNew,
   getPubSubSelfEventNew,
+  getPubSubEventUpdate,
+  getPubSubSelfEventUpdate,
 } from '../../redux/action/eventAction'
 
 // Child components
@@ -100,11 +102,29 @@ const CalenderMain = () => {
     }
   }
 
+  const handleGetSubscriptionUpdateEvent = () => {
+    console.log(subUpdateEvent)
+    if (subUpdateEvent && subUpdateEvent.eventUpdated) {
+      const TempArr = { ...subUpdateEvent.eventUpdated }
+
+      // If user Not manager, check subscription event is created by him
+      if (TempArr.user.id === user.id) {
+        dispatch(getPubSubSelfEventUpdate(TempArr))
+      }
+      // If user is manager, get and push to all other user event list
+      else if (user.isManager) {
+        dispatch(getPubSubEventUpdate(TempArr))
+      }
+      // Else user not manager, ignore the event add by other
+    }
+  }
+
   useEffect(() => {
     handleGetSelectedMonthEvent()
     setCurrentMonth(getMonth(monthIndex))
   }, [monthIndex])
 
+  // Get Event UseEffect
   useEffect(() => {
     if (selfListData) {
       dispatch(getSelfEventList(selfListData.getSelfEvent))
@@ -117,9 +137,14 @@ const CalenderMain = () => {
     }
   }, [allListData])
 
+  // Subscription UseEffect
   useEffect(() => {
     handleGetSubscriptionNewEvent()
   }, [subNewEvent])
+
+  useEffect(() => {
+    handleGetSubscriptionUpdateEvent()
+  }, [subUpdateEvent])
 
   return (
     <CalenderSection>
@@ -145,6 +170,7 @@ const GET_SELF_EVENT_LIST = gql`
       isCompleted
       isRescheduled
       isCancelled
+      remark
     }
   }
 `
@@ -164,6 +190,7 @@ const GET_ALL_EVENT_LIST = gql`
       isCompleted
       isRescheduled
       isCancelled
+      remark
     }
   }
 `
@@ -183,6 +210,7 @@ const CREATED_EVENT_SUBSCRIPTION = gql`
       isCompleted
       isRescheduled
       isCancelled
+      remark
     }
   }
 `
@@ -202,6 +230,7 @@ const UPDATED_EVENT_SUBSCRIPTION = gql`
       isCompleted
       isRescheduled
       isCancelled
+      remark
     }
   }
 `

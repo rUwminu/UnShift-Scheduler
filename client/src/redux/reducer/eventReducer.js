@@ -2,8 +2,10 @@ import { SET_SELECTED_DATE } from '../constant/monthConstants'
 import {
   TOGGLE_MODEL_OPEN,
   TOGGLE_MODEL_CLOSE,
-  PUBSUB_EVENT,
-  PUBSUB_SELF_EVENT,
+  PUBSUB_EVENT_NEW,
+  PUBSUB_SELF_EVENT_NEW,
+  PUBSUB_EVENT_UPDATE,
+  PUBSUB_SELF_EVENT_UPDATE,
   GET_SELF_EVENT_LIST,
   GET_OTHER_EVENT_LIST,
   SET_SELECTED_EVENT,
@@ -25,15 +27,30 @@ export const eventsReducer = (state = {}, action) => {
       return { ...state, eventList: action.payload }
     case GET_OTHER_EVENT_LIST:
       return { ...state, eventOtherList: action.payload }
-    case PUBSUB_EVENT:
+    case PUBSUB_EVENT_NEW:
       return {
         ...state,
         eventOtherList: [...state.eventOtherList, action.payload],
       }
-    case PUBSUB_SELF_EVENT:
+    case PUBSUB_SELF_EVENT_NEW:
       return {
         ...state,
         eventList: [...state.eventList, action.payload],
+      }
+    case PUBSUB_EVENT_UPDATE:
+      return {
+        ...state,
+        eventOtherList: state.eventOtherList.map((evt) =>
+          evt.id === action.payload.id ? action.payload : evt
+        ),
+      }
+    case PUBSUB_SELF_EVENT_UPDATE:
+      return {
+        ...state,
+        eventList: state.eventList.map((evt) =>
+          evt.id === action.payload.id ? action.payload : evt
+        ),
+        selectedEvent: state.isViewOpen ? action.payload : {},
       }
     case SET_SELECTED_DATE:
       return {

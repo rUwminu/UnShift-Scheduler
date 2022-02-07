@@ -1,8 +1,10 @@
 import {
   TOGGLE_MODEL_OPEN,
   TOGGLE_MODEL_CLOSE,
-  PUBSUB_EVENT,
-  PUBSUB_SELF_EVENT,
+  PUBSUB_EVENT_NEW,
+  PUBSUB_SELF_EVENT_NEW,
+  PUBSUB_EVENT_UPDATE,
+  PUBSUB_SELF_EVENT_UPDATE,
   GET_SELF_EVENT_LIST,
   GET_OTHER_EVENT_LIST,
   SET_SELECTED_EVENT,
@@ -30,11 +32,19 @@ export const getOtherEventList = (evtList) => (dispatch) => {
 }
 
 export const getPubSubEventNew = (evt) => (dispatch) => {
-  dispatch({ type: PUBSUB_EVENT, payload: evt })
+  dispatch({ type: PUBSUB_EVENT_NEW, payload: evt })
 }
 
 export const getPubSubSelfEventNew = (evt) => (dispatch) => {
-  dispatch({ type: PUBSUB_SELF_EVENT, payload: evt })
+  dispatch({ type: PUBSUB_SELF_EVENT_NEW, payload: evt })
+}
+
+export const getPubSubEventUpdate = (evt) => (dispatch) => {
+  dispatch({ type: PUBSUB_EVENT_UPDATE, payload: evt })
+}
+
+export const getPubSubSelfEventUpdate = (evt) => (dispatch) => {
+  dispatch({ type: PUBSUB_SELF_EVENT_UPDATE, payload: evt })
 }
 
 export const setSelectEvent = (data) => (dispatch) => {

@@ -11,6 +11,7 @@ import {
 } from '@apollo/client'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
+import { useSelector } from 'react-redux'
 
 // Route Layout
 import Guestlayout from './utils/GuestLayout'
@@ -21,6 +22,9 @@ import { LoginPage, ErrorPage } from './pages/index'
 import { CalenderMain, NotifyTag } from './components/index'
 
 function App() {
+  const userSignIn = useSelector((state) => state.userSignIn)
+  const { user } = userSignIn
+
   const httpLink = new HttpLink({
     uri: 'http://localhost:4000/graphql',
   })
@@ -28,8 +32,12 @@ function App() {
   const wsLink = new WebSocketLink({
     uri: 'ws://localhost:4000/graphql',
     options: {
-      lazy: true,
       reconnect: true,
+      connectionParams: {
+        headers: {
+          Authorization: `Bearer${' '}${user && user.token}`,
+        },
+      },
     },
   })
 

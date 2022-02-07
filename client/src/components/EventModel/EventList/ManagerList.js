@@ -246,6 +246,7 @@ const BoxContainer = styled.div`
 
     .list-box.hide {
       ${tw`
+          h-full
           max-w-[3rem]
           min-w-[3rem] 
         `}
@@ -255,9 +256,9 @@ const BoxContainer = styled.div`
             py-0
             text-base
         `}
-        width: 10rem;
+        width: 8rem;
         height: 3rem;
-        transform: translateY(80px) rotate(90deg);
+        transform: translateY(70px) rotate(90deg);
       }
 
       .list-item-box {
