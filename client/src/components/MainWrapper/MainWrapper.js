@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { gql, useLazyQuery, useSubscription } from '@apollo/client'
-
 // Redux Action
 import {
   getSelfEventList,
@@ -15,18 +14,7 @@ import {
   getPubSubSelfEventUpdate,
 } from '../../redux/action/eventAction'
 
-// Child components
-import CalenderHeader from './CalenderHeader/CalenderHeader'
-import CalenderMonth from './CalenderMonth/CalenderMonth'
-import CalenderSidebar from './CalenderSidebar/CalenderSidebar'
-
-// Utils
-import { getMonth } from '../../utils/GlobalUtils'
-
-// Global Components
-import { EventAdd, EventCard } from '../index'
-
-const CalenderMain = () => {
+const MainWrapper = ({ children }) => {
   const dispatch = useDispatch()
 
   const userSignIn = useSelector((state) => state.userSignIn)
@@ -34,11 +22,6 @@ const CalenderMain = () => {
 
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { monthIndex } = calenderInfo
-
-  const eventInfo = useSelector((state) => state.eventInfo)
-  const { isAddOpen } = eventInfo
-
-  const [currentMonth, setCurrentMonth] = useState(getMonth(monthIndex))
 
   const [getSelfEventListItem, { error: selfListError, data: selfListData }] =
     useLazyQuery(GET_SELF_EVENT_LIST, {
@@ -121,7 +104,6 @@ const CalenderMain = () => {
 
   useEffect(() => {
     handleGetSelectedMonthEvent()
-    setCurrentMonth(getMonth(monthIndex))
   }, [monthIndex])
 
   // Get Event UseEffect
@@ -146,17 +128,7 @@ const CalenderMain = () => {
     handleGetSubscriptionUpdateEvent()
   }, [subUpdateEvent])
 
-  return (
-    <CalenderSection>
-      {isAddOpen && <EventAdd />}
-      <EventCard />
-      <CalenderHeader />
-      <div className="body-container">
-        <CalenderSidebar />
-        <CalenderMonth month={currentMonth} view={'base'} />
-      </div>
-    </CalenderSection>
-  )
+  return <MainContainer>{children}</MainContainer>
 }
 
 const GET_SELF_EVENT_LIST = gql`
@@ -235,21 +207,15 @@ const UPDATED_EVENT_SUBSCRIPTION = gql`
   }
 `
 
-const CalenderSection = styled.div`
+const MainContainer = styled.div`
   ${tw`
     relative
     flex
-    flex-col
-    w-full
+    items-center
+    justify-center
+    w-screen
     h-screen
   `}
-
-  .body-container {
-    ${tw`
-        flex
-        flex-grow
-    `}
-  }
 `
 
-export default CalenderMain
+export default MainWrapper

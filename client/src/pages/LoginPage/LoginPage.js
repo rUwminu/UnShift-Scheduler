@@ -8,7 +8,7 @@ import { gql, useMutation } from '@apollo/client'
 // Redux Action
 import { signin } from '../../redux/action/userAction'
 
-const LoginForm = () => {
+const LoginPage = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const InputState = {
@@ -528,4 +528,4 @@ const AnimaCard = styled.div`
   }
 `
 
-export default LoginForm
+export default LoginPage

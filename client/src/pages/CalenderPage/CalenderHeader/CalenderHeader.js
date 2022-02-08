@@ -18,7 +18,7 @@ import {
   toggleEventListClose,
 } from '../../../redux/action/eventAction'
 
-import EventList from '../../EventModel/EventList/EventList'
+import { EventList } from '../../../components/index.js'
 
 import {
   EventNote,

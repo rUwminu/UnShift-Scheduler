@@ -18,8 +18,8 @@ import Guestlayout from './utils/GuestLayout'
 import PrivateRoute from './utils/PrivateRoute'
 
 // Components & pages
-import { LoginPage, ErrorPage } from './pages/index'
-import { CalenderMain, NotifyTag } from './components/index'
+import { LoginPage, CalenderPage, ErrorPage } from './pages/index'
+import { MainWrapper, NotifyTag } from './components/index'
 
 function App() {
   const userSignIn = useSelector((state) => state.userSignIn)
@@ -63,7 +63,7 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <BrowserRouter>
-        <MainContainer className="App">
+        <MainWrapper className="App">
           <NotifyTag />
           <Routes path="/" element={<Guestlayout />}>
             <Route path={`login`} element={<LoginPage />} />
@@ -72,27 +72,16 @@ function App() {
               path={`/`}
               element={
                 <PrivateRoute>
-                  <CalenderMain />
+                  <CalenderPage />
                 </PrivateRoute>
               }
             />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
-        </MainContainer>
+        </MainWrapper>
       </BrowserRouter>
     </ApolloProvider>
   )
 }
-
-const MainContainer = styled.div`
-  ${tw`
-    relative
-    flex
-    items-center
-    justify-center
-    w-screen
-    h-screen
-  `}
-`
 
 export default App

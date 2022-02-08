@@ -1,4 +1,5 @@
-export { default as CalenderMain } from './Calender/CalenderMain'
+// System Wrapper
+export { default as MainWrapper } from './MainWrapper/MainWrapper'
 
 // Event Model Components
 export { default as EventAdd } from './EventModel/EventAdd/EventAdd'
