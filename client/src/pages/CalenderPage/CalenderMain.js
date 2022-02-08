@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useSelector } from 'react-redux'
@@ -22,6 +22,10 @@ const CalenderMain = () => {
   const { isAddOpen } = eventInfo
 
   const [currentMonth, setCurrentMonth] = useState(getMonth(monthIndex))
+
+  useEffect(() => {
+    setCurrentMonth(getMonth(monthIndex))
+  }, [monthIndex])
 
   return (
     <CalenderSection>

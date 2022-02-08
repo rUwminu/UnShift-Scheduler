@@ -111,7 +111,7 @@ const ListBox = ({ title, eventList }) => {
               <h2>All Plan</h2>
               <div className="card-container">
                 {eventList.map((allEvt) => (
-                  <EventCard key={allEvt.id} allEvt={allEvt} />
+                  <EventCard key={allEvt.id} allEvt={allEvt} cardType={'All'} />
                 ))}
               </div>
             </ListContainer>
@@ -121,7 +121,11 @@ const ListBox = ({ title, eventList }) => {
                 {eventList
                   .filter((x) => x.isCompleted !== false)
                   .map((allEvt) => (
-                    <EventCard key={allEvt.id} allEvt={allEvt} />
+                    <EventCard
+                      key={allEvt.id}
+                      allEvt={allEvt}
+                      cardType={'Completed'}
+                    />
                   ))}
               </div>
             </ListContainer>
@@ -132,7 +136,7 @@ const ListBox = ({ title, eventList }) => {
   )
 }
 
-const EventCard = ({ allEvt }) => {
+const EventCard = ({ allEvt, cardType }) => {
   const elementRef = useRef()
   const dispatch = useDispatch()
 
@@ -148,7 +152,9 @@ const EventCard = ({ allEvt }) => {
   return (
     <div
       ref={elementRef}
-      className="card-evt card-comp-evt"
+      className={`card-evt ${
+        cardType === 'All' ? 'card-all-evt' : 'card-comp-evt'
+      }`}
       onClick={(e) => handleClick(e)}
     >
       <div className="card-left">

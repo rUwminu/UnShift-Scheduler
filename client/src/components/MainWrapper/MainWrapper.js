@@ -27,7 +27,7 @@ const MainWrapper = ({ children }) => {
     useLazyQuery(GET_SELF_EVENT_LIST, {
       context: {
         headers: {
-          Authorization: `Bearer${' '}${user.token}`,
+          Authorization: `Bearer${' '}${user && user.token}`,
         },
       },
     })
@@ -37,7 +37,7 @@ const MainWrapper = ({ children }) => {
     {
       context: {
         headers: {
-          Authorization: `Bearer${' '}${user.token}`,
+          Authorization: `Bearer${' '}${user && user.token}`,
         },
       },
     }
@@ -48,6 +48,7 @@ const MainWrapper = ({ children }) => {
   const { data: subUpdateEvent } = useSubscription(UPDATED_EVENT_SUBSCRIPTION)
 
   const handleGetSelectedMonthEvent = () => {
+    console.log('is trigger?')
     const selectedMonth = dayjs(new Date(dayjs().year(), monthIndex))
       .format('MM YYYY')
       .split(' ')
@@ -86,7 +87,6 @@ const MainWrapper = ({ children }) => {
   }
 
   const handleGetSubscriptionUpdateEvent = () => {
-    console.log(subUpdateEvent)
     if (subUpdateEvent && subUpdateEvent.eventUpdated) {
       const TempArr = { ...subUpdateEvent.eventUpdated }
 
@@ -103,12 +103,13 @@ const MainWrapper = ({ children }) => {
   }
 
   useEffect(() => {
-    handleGetSelectedMonthEvent()
-  }, [monthIndex])
+    if (user) handleGetSelectedMonthEvent()
+  }, [monthIndex, user])
 
   // Get Event UseEffect
   useEffect(() => {
     if (selfListData) {
+      console.log(selfListData)
       dispatch(getSelfEventList(selfListData.getSelfEvent))
     }
   }, [selfListData])

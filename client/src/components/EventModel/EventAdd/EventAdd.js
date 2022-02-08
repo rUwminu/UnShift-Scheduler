@@ -20,10 +20,18 @@ import {
 const EventAdd = () => {
   const dispatch = useDispatch()
 
+  const dropTitleDefaultValue = [
+    'F&B Visit',
+    'Customer Meetup',
+    'Sample Deliver',
+  ]
+
+  const [isTitleDropOpen, setIsTitleDropOpen] = useState(false)
   const [isDropOpen, setIsDropOpen] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
   const [inputValue, setInputValue] = useState({
     title: '',
+    customer: '',
     description: '',
     isCompleted: false,
   })
@@ -103,6 +111,12 @@ const EventAdd = () => {
               placeholder="Add title"
               required
             />
+            <div
+              className="drop-icon-box absolute-icon-box"
+              onClick={() => setIsDropOpen(!isDropOpen)}
+            >
+              <ArrowDropDown className="drop-icon" />
+            </div>
           </div>
         </div>
         <div className="card-item items-center">
@@ -177,6 +191,7 @@ const EventAdd = () => {
 const CREATE_NEW_EVENT = gql`
   mutation createNewEvent(
     $title: String!
+    $customer: String!
     $description: String
     $planDate: String!
     $compDate: String
@@ -185,6 +200,7 @@ const CREATE_NEW_EVENT = gql`
     createNewEvent(
       createEventInput: {
         title: $title
+        customer: $customer
         description: $description
         planDate: $planDate
         compDate: $compDate
@@ -389,40 +405,6 @@ const BoxContainer = styled.div`
           justify-start
         `}
 
-        .drop-icon-box {
-          ${tw`
-            flex
-            items-center
-            justify-center
-            w-7
-            h-7
-            p-1
-            ml-1
-            rounded-full
-            cursor-pointer
-
-            transition
-            duration-200
-            ease-in-out
-          `}
-
-          .drop-icon {
-            ${tw`
-              mt-[2px]
-              h-full
-              w-full
-              text-gray-600
-              pointer-events-none
-            `}
-          }
-
-          &:hover {
-            ${tw`
-              bg-gray-300
-            `}
-          }
-        }
-
         .drop-box {
           ${tw`
             absolute
@@ -478,6 +460,52 @@ const BoxContainer = styled.div`
           `}
           box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.5);
         }
+      }
+
+      .drop-icon-box {
+        ${tw`
+          flex
+          items-center
+          justify-center
+          w-7
+          h-7
+          p-1
+          ml-1
+          rounded-full
+          cursor-pointer
+
+          transition
+          duration-200
+          ease-in-out
+        `}
+
+        .drop-icon {
+          ${tw`
+            mt-[2px]
+            h-full
+            w-full
+            text-gray-600
+            pointer-events-none
+          `}
+        }
+
+        &:hover {
+          ${tw`
+            bg-gray-300
+          `}
+        }
+      }
+
+      .absolute-icon-box {
+        ${tw`
+          absolute
+          top-1/2
+          right-1
+          m-0
+          w-8
+          h-8
+        `}
+        transform: translateY(-50%);
       }
     }
   }

@@ -1,11 +1,8 @@
-import tw from 'twin.macro'
-import styled from 'styled-components'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import {
   split,
   HttpLink,
   ApolloClient,
-  ApolloLink,
   InMemoryCache,
   ApolloProvider,
 } from '@apollo/client'
@@ -18,7 +15,7 @@ import Guestlayout from './utils/GuestLayout'
 import PrivateRoute from './utils/PrivateRoute'
 
 // Components & pages
-import { LoginPage, CalenderPage, ErrorPage } from './pages/index'
+import { LoginPage, CalenderPage, ReportPage, ErrorPage } from './pages/index'
 import { MainWrapper, NotifyTag } from './components/index'
 
 function App() {
@@ -73,6 +70,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <CalenderPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`/report`}
+              element={
+                <PrivateRoute>
+                  <ReportPage />
                 </PrivateRoute>
               }
             />

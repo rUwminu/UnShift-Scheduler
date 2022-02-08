@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,16 +9,6 @@ import { getFirstCharaterOfUsername } from '../../../utils/GlobalUtils'
 
 // Redux Action
 import { signout } from '../../../redux/action/userAction'
-import {
-  resetCurrentMonth,
-  toggleNextPrevMonth,
-} from '../../../redux/action/monthAction'
-import {
-  toggleEventListOpen,
-  toggleEventListClose,
-} from '../../../redux/action/eventAction'
-
-import { EventList } from '../../../components/index.js'
 
 import {
   EventNote,
@@ -30,7 +19,7 @@ import {
   Logout,
 } from '@mui/icons-material'
 
-const CalenderHeader = () => {
+const ReportHeader = () => {
   const dispatch = useDispatch()
 
   const [isDropActive, setIsDropActive] = useState(false)
@@ -38,39 +27,12 @@ const CalenderHeader = () => {
   const userSignIn = useSelector((state) => state.userSignIn)
   const { user } = userSignIn
 
-  const calenderInfo = useSelector((state) => state.calenderInfo)
-  const { monthIndex } = calenderInfo
-
-  const eventInfo = useSelector((state) => state.eventInfo)
-  const { listListener } = eventInfo
-
-  const handleResetMonth = () => {
-    dispatch(resetCurrentMonth())
-  }
-
-  const handlePrevMonth = () => {
-    dispatch(toggleNextPrevMonth(monthIndex - 1))
-  }
-
-  const handleNextMonth = () => {
-    dispatch(toggleNextPrevMonth(monthIndex + 1))
-  }
-
   const handleUserLogout = () => {
     dispatch(signout())
   }
 
-  const handleToggleListOpenNCose = () => {
-    if (!listListener.isListOpen) {
-      dispatch(toggleEventListOpen(null))
-    } else {
-      dispatch(toggleEventListClose())
-    }
-  }
-
   return (
     <BoxContainer>
-      <EventList />
       <div className="left-container">
         <Link to={`/`} className="logo-box">
           <EventNote className="logo-icon" />
@@ -78,28 +40,13 @@ const CalenderHeader = () => {
             <span>Un</span>Shift
           </h1>
         </Link>
-        <div className="date-control-box">
-          <div className="today-btn" onClick={() => handleResetMonth()}>
-            Today
-          </div>
-          <div className="mth-btn">
-            <div className="prev-btn btn" onClick={() => handlePrevMonth()}>
-              <ChevronLeft className="icon" />
-            </div>
-            <div className="next-btn btn" onClick={() => handleNextMonth()}>
-              <ChevronRight className="icon" />
-            </div>
-          </div>
-          <h1 className="cur-month">
-            {dayjs(new Date(dayjs().year(), monthIndex)).format('MMMM YYYY')}
-          </h1>
+        <div className="nav-links">
+          <Link to={`/`} className="link-item">
+            Back To Schedule
+          </Link>
         </div>
       </div>
-      <div
-        className={`right-container ${
-          listListener && listListener.isListOpen && 'active'
-        }`}
-      >
+      <div className={`right-container`}>
         <UserIcon>
           <span
             className="user-name"
@@ -126,17 +73,6 @@ const CalenderHeader = () => {
             </div>
           </div>
         </UserIcon>
-
-        <Burger
-          className={`menu ${
-            listListener && listListener.isListOpen && 'line-active'
-          }`}
-          onClick={() => handleToggleListOpenNCose()}
-        >
-          <div className={`line-1`} />
-          <div className={`line-2`} />
-          <div className={`line-3`} />
-        </Burger>
       </div>
     </BoxContainer>
   )
@@ -155,17 +91,19 @@ const BoxContainer = styled.div`
     ${tw`
       flex
       items-center
-      justify-center
-
+      justify-start
+      w-full
       text-gray-700
     `}
 
     .logo-box {
       ${tw`
-      flex
-      items-center
-      justify-center
-    `}
+        flex
+        items-center
+        justify-start
+        w-full
+        max-w-[12rem]
+      `}
 
       .logo-icon {
         ${tw`
@@ -191,87 +129,54 @@ const BoxContainer = styled.div`
       }
     }
 
-    .date-control-box {
+    .nav-links {
       ${tw`
         flex
         items-center
-        justify-center
-        mx-12
+        justify-start
       `}
 
-      .today-btn {
+      .link-item {
         ${tw`
-          py-[5px]
-          px-4
-          text-sm
-          md:text-base
+          relative
+          pr-2
+          py-1
           font-semibold
-          border
-          border-gray-200
-          rounded-md
-          cursor-pointer
+          text-gray-600
 
-          transition
+          transition-all
           duration-200
           ease-in-out
         `}
 
-        &:hover {
+        &::after {
+          content: '';
           ${tw`
-            shadow-md
-            border-gray-400
-          `}
-        }
-      }
+            absolute
+            left-0
+            bottom-0
+            h-[2.6px]
+            w-0
+            bg-blue-600
 
-      .mth-btn {
-        ${tw`
-          flex
-          items-center
-          justify-center
-          mx-4
-        `}
-
-        .btn {
-          ${tw`
-            flex
-            items-center
-            justify-center
-            h-8
-            w-8
-            p-1
-            rounded-full
-            cursor-pointer
-
-            transition
+            transition-all
             duration-200
             ease-in-out
           `}
+        }
 
-          &:hover {
-            ${tw`
-              bg-gray-200
-            `}
-          }
+        &:hover {
+          ${tw`
+            text-gray-900
+          `}
 
-          .icon {
+          &::after {
             ${tw`
               w-full
-              h-full
-              text-gray-600
-              pointer-events-none
             `}
           }
         }
       }
-    }
-
-    .cur-month {
-      ${tw`
-        text-lg
-        md:text-xl
-        font-semibold
-      `}
     }
   }
 
@@ -281,28 +186,6 @@ const BoxContainer = styled.div`
       items-center
       justify-center
       z-10
-    `}
-
-    .line-active {
-      .line-1 {
-        transform: rotate(-45deg) translate(-6px, 6px);
-      }
-
-      .line-2 {
-        opacity: 0;
-        transform: translate(100%);
-      }
-
-      .line-3 {
-        width: 1.5rem;
-        transform: rotate(45deg) translate(-5px, -5px);
-      }
-    }
-  }
-
-  .right-container.active {
-    ${tw`
-      z-30
     `}
   }
 `
@@ -420,42 +303,4 @@ const UserIcon = styled.div`
   }
 `
 
-const Burger = styled.div`
-  ${tw`
-    ml-2
-    h-10
-    w-10
-    p-2
-    flex
-    flex-col
-    items-start
-    justify-around
-    cursor-pointer
-    bg-opacity-90
-    hover:bg-gray-200
-    rounded-full
-    transition
-    duration-200
-    ease-in-out
-    z-30
-  `}
-
-  div {
-    ${tw`
-      w-6
-      h-[2px]
-      bg-gray-900
-      transition
-      duration-200
-      ease-in-out
-    `}
-  }
-
-  div:nth-child(3) {
-    ${tw`
-      w-4
-    `}
-  }
-`
-
-export default CalenderHeader
+export default ReportHeader
