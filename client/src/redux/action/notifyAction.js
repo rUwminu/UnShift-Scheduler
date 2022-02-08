@@ -9,5 +9,4 @@ export const toggleNotifyTagOpen = (data) => (dispatch) => {
       info: data.info,
     },
   })
-  dispatch({ type: TOGGLE_MODEL_CLOSE })
 }

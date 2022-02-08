@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
 import moment from 'moment'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  setSelectEvent,
+  setEventBoxPosition,
+} from '../../../redux/action/eventAction'
 
 const ManagerList = () => {
   const [selfEvt, setSelfEvt] = useState([])
@@ -107,31 +111,7 @@ const ListBox = ({ title, eventList }) => {
               <h2>All Plan</h2>
               <div className="card-container">
                 {eventList.map((allEvt) => (
-                  <div key={allEvt.id} className="card-evt card-all-evt">
-                    <div className="card-left">
-                      <h3>{allEvt.title}</h3>
-                      <span>
-                        {moment(allEvt.planDate).format('dddd, MMMM D')}
-                      </span>
-                    </div>
-                    <div className="card-right">
-                      <div
-                        className={`card-tag ${
-                          allEvt.isCancelled
-                            ? 'cancel-tag'
-                            : allEvt.isCompleted
-                            ? 'comp-tag'
-                            : 'fore-tag'
-                        } `}
-                      >
-                        {allEvt.isCancelled
-                          ? 'Cancelled'
-                          : allEvt.isCompleted
-                          ? 'Completed'
-                          : 'Forecast'}
-                      </div>
-                    </div>
-                  </div>
+                  <EventCard key={allEvt.id} allEvt={allEvt} />
                 ))}
               </div>
             </ListContainer>
@@ -141,36 +121,56 @@ const ListBox = ({ title, eventList }) => {
                 {eventList
                   .filter((x) => x.isCompleted !== false)
                   .map((allEvt) => (
-                    <div key={allEvt.id} className="card-evt card-comp-evt">
-                      <div className="card-left">
-                        <h3>{allEvt.title}</h3>
-                        <span>
-                          {moment(allEvt.planDate).format('dddd, MMMM D')}
-                        </span>
-                      </div>
-                      <div className="card-right">
-                        <div
-                          className={`card-tag ${
-                            allEvt.isCancelled
-                              ? 'cancel-tag'
-                              : allEvt.isCompleted
-                              ? 'comp-tag'
-                              : 'fore-tag'
-                          } `}
-                        >
-                          {allEvt.isCancelled
-                            ? 'Cancelled'
-                            : allEvt.isCompleted
-                            ? 'Completed'
-                            : 'Forecast'}
-                        </div>
-                      </div>
-                    </div>
+                    <EventCard key={allEvt.id} allEvt={allEvt} />
                   ))}
               </div>
             </ListContainer>
           </>
         )}
+      </div>
+    </div>
+  )
+}
+
+const EventCard = ({ allEvt }) => {
+  const elementRef = useRef()
+  const dispatch = useDispatch()
+
+  const handleClick = (e) => {
+    e.stopPropagation()
+
+    const bounding = elementRef.current.getBoundingClientRect()
+
+    dispatch(setEventBoxPosition(bounding))
+    dispatch(setSelectEvent(allEvt))
+  }
+
+  return (
+    <div
+      ref={elementRef}
+      className="card-evt card-comp-evt"
+      onClick={(e) => handleClick(e)}
+    >
+      <div className="card-left">
+        <h3>{allEvt.title}</h3>
+        <span>{moment(allEvt.planDate).format('dddd, MMMM D')}</span>
+      </div>
+      <div className="card-right">
+        <div
+          className={`card-tag ${
+            allEvt.isCancelled
+              ? 'cancel-tag'
+              : allEvt.isCompleted
+              ? 'comp-tag'
+              : 'fore-tag'
+          } `}
+        >
+          {allEvt.isCancelled
+            ? 'Cancelled'
+            : allEvt.isCompleted
+            ? 'Completed'
+            : 'Forecast'}
+        </div>
       </div>
     </div>
   )
@@ -326,8 +326,17 @@ const ListContainer = styled.div`
         px-3
         border-l-4
         rounded-r-md
+        cursor-pointer
+
+        transition-all
+        duration-[300ms]
+        ease-in-out
       `}
       box-shadow: 5px 5px 12px 0px rgba(0,0,0,0.3);
+
+      &:hover {
+        box-shadow: 5px 5px 12px 0px rgba(0, 0, 0, 0.5);
+      }
 
       .card-left {
         ${tw`

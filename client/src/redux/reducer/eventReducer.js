@@ -76,6 +76,7 @@ export const eventsReducer = (state = {}, action) => {
     case TOGGLE_EVENT_LIST_CLOSE:
       return {
         ...state,
+        isViewOpen: false,
         listListener: {
           ...state.listListener,
           isListOpen: false,

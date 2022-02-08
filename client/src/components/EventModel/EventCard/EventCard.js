@@ -6,6 +6,7 @@ import { gql, useMutation } from '@apollo/client'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { closeSelectedEvent } from '../../../redux/action/eventAction'
+import { toggleNotifyTagOpen } from '../../../redux/action/notifyAction'
 
 // MUi icons
 import {
@@ -15,6 +16,7 @@ import {
   AddTask,
   MoreVert,
   NoteAlt,
+  EventBusy,
 } from '@mui/icons-material'
 
 const EventCard = () => {
@@ -47,7 +49,9 @@ const EventCard = () => {
       },
     },
     update(_, { data }) {
-      //console.log(data)
+      dispatch(
+        toggleNotifyTagOpen({ isSuccess: true, info: 'Schedule Updated' })
+      )
     },
     onError(err) {
       console.log(err)
@@ -61,7 +65,9 @@ const EventCard = () => {
       },
     },
     update(_, { data }) {
-      //console.log(data)
+      dispatch(
+        toggleNotifyTagOpen({ isSuccess: true, info: 'Schedule Updated' })
+      )
     },
     onError(err) {
       console.log(err)
@@ -93,6 +99,9 @@ const EventCard = () => {
         isCancel: false,
         remark: '',
       })
+      dispatch(
+        toggleNotifyTagOpen({ isSuccess: false, info: 'Schedule Cancelled' })
+      )
     },
     onError(err) {
       console.log(err)
@@ -229,6 +238,12 @@ const EventCard = () => {
                   <span className="info-box">{selectedEvent.description}</span>
                 </div>
               )}
+            {selectedEvent.isCancelled && selectedEvent.remark !== '' && (
+              <div className="card-item card-item-cancel items-start">
+                <EventBusy className="icon" />
+                <span className="info-box">{selectedEvent.remark}</span>
+              </div>
+            )}
             <div className="card-item items-center">
               <AddTask className="icon" />
               <span
@@ -366,12 +381,15 @@ const BoxContainer = styled.div`
     duration-500
     ease-in-out
   `}
-  top: ${(props) => (props.position ? `${props.position.top}px` : '0')};
+  top: ${(props) =>
+    props.position && props.rePosition.isTooBottom
+      ? `${props.position.bottom}px`
+      : `${props.position.top}px`};
   left: ${(props) => (props.position ? `${props.position.left}px` : '0')};
   transform: ${(props) =>
     props.rePosition &&
     `translate(${props.rePosition.isTooLeft ? '7%' : '-101%'}, ${
-      props.rePosition.isTooBottom ? '-100%' : '0%'
+      props.rePosition.isTooBottom ? `calc(-100% - 1rem)` : '0%'
     })`};
   box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.25);
 
@@ -513,20 +531,21 @@ const BoxContainer = styled.div`
       .info-box {
         ${tw`
           -mt-1
+          font-semibold
+          text-gray-600
         `}
 
         h1 {
           ${tw`
             text-2xl
             font-semibold
+            text-gray-900
           `}
         }
 
         .date {
           ${tw`
             text-sm
-            font-semibold
-            text-gray-600
           `}
         }
       }
@@ -684,6 +703,20 @@ const BoxContainer = styled.div`
             `}
           }
         }
+      }
+    }
+
+    .card-item-cancel {
+      .icon {
+        ${tw`
+          text-red-500
+        `}
+      }
+
+      .info-box {
+        ${tw`
+          text-red-500
+        `}
       }
     }
   }
