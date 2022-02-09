@@ -20,7 +20,7 @@ import {
 export const eventsReducer = (state = {}, action) => {
   switch (action.type) {
     case TOGGLE_MODEL_OPEN:
-      return { ...state, isAddOpen: true }
+      return { ...state, isAddOpen: true, isViewOpen: false }
     case TOGGLE_MODEL_CLOSE:
       return { ...state, isAddOpen: false, selectedEvent: {} }
     case GET_SELF_EVENT_LIST:

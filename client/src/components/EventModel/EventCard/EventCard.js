@@ -17,6 +17,7 @@ import {
   MoreVert,
   NoteAlt,
   EventBusy,
+  PeopleAlt,
 } from '@mui/icons-material'
 
 const EventCard = () => {
@@ -48,7 +49,7 @@ const EventCard = () => {
         Authorization: `Bearer${' '}${user.token}`,
       },
     },
-    update(_, { data }) {
+    update() {
       dispatch(
         toggleNotifyTagOpen({ isSuccess: true, info: 'Schedule Updated' })
       )
@@ -230,6 +231,12 @@ const EventCard = () => {
                   {moment(selectedEvent.planDate).format('dddd, MMMM D')}
                 </span>
               </div>
+            </div>
+            <div className="card-item items-center">
+              <PeopleAlt className="icon" />
+              <span className="info-box">
+                Meet with {selectedEvent.customer.personal}
+              </span>
             </div>
             {selectedEvent.description !== '' &&
               selectedEvent.description !== null && (

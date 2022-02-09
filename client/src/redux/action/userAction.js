@@ -1,11 +1,9 @@
 import {
-  USER_CREATE,
-  USER_DELETE,
   USER_INFO,
-  USER_LIST_ALL,
   USER_SIGNIN_FAIL,
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_SUCCESS,
+  USER_CONTACT_BOOK,
   USER_SIGNOUT,
 } from '../constant/userConstant'
 import { RESET_EVENT_DETAIL } from '../constant/eventConstants'
@@ -42,18 +40,10 @@ export const signout = () => (dispatch) => {
   })
 }
 
-export const getAllUser = (data) => (dispatch) => {
-  dispatch({ type: USER_LIST_ALL, payload: data })
-}
-
 export const getSingleUser = (data) => (dispatch) => {
   dispatch({ type: USER_INFO, payload: data })
 }
 
-export const deleteUser = (userId) => (dispatch) => {
-  dispatch({ type: USER_DELETE, payload: userId })
-}
-
-export const register = (data) => (dispatch) => {
-  dispatch({ type: USER_CREATE, payload: data })
+export const getSelfContactBook = (data) => (dispatch) => {
+  dispatch({ type: USER_CONTACT_BOOK, payload: data })
 }

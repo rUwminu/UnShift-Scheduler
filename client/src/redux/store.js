@@ -4,9 +4,8 @@ import jwtDecode from 'jwt-decode'
 import { applyMiddleware, createStore, compose, combineReducers } from 'redux'
 
 import {
-  userRegisterReducer,
   userSignInReducer,
-  userDetailsReducer,
+  userContactBookReducer,
 } from './reducer/userReducer'
 import { calenderInfoReducer } from './reducer/monthReducer'
 import { eventsReducer } from './reducer/eventReducer'
@@ -35,6 +34,9 @@ const initialState = {
   userSignIn: {
     user: decodeLocalUser(),
   },
+  contactBook: {
+    allCustomerContact: [],
+  },
   calenderInfo: {
     monthIndex: getCurrentMonthIndex(),
     daySelected: dayjs(),
@@ -59,8 +61,7 @@ const initialState = {
 
 const reducer = combineReducers({
   userSignIn: userSignInReducer,
-  userRegister: userRegisterReducer,
-  userDetails: userDetailsReducer,
+  contactBook: userContactBookReducer,
   calenderInfo: calenderInfoReducer,
   eventInfo: eventsReducer,
   notifyInfo: notifyReducer,

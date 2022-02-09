@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { gql, useLazyQuery, useSubscription } from '@apollo/client'
 // Redux Action
+import { getSelfContactBook } from '../../redux/action/userAction'
 import {
   getSelfEventList,
   getOtherEventList,
@@ -22,6 +23,17 @@ const MainWrapper = ({ children }) => {
 
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { monthIndex } = calenderInfo
+
+  const [getSelfContactBookListItem, { data: selfContactData }] = useLazyQuery(
+    GET_SELF_CONTACT_BOOK,
+    {
+      context: {
+        headers: {
+          Authorization: `Bearer${' '}${user && user.token}`,
+        },
+      },
+    }
+  )
 
   const [getSelfEventListItem, { error: selfListError, data: selfListData }] =
     useLazyQuery(GET_SELF_EVENT_LIST, {
@@ -48,10 +60,11 @@ const MainWrapper = ({ children }) => {
   const { data: subUpdateEvent } = useSubscription(UPDATED_EVENT_SUBSCRIPTION)
 
   const handleGetSelectedMonthEvent = () => {
-    console.log('is trigger?')
     const selectedMonth = dayjs(new Date(dayjs().year(), monthIndex))
       .format('MM YYYY')
       .split(' ')
+
+    getSelfContactBookListItem()
 
     if (user.isManager) {
       getAllEventListItem({
@@ -106,10 +119,15 @@ const MainWrapper = ({ children }) => {
     if (user) handleGetSelectedMonthEvent()
   }, [monthIndex, user])
 
-  // Get Event UseEffect
+  // Get Data UseEffect
+  useEffect(() => {
+    if (selfContactData) {
+      dispatch(getSelfContactBook(selfContactData.getSelfCustomers))
+    }
+  }, [selfContactData])
+
   useEffect(() => {
     if (selfListData) {
-      console.log(selfListData)
       dispatch(getSelfEventList(selfListData.getSelfEvent))
     }
   }, [selfListData])
@@ -132,11 +150,28 @@ const MainWrapper = ({ children }) => {
   return <MainContainer>{children}</MainContainer>
 }
 
+const GET_SELF_CONTACT_BOOK = gql`
+  query getSelfCustomers {
+    getSelfCustomers {
+      id
+      personal
+      company
+      personalcontact
+      companycontact
+      address
+    }
+  }
+`
+
 const GET_SELF_EVENT_LIST = gql`
   query getSelfEvent($month: Int!, $year: Int!) {
     getSelfEvent(month: $month, year: $year) {
       id
       title
+      customer {
+        cusId
+        personal
+      }
       description
       planDate
       compDate
@@ -157,6 +192,10 @@ const GET_ALL_EVENT_LIST = gql`
         username
       }
       title
+      customer {
+        cusId
+        personal
+      }
       description
       planDate
       compDate
@@ -177,6 +216,10 @@ const CREATED_EVENT_SUBSCRIPTION = gql`
         username
       }
       title
+      customer {
+        cusId
+        personal
+      }
       description
       planDate
       compDate
@@ -197,6 +240,10 @@ const UPDATED_EVENT_SUBSCRIPTION = gql`
         username
       }
       title
+      customer {
+        cusId
+        personal
+      }
       description
       planDate
       compDate

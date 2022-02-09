@@ -12,32 +12,38 @@ import {
   PlaylistAdd,
   Close,
   AccessTime,
+  PersonAdd,
   Notes,
   AddTask,
   ArrowDropDown,
 } from '@mui/icons-material'
 
+const dropTitleDefaultValue = ['F&B Visit', 'Customer Meetup', 'Sample Deliver']
+
 const EventAdd = () => {
   const dispatch = useDispatch()
 
-  const dropTitleDefaultValue = [
-    'F&B Visit',
-    'Customer Meetup',
-    'Sample Deliver',
-  ]
-
-  const [isTitleDropOpen, setIsTitleDropOpen] = useState(false)
-  const [isDropOpen, setIsDropOpen] = useState(false)
+  const [dropStatusControl, setDropStatusControl] = useState({
+    titleDrop: false,
+    personalDrop: false,
+    statusDrop: false,
+  })
   const [isCompleted, setIsCompleted] = useState(false)
   const [inputValue, setInputValue] = useState({
     title: '',
-    customer: '',
+    customer: {
+      cusId: '',
+      personal: '',
+    },
     description: '',
     isCompleted: false,
   })
 
   const userSignIn = useSelector((state) => state.userSignIn)
   const { user } = userSignIn
+
+  const contactBook = useSelector((state) => state.contactBook)
+  const { allCustomerContact } = contactBook
 
   const calenderInfo = useSelector((state) => state.calenderInfo)
   const { daySelected } = calenderInfo
@@ -63,7 +69,7 @@ const EventAdd = () => {
   }
 
   const handleCreateEvent = () => {
-    if (inputValue.title !== '') {
+    if (inputValue.title !== '' && inputValue.customer.personal !== '') {
       if (!isCompleted) {
         createNewEvent({
           variables: {
@@ -98,12 +104,12 @@ const EventAdd = () => {
         </div>
       </div>
       <div className="card-body">
-        <div className="card-item">
+        <div className="card-item items-center">
           <AccessTime className="icon hide" />
           <div className="input-box">
             <input
               type="text"
-              className="title-input"
+              className="input title-input"
               value={inputValue.title}
               onChange={(e) =>
                 setInputValue({ ...inputValue, title: e.target.value })
@@ -113,9 +119,101 @@ const EventAdd = () => {
             />
             <div
               className="drop-icon-box absolute-icon-box"
-              onClick={() => setIsDropOpen(!isDropOpen)}
+              onClick={() =>
+                setDropStatusControl({
+                  titleDrop: !dropStatusControl.titleDrop,
+                  statusDrop: false,
+                  personalDrop: false,
+                })
+              }
             >
               <ArrowDropDown className="drop-icon" />
+            </div>
+            <div
+              className={`drop-box ${dropStatusControl.titleDrop && 'active'}`}
+              onMouseLeave={() =>
+                setDropStatusControl({
+                  ...dropStatusControl,
+                  titleDrop: false,
+                })
+              }
+            >
+              {dropTitleDefaultValue.map((x, idx) => (
+                <div
+                  key={idx}
+                  className="drop-option"
+                  onClick={() => {
+                    setDropStatusControl({
+                      ...dropStatusControl,
+                      titleDrop: false,
+                    })
+                    setInputValue({ ...inputValue, title: x })
+                  }}
+                >
+                  {x}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="card-item items-center">
+          <PersonAdd className="icon" />
+          <div className="input-box">
+            <input
+              type="text"
+              className="input"
+              value={inputValue.customer.personal}
+              placeholder="Who is Meeting-up?"
+              required
+            />
+
+            <div
+              className="drop-icon-box absolute-icon-box"
+              onClick={() =>
+                setDropStatusControl({
+                  titleDrop: false,
+                  statusDrop: false,
+                  personalDrop: !dropStatusControl.personalDrop,
+                })
+              }
+            >
+              <ArrowDropDown className="drop-icon" />
+            </div>
+            <div
+              className={`drop-box ${
+                dropStatusControl.personalDrop && 'active'
+              }`}
+              onMouseLeave={() =>
+                setDropStatusControl({
+                  ...dropStatusControl,
+                  personalDrop: false,
+                })
+              }
+            >
+              {allCustomerContact && allCustomerContact.length > 0 ? (
+                allCustomerContact.map((x, idx) => (
+                  <div
+                    key={idx}
+                    className="drop-option"
+                    onClick={() => {
+                      setDropStatusControl({
+                        ...dropStatusControl,
+                        personalDrop: false,
+                      })
+                      setInputValue({
+                        ...inputValue,
+                        customer: { cusId: x.id, personal: x.personal },
+                      })
+                    }}
+                  >
+                    {x.personal}
+                  </div>
+                ))
+              ) : (
+                <div className="drop-option pointer-events-none">
+                  Seem Empty Here
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -147,20 +245,36 @@ const EventAdd = () => {
             <span>{isCompleted ? 'Completed' : 'Forecast'}</span>
             <div
               className="drop-icon-box"
-              onClick={() => setIsDropOpen(!isDropOpen)}
+              onClick={() =>
+                setDropStatusControl({
+                  titleDrop: false,
+                  statusDrop: !dropStatusControl.statusDrop,
+                  personalDrop: false,
+                })
+              }
             >
               <ArrowDropDown className="drop-icon" />
             </div>
             <div
-              className={`drop-box ${isDropOpen && 'active'}`}
-              onMouseLeave={() => setIsDropOpen(false)}
+              className={`drop-box ${dropStatusControl.statusDrop && 'active'}`}
+              onMouseLeave={() =>
+                setDropStatusControl({
+                  titleDrop: false,
+                  statusDrop: false,
+                  personalDrop: false,
+                })
+              }
             >
               <div
                 className="drop-option"
                 onClick={() => {
                   setIsCompleted(false)
                   setInputValue({ ...inputValue, isCompleted: false })
-                  setIsDropOpen(false)
+                  setDropStatusControl({
+                    titleDrop: false,
+                    personalDrop: false,
+                    statusDrop: false,
+                  })
                 }}
               >
                 Forecast
@@ -170,7 +284,11 @@ const EventAdd = () => {
                 onClick={() => {
                   setIsCompleted(true)
                   setInputValue({ ...inputValue, isCompleted: true })
-                  setIsDropOpen(false)
+                  setDropStatusControl({
+                    titleDrop: false,
+                    personalDrop: false,
+                    statusDrop: false,
+                  })
                 }}
               >
                 Completed
@@ -191,7 +309,7 @@ const EventAdd = () => {
 const CREATE_NEW_EVENT = gql`
   mutation createNewEvent(
     $title: String!
-    $customer: String!
+    $customer: CustomerInfoInput!
     $description: String
     $planDate: String!
     $compDate: String
@@ -357,12 +475,19 @@ const BoxContainer = styled.div`
           }
         }
 
-        .title-input {
+        .input {
           ${tw`
             w-full
-            py-[0.5px]
-            text-2xl
+            py-[2px]
             outline-none
+            font-semibold
+          `}
+        }
+
+        .title-input {
+          ${tw`
+            text-2xl  
+            font-normal    
           `}
         }
 
@@ -372,6 +497,68 @@ const BoxContainer = styled.div`
             py-[0.5px]
             outline-none
           `}
+        }
+
+        .drop-box {
+          ${tw`
+            absolute
+            bottom-0
+            left-0
+            w-full
+            bg-white
+            opacity-0
+            rounded-md
+            overflow-y-scroll
+            scrollbar-hide
+
+            transition-all
+            duration-200
+            ease-in-out
+          `}
+          transform: translateY(calc(100% + 0.5rem));
+
+          .drop-option {
+            ${tw`
+              flex
+              items-center
+              justify-start
+              h-0
+              w-full
+              font-semibold
+              text-gray-700
+              rounded-md
+              opacity-0
+              cursor-pointer
+
+              transition-all
+              duration-200
+              ease-in-out
+            `}
+
+            &:hover {
+              ${tw`
+                bg-gray-200
+              `}
+            }
+          }
+        }
+
+        .drop-box.active {
+          ${tw`
+            p-1
+            max-h-[10rem]
+            opacity-100
+            z-30
+          `}
+          box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.5);
+
+          .drop-option {
+            ${tw`
+              px-2
+              h-8
+              opacity-100
+            `}
+          }
         }
       }
 

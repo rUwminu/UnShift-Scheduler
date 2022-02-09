@@ -24,6 +24,7 @@ const ManagerList = () => {
   } = eventInfo
 
   const handleFilterSelfEvent = () => {
+    var event = []
     var tempArr = []
     var selectedDay
     const currentMonth = dayjs().month(monthIndex).format('MM')
@@ -50,13 +51,28 @@ const ManagerList = () => {
     }
 
     if (eventOtherList && eventOtherList.length > 0) {
-      const event = eventOtherList
-        .filter(
-          (evt) =>
-            moment(evt.planDate).format('DD-MM-YY') ===
-            moment(isSelectedDate).format('DD-MM-YY')
-        )
-        .reduce((acc, obj) => {
+      if (isSelectedDate !== null) {
+        event = eventOtherList
+          .filter(
+            (evt) =>
+              moment(evt.planDate).format('DD-MM-YY') ===
+              moment(isSelectedDate).format('DD-MM-YY')
+          )
+          .reduce((acc, obj) => {
+            const {
+              user: { username },
+            } = obj
+
+            if (!acc[username]) {
+              acc[username] = []
+            }
+
+            acc[username].push(obj)
+
+            return acc
+          }, {})
+      } else {
+        event = eventOtherList.reduce((acc, obj) => {
           const {
             user: { username },
           } = obj
@@ -69,6 +85,7 @@ const ManagerList = () => {
 
           return acc
         }, {})
+      }
 
       const objToArr = Object.keys(event).map((key) => {
         return { username: key, eventList: event[key] }
