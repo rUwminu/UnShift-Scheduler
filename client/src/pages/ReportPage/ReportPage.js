@@ -3,14 +3,12 @@ import tw from 'twin.macro'
 import styled from 'styled-components'
 
 // Child components
-import ReportHeader from './ReportHeader/ReportHeader'
 import ReportSidebar from './ReportSidebar/ReportSidebar'
 import ReportLister from './ReportLister/ReportLister'
 
 const ReportPage = () => {
   return (
     <ReportSection>
-      <ReportHeader />
       <div className="body-container">
         <ReportSidebar />
         <ReportLister />
@@ -22,8 +20,7 @@ const ReportPage = () => {
 const ReportSection = styled.div`
   ${tw`
     relative
-    flex
-    flex-col
+    pt-20
     w-full
     h-screen
   `}

@@ -1,25 +1,24 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 
 // Utils
-import { getFirstCharaterOfUsername } from '../../../utils/GlobalUtils'
+import { getFirstCharaterOfUsername } from '../../utils/GlobalUtils'
 
 // Redux Action
-import { signout } from '../../../redux/action/userAction'
+import { signout } from '../../redux/action/userAction'
 
 import {
   EventNote,
-  ChevronLeft,
-  ChevronRight,
   AssignmentInd,
   Summarize,
   Logout,
 } from '@mui/icons-material'
 
-const ReportHeader = () => {
+const Header = () => {
+  const location = useLocation()
   const dispatch = useDispatch()
 
   const [isDropActive, setIsDropActive] = useState(false)
@@ -32,59 +31,76 @@ const ReportHeader = () => {
   }
 
   return (
-    <BoxContainer>
-      <div className="left-container">
-        <Link to={`/`} className="logo-box">
-          <EventNote className="logo-icon" />
-          <h1 className="logo-title">
-            <span>Un</span>Shift
-          </h1>
-        </Link>
-        <div className="nav-links">
-          <Link to={`/`} className="link-item">
-            Back To Schedule
-          </Link>
-        </div>
-      </div>
-      <div className={`right-container`}>
-        <UserIcon>
-          <span
-            className="user-name"
-            onClick={() => setIsDropActive(!isDropActive)}
-          >
-            {getFirstCharaterOfUsername(user.username)}
-          </span>
-          <div
-            className={`drop-option ${isDropActive && 'active'}`}
-            onMouseLeave={() => setIsDropActive(false)}
-          >
-            <h2>Option</h2>
-            <Link to={`/profile`} className="option-item">
-              <span>Profile</span>
-              <AssignmentInd className="icon" />
+    <>
+      {user && location.pathname !== '/' && (
+        <BoxContainer>
+          <div className="left-container">
+            <Link to={`/`} className="logo-box">
+              <EventNote className="logo-icon" />
+              <h1 className="logo-title">
+                <span>Un</span>Shift
+              </h1>
             </Link>
-            <Link to={`/report`} className="option-item">
-              <span>Report</span>
-              <Summarize className="icon" />
-            </Link>
-            <div className="option-item" onClick={() => handleUserLogout()}>
-              <span>Logout</span>
-              <Logout className="icon" />
+            <div className="nav-links">
+              <Link to={`/`} className="link-item">
+                Back To Schedule
+              </Link>
+              <Link to={`/report`} className="link-item">
+                View Report
+              </Link>
+              <Link to={`/info/type?name=contact`} className="link-item">
+                Customer Contact
+              </Link>
             </div>
           </div>
-        </UserIcon>
-      </div>
-    </BoxContainer>
+          <div className={`right-container`}>
+            <UserIcon>
+              <span
+                className="user-name"
+                onClick={() => setIsDropActive(!isDropActive)}
+              >
+                {getFirstCharaterOfUsername(user.username)}
+              </span>
+              <div
+                className={`drop-option ${isDropActive && 'active'}`}
+                onMouseLeave={() => setIsDropActive(false)}
+              >
+                <h2>Option</h2>
+                <Link to={`/profile`} className="option-item">
+                  <span>Profile</span>
+                  <AssignmentInd className="icon" />
+                </Link>
+                <Link to={`/report`} className="option-item">
+                  <span>Report</span>
+                  <Summarize className="icon" />
+                </Link>
+                <div className="option-item" onClick={() => handleUserLogout()}>
+                  <span>Logout</span>
+                  <Logout className="icon" />
+                </div>
+              </div>
+            </UserIcon>
+          </div>
+        </BoxContainer>
+      )}
+    </>
   )
 }
 
 const BoxContainer = styled.div`
   ${tw`
+    fixed
+    top-0
+    left-0
     flex
     items-center
     justify-between
+    w-full
     px-4
     py-3
+    bg-white
+    shadow-md
+    z-30
   `}
 
   .left-container {
@@ -139,6 +155,7 @@ const BoxContainer = styled.div`
       .link-item {
         ${tw`
           relative
+          mr-6
           pr-2
           py-1
           font-semibold
@@ -303,4 +320,4 @@ const UserIcon = styled.div`
   }
 `
 
-export default ReportHeader
+export default Header

@@ -7,5 +7,8 @@ export { default as CalenderPage } from './CalenderPage/CalenderMain'
 // Report Page
 export { default as ReportPage } from './ReportPage/ReportPage'
 
+// Info Page
+export { default as InfoPage } from './InfoPage/InfoPage'
+
 // Error Page'
 export { default as ErrorPage } from './ErrorPage/ErrorPage'

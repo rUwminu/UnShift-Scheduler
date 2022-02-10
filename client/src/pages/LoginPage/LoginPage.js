@@ -247,6 +247,7 @@ const LOGIN_USER = gql`
       username
       isManager
       token
+      createdAt
     }
   }
 `

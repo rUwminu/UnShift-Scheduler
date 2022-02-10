@@ -15,8 +15,14 @@ import Guestlayout from './utils/GuestLayout'
 import PrivateRoute from './utils/PrivateRoute'
 
 // Components & pages
-import { LoginPage, CalenderPage, ReportPage, ErrorPage } from './pages/index'
-import { MainWrapper, NotifyTag } from './components/index'
+import {
+  LoginPage,
+  CalenderPage,
+  ReportPage,
+  InfoPage,
+  ErrorPage,
+} from './pages/index'
+import { MainWrapper, Header, NotifyTag } from './components/index'
 
 function App() {
   const userSignIn = useSelector((state) => state.userSignIn)
@@ -62,6 +68,7 @@ function App() {
       <BrowserRouter>
         <MainWrapper className="App">
           <NotifyTag />
+          <Header />
           <Routes path="/" element={<Guestlayout />}>
             <Route path={`login`} element={<LoginPage />} />
 
@@ -78,6 +85,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <ReportPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`/info/type`}
+              element={
+                <PrivateRoute>
+                  <InfoPage />
                 </PrivateRoute>
               }
             />
