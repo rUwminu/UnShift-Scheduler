@@ -15,10 +15,6 @@ const MyProfile = () => {
   const userSignIn = useSelector((state) => state.userSignIn)
   const { user } = userSignIn
 
-  useEffect(() => {
-    if (user) setUserDetail(user)
-  }, [user])
-
   const handleViewPassword = (selected) => {
     if (selected === 1 && selected !== curView) {
       setCurView(selected)
@@ -30,6 +26,10 @@ const MyProfile = () => {
       setCurView(0)
     }
   }
+
+  useEffect(() => {
+    if (user) setUserDetail(user)
+  }, [user])
 
   return (
     <MainContainer>

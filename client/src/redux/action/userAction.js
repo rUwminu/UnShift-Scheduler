@@ -4,6 +4,8 @@ import {
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_SUCCESS,
   USER_CONTACT_BOOK,
+  USER_UPDATE_CONTACT_BOOK,
+  USER_DELETE_CONTACT_BOOK,
   USER_SIGNOUT,
 } from '../constant/userConstant'
 import { RESET_EVENT_DETAIL } from '../constant/eventConstants'
@@ -46,4 +48,12 @@ export const getSingleUser = (data) => (dispatch) => {
 
 export const getSelfContactBook = (data) => (dispatch) => {
   dispatch({ type: USER_CONTACT_BOOK, payload: data })
+}
+
+export const updateSelfContactBook = (data) => (dispatch) => {
+  dispatch({ type: USER_UPDATE_CONTACT_BOOK, payload: data })
+}
+
+export const deleteSelfContactBook = (cusId) => (dispatch) => {
+  dispatch({ type: USER_DELETE_CONTACT_BOOK, payload: cusId })
 }

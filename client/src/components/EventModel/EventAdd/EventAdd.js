@@ -4,6 +4,8 @@ import tw from 'twin.macro'
 import styled from 'styled-components'
 import { gql, useMutation } from '@apollo/client'
 import { useDispatch, useSelector } from 'react-redux'
+
+// Redux Action
 import { toggleEventCardClose } from '../../../redux/action/eventAction'
 import { toggleNotifyTagOpen } from '../../../redux/action/notifyAction'
 
@@ -60,7 +62,9 @@ const EventAdd = () => {
       )
     },
     onError(err) {
-      console.log(err)
+      dispatch(
+        toggleNotifyTagOpen({ isSuccess: false, info: 'Error Create Event' })
+      )
     },
   })
 
