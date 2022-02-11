@@ -18,7 +18,11 @@ export const getMonth = (month = dayjs().month()) => {
 export const getFirstCharaterOfUsername = (username) => {
   const FC = username.split(' ')
 
-  return FC[0].slice(0, 1) + FC[1].slice(0, 1)
+  if (FC.length >= 2) {
+    return FC[0].slice(0, 1) + FC[1].slice(0, 1)
+  }
+
+  return FC[0].slice(0, 1)
 }
 
 export const getFirstName = (username) => {

@@ -3,6 +3,7 @@ import {
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_SUCCESS,
   USER_CONTACT_BOOK,
+  USER_CREATE_CONTACT_BOOK,
   USER_UPDATE_CONTACT_BOOK,
   USER_DELETE_CONTACT_BOOK,
   USER_SIGNOUT,
@@ -27,6 +28,11 @@ export const userContactBookReducer = (state = {}, action) => {
   switch (action.type) {
     case USER_CONTACT_BOOK:
       return { ...state, allCustomerContact: action.payload }
+    case USER_CREATE_CONTACT_BOOK:
+      return {
+        ...state,
+        allCustomerContact: [action.payload, ...state.allCustomerContact],
+      }
     case USER_UPDATE_CONTACT_BOOK:
       return {
         ...state,

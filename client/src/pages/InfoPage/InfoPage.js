@@ -211,7 +211,7 @@ const FormContainer = styled.div`
     duration-500
     ease-in-out
 
-    overflow-x-hidden
+    overflow-y-visible
   `}
   box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.2);
 `
