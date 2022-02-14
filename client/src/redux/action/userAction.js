@@ -7,6 +7,7 @@ import {
   USER_CREATE_CONTACT_BOOK,
   USER_UPDATE_CONTACT_BOOK,
   USER_DELETE_CONTACT_BOOK,
+  USER_UPDATE_PROFILE,
   USER_SIGNOUT,
 } from '../constant/userConstant'
 import { RESET_EVENT_DETAIL } from '../constant/eventConstants'
@@ -41,6 +42,12 @@ export const signout = () => (dispatch) => {
   dispatch({
     type: RESET_EVENT_DETAIL,
   })
+}
+
+export const updateProfile = (data) => (dispatch) => {
+  dispatch({ type: USER_UPDATE_PROFILE, payload: data })
+
+  localStorage.setItem('user', JSON.stringify(data))
 }
 
 export const getSingleUser = (data) => (dispatch) => {

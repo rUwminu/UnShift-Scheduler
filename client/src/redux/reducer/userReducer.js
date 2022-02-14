@@ -6,6 +6,7 @@ import {
   USER_CREATE_CONTACT_BOOK,
   USER_UPDATE_CONTACT_BOOK,
   USER_DELETE_CONTACT_BOOK,
+  USER_UPDATE_PROFILE,
   USER_SIGNOUT,
 } from '../constant/userConstant'
 
@@ -17,6 +18,8 @@ export const userSignInReducer = (state = {}, action) => {
       return { loading: false, user: action.payload }
     case USER_SIGNIN_FAIL:
       return { loading: false, error: action.payload }
+    case USER_UPDATE_PROFILE:
+      return { loading: false, user: action.payload }
     case USER_SIGNOUT:
       return {}
     default:

@@ -100,7 +100,7 @@ const BoxContainer = styled.div`
     py-3
     bg-white
     shadow-md
-    z-30
+    z-20
   `}
 
   .left-container {
