@@ -66,7 +66,7 @@ const Header = () => {
                 onMouseLeave={() => setIsDropActive(false)}
               >
                 <h2>Option</h2>
-                <Link to={`/profile`} className="option-item">
+                <Link to={`/info/type?name=profile`} className="option-item">
                   <span>Profile</span>
                   <AssignmentInd className="icon" />
                 </Link>
