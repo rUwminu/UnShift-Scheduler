@@ -33,6 +33,10 @@ const EventCard = () => {
   })
   const [isDropActive, setIsDropActive] = useState(false)
   const [rePosition, setRePosition] = useState({
+    top: '',
+    bottom: '',
+    left: '',
+    right: '',
     isTooLeft: false,
     isTooBottom: false,
   })
@@ -124,19 +128,14 @@ const EventCard = () => {
     let leftWidth = width - position.left
     let leftHeight = height - position.top
 
-    if (leftWidth > 850) {
-      if (leftHeight <= 350) {
-        setRePosition({ isTooLeft: true, isTooBottom: true })
-      } else {
-        setRePosition({ isTooLeft: true, isTooBottom: false })
-      }
-    } else {
-      if (leftHeight <= 350) {
-        setRePosition({ isTooLeft: false, isTooBottom: true })
-      } else {
-        setRePosition({ isTooLeft: false, isTooBottom: false })
-      }
-    }
+    setRePosition({
+      top: position.top,
+      bottom: position.bottom,
+      left: position.left,
+      right: position.right,
+      isTooLeft: leftWidth > 850 ? true : false,
+      isTooBottom: leftHeight <= 350 ? true : false,
+    })
   }
 
   const autoGrowHeight = (e) => {
@@ -154,7 +153,7 @@ const EventCard = () => {
   return (
     <>
       {isViewOpen && selectedEvent && (
-        <BoxContainer position={position} rePosition={rePosition}>
+        <BoxContainer rePosition={rePosition}>
           <div className="card-header">
             {!selectedEvent.isCancelled && (
               <div
@@ -223,37 +222,48 @@ const EventCard = () => {
             </div>
           </div>
           <div className="card-body">
-            <div className="card-item items-start">
-              <Event className="icon" />
+            <div className="card-item">
+              <Event className="icon mt-2" />
               <div className="info-box">
                 <h1>{selectedEvent.title}</h1>
-                <span className="date">
+                <span className="span-sm">
                   {moment(selectedEvent.planDate).format('dddd, MMMM D')}
                 </span>
               </div>
             </div>
-            <div className="card-item items-center">
-              <PeopleAlt className="icon" />
-              <span className="info-box">
-                Meet with {selectedEvent.customer.personal}
-              </span>
+            <div className="card-item">
+              <PeopleAlt className="icon mt-1" />
+              <div className="info-box">
+                <span className="span-lg">
+                  {selectedEvent.customer.company}
+                </span>
+                <span className="span-sm">
+                  Meet with {selectedEvent.customer.personal}
+                </span>
+              </div>
             </div>
             {selectedEvent.description !== '' &&
               selectedEvent.description !== null && (
-                <div className="card-item items-start">
-                  <Notes className="icon" />
-                  <span className="info-box">{selectedEvent.description}</span>
+                <div className="card-item">
+                  <Notes className="icon mt-[0.15rem]" />
+                  <div className="info-box">
+                    <span className="span-base">
+                      {selectedEvent.description}
+                    </span>
+                  </div>
                 </div>
               )}
             {selectedEvent.isCancelled && selectedEvent.remark !== '' && (
               <div className="card-item card-item-cancel items-start">
                 <EventBusy className="icon" />
-                <span className="info-box">{selectedEvent.remark}</span>
+                <div className="info-box">
+                  <span className="span-base">{selectedEvent.remark}</span>
+                </div>
               </div>
             )}
             <div className="card-item items-center">
               <AddTask className="icon" />
-              <span
+              <div
                 className={`status-tag ${
                   selectedEvent.isCancelled
                     ? 'cancel-tag'
@@ -271,7 +281,7 @@ const EventCard = () => {
                   : selectedEvent.isCompleted
                   ? 'Completed'
                   : 'Forecast'}
-              </span>
+              </div>
             </div>
             {!selectedEvent.isCompleted && isCancelClick.isCancel && (
               <>
@@ -389,10 +399,10 @@ const BoxContainer = styled.div`
     ease-in-out
   `}
   top: ${(props) =>
-    props.position && props.rePosition.isTooBottom
-      ? `${props.position.bottom}px`
-      : `${props.position.top}px`};
-  left: ${(props) => (props.position ? `${props.position.left}px` : '0')};
+    props.rePosition && props.rePosition.isTooBottom
+      ? `${props.rePosition.bottom}px`
+      : `${props.rePosition.top}px`};
+  left: ${(props) => (props.rePosition ? `${props.rePosition.left}px` : '0')};
   transform: ${(props) =>
     props.rePosition &&
     `translate(${props.rePosition.isTooLeft ? '7%' : '-101%'}, ${
@@ -537,7 +547,8 @@ const BoxContainer = styled.div`
 
       .info-box {
         ${tw`
-          -mt-1
+          flex
+          flex-col
           font-semibold
           text-gray-600
         `}
@@ -550,7 +561,27 @@ const BoxContainer = styled.div`
           `}
         }
 
-        .date {
+        span {
+          ${tw`
+            w-full
+          `}
+        }
+
+        .span-base {
+          ${tw`
+            text-base
+            text-gray-700
+          `}
+        }
+
+        .span-lg {
+          ${tw`
+            text-lg
+            text-gray-700
+          `}
+        }
+
+        .span-sm {
           ${tw`
             text-sm
           `}
@@ -721,9 +752,11 @@ const BoxContainer = styled.div`
       }
 
       .info-box {
-        ${tw`
-          text-red-500
-        `}
+        span {
+          ${tw`
+            text-red-500
+          `}
+        }
       }
     }
   }

@@ -171,6 +171,7 @@ const GET_SELF_EVENT_LIST = gql`
       customer {
         cusId
         personal
+        company
       }
       description
       planDate
@@ -195,6 +196,7 @@ const GET_ALL_EVENT_LIST = gql`
       customer {
         cusId
         personal
+        company
       }
       description
       planDate
@@ -219,6 +221,7 @@ const CREATED_EVENT_SUBSCRIPTION = gql`
       customer {
         cusId
         personal
+        company
       }
       description
       planDate
@@ -243,6 +246,7 @@ const UPDATED_EVENT_SUBSCRIPTION = gql`
       customer {
         cusId
         personal
+        company
       }
       description
       planDate

@@ -36,6 +36,7 @@ const EventAdd = () => {
     customer: {
       cusId: '',
       personal: '',
+      company: '',
     },
     description: '',
     isCompleted: false,
@@ -73,7 +74,7 @@ const EventAdd = () => {
   }
 
   const handleCreateEvent = () => {
-    if (inputValue.title !== '' && inputValue.customer.personal !== '') {
+    if (inputValue.title !== '' && inputValue.customer.cusId !== '') {
       if (!isCompleted) {
         createNewEvent({
           variables: {
@@ -166,8 +167,8 @@ const EventAdd = () => {
             <input
               type="text"
               className="input"
-              value={inputValue.customer.personal}
-              placeholder="Who is Meeting-up?"
+              value={inputValue.customer.company}
+              placeholder="Where to meetup?"
               required
             />
 
@@ -206,11 +207,15 @@ const EventAdd = () => {
                       })
                       setInputValue({
                         ...inputValue,
-                        customer: { cusId: x.id, personal: x.personal },
+                        customer: {
+                          cusId: x.id,
+                          personal: x.personal,
+                          company: x.company,
+                        },
                       })
                     }}
                   >
-                    {x.personal}
+                    {x.company}
                   </div>
                 ))
               ) : (
@@ -449,6 +454,8 @@ const BoxContainer = styled.div`
       .input-box {
         ${tw`
           relative
+          flex
+          flex-col
           w-full
           border-b
           border-gray-400
