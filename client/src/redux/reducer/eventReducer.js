@@ -8,6 +8,8 @@ import {
   PUBSUB_SELF_EVENT_UPDATE,
   GET_SELF_EVENT_LIST,
   GET_OTHER_EVENT_LIST,
+  GET_SELF_REPORT_EVENT_LIST,
+  GET_OTHER_REPORT_EVENT_LIST,
   SET_SELECTED_EVENT,
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
@@ -18,6 +20,8 @@ import {
 } from '../constant/eventConstants'
 
 export const eventsReducer = (state = {}, action) => {
+  const isExist = null
+
   switch (action.type) {
     case TOGGLE_MODEL_OPEN:
       return { ...state, isAddOpen: true, isViewOpen: false }
@@ -38,6 +42,25 @@ export const eventsReducer = (state = {}, action) => {
         eventList: [...state.eventList, action.payload],
       }
     case PUBSUB_EVENT_UPDATE:
+      isExist =
+        state.eventReportOtherList.length > 0
+          ? state.eventReportOtherList.some(
+              (evt) => evt.id === action.payload.id
+            )
+          : false
+
+      if (isExist) {
+        return {
+          ...state,
+          eventOtherList: state.eventOtherList.map((evt) =>
+            evt.id === action.payload.id ? action.payload : evt
+          ),
+          eventReportOtherList: state.eventReportOtherList.map((evt) =>
+            evt.id === action.payload.id ? action.payload : evt
+          ),
+        }
+      }
+
       return {
         ...state,
         eventOtherList: state.eventOtherList.map((evt) =>
@@ -45,6 +68,23 @@ export const eventsReducer = (state = {}, action) => {
         ),
       }
     case PUBSUB_SELF_EVENT_UPDATE:
+      isExist =
+        state.eventReportList.length > 0
+          ? state.eventReportList.some((evt) => evt.id === action.payload.id)
+          : false
+
+      if (isExist) {
+        return {
+          ...state,
+          eventList: state.eventList.map((evt) =>
+            evt.id === action.payload.id ? action.payload : evt
+          ),
+          eventReportList: state.eventReportList.map((evt) =>
+            evt.id === action.payload.id ? action.payload : evt
+          ),
+        }
+      }
+
       return {
         ...state,
         eventList: state.eventList.map((evt) =>
@@ -52,6 +92,12 @@ export const eventsReducer = (state = {}, action) => {
         ),
         selectedEvent: state.isViewOpen ? action.payload : {},
       }
+    case GET_SELF_REPORT_EVENT_LIST: {
+      return { ...state, eventReportList: action.payload }
+    }
+    case GET_OTHER_REPORT_EVENT_LIST: {
+      return { ...state, eventReportOtherList: action.payload }
+    }
     case SET_SELECTED_DATE:
       return {
         ...state,

@@ -45,6 +45,9 @@ const initialState = {
     eventList: [],
     eventOtherList: [],
     eventFilterType: [],
+    eventReportList: [],
+    eventReportOtherList: [],
+    eventReportFilterType: [],
     isAddOpen: false,
     isViewOpen: false,
     listListener: {

@@ -1,7 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
+import { useDispatch, useSelector } from 'react-redux'
+
+// Redux action
+import { closeSelectedEvent } from '../../../redux/action/eventAction'
 
 import { ArrowDropDown } from '@mui/icons-material'
 
@@ -11,14 +15,24 @@ import UserLister from './UserLister/UserLister'
 import ManagerLister from './ManagerLister/ManagerLister'
 
 const ReportLister = () => {
+  const dispatch = useDispatch()
+
+  const eventInfo = useSelector((state) => state.eventInfo)
+  const { isViewOpen } = eventInfo
+
   const [pickedDate, setPickedDate] = useState({
-    startDate: dayjs().format('DD-MM-YY'),
+    startDate: dayjs().format('YYYY-MM-DD'),
     endDate: 'All',
   })
   const [pickerControl, setPickerControl] = useState({
     isStartCalenderDrop: false,
     isEndCalenderDrop: false,
   })
+
+  useEffect(() => {
+    if (isViewOpen)
+      setPickerControl({ isStartCalenderDrop: false, isEndCalenderDrop: false })
+  }, [isViewOpen])
 
   return (
     <BoxContainer>
@@ -27,12 +41,14 @@ const ReportLister = () => {
         <div className="datetime-picker-container">
           <div
             className="date-picker"
-            onClick={() =>
+            onClick={() => {
               setPickerControl({
                 isStartCalenderDrop: !pickedDate.isStartCalenderDrop,
                 isEndCalenderDrop: false,
               })
-            }
+
+              if (isViewOpen) dispatch(closeSelectedEvent())
+            }}
           >
             <h2>From</h2>
             <p>{pickedDate.startDate}</p>
@@ -49,12 +65,14 @@ const ReportLister = () => {
           <span className="date-spacer" />
           <div
             className="date-picker"
-            onClick={() =>
+            onClick={() => {
               setPickerControl({
                 isStartCalenderDrop: false,
                 isEndCalenderDrop: !pickedDate.isEndCalenderDrop,
               })
-            }
+
+              if (isViewOpen) dispatch(closeSelectedEvent())
+            }}
           >
             <h2>To</h2>
             <p>{pickedDate.endDate}</p>

@@ -7,6 +7,8 @@ import {
   PUBSUB_SELF_EVENT_UPDATE,
   GET_SELF_EVENT_LIST,
   GET_OTHER_EVENT_LIST,
+  GET_SELF_REPORT_EVENT_LIST,
+  GET_OTHER_REPORT_EVENT_LIST,
   SET_SELECTED_EVENT,
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
@@ -47,6 +49,15 @@ export const getPubSubSelfEventUpdate = (evt) => (dispatch) => {
   dispatch({ type: PUBSUB_SELF_EVENT_UPDATE, payload: evt })
 }
 
+export const getSelfReportEventList = (evt) => (dispatch) => {
+  dispatch({ type: GET_SELF_REPORT_EVENT_LIST, payload: evt })
+}
+
+export const getOtherReportEventList = (evt) => (dispatch) => {
+  dispatch({ type: GET_OTHER_REPORT_EVENT_LIST, payload: evt })
+}
+
+// Control components view and reset value ---------------------------------------------------
 export const setSelectEvent = (data) => (dispatch) => {
   dispatch({ type: SET_SELECTED_EVENT, payload: data })
 }

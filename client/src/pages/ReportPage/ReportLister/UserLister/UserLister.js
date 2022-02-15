@@ -8,17 +8,23 @@ import dayjs from 'dayjs'
 
 // Redux action
 import {
+  getSelfReportEventList,
+  getOtherReportEventList,
   setSelectEvent,
   setEventBoxPosition,
 } from '../../../../redux/action/eventAction'
 
 const UserLister = ({ pickedDate }) => {
-  const [filtertype, setFilterType] = useState([])
+  const dispatch = useDispatch()
+
   const [renderList, setRenderList] = useState([])
   const [selectedEvtListState, setSelectedEvtListState] = useState([])
 
   const userSignIn = useSelector((state) => state.userSignIn)
   const { user } = userSignIn
+
+  const eventInfo = useSelector((state) => state.eventInfo)
+  const { eventReportList, eventReportFilterType } = eventInfo
 
   const [getSelfSelectedEventList, { data }] = useLazyQuery(
     GET_SELF_SELECTED_EVENT_LIST,
@@ -73,14 +79,21 @@ const UserLister = ({ pickedDate }) => {
       return { year: x, evtList: EvtByDate }
     })
 
+    // Test
+    dispatch(getOtherReportEventList(EvtByYear))
+
+    // Save a original cope
     setSelectedEvtListState(EvtByYear)
+
+    // Trigger filter function
+    handleAnyEvtFilterType(EvtByYear)
   }
 
-  const handleAnyEvtFilterType = () => {
-    if (filtertype.length > 0) {
+  const handleAnyEvtFilterType = (allEvt) => {
+    if (eventReportFilterType.length > 0) {
       // Filter the list
     } else {
-      setRenderList(selectedEvtListState)
+      setRenderList(allEvt)
     }
   }
 
@@ -102,16 +115,19 @@ const UserLister = ({ pickedDate }) => {
 
   // API return data and format the data by year, month and date. then set state
   useEffect(() => {
-    console.log(data)
     if (data && data.getSelfSelectedEvent) {
-      handleFormatEvtListGroupByDate(data.getSelfSelectedEvent)
+      dispatch(getSelfReportEventList(data.getSelfSelectedEvent))
     }
   }, [data])
 
-  // get setted state and do any filter on user click
+  // After Redux get data pass to the function to perform event grouping by date
   useEffect(() => {
-    if (selectedEvtListState) handleAnyEvtFilterType()
-  }, [selectedEvtListState, filtertype])
+    if (eventReportList) handleFormatEvtListGroupByDate(eventReportList)
+  }, [eventReportList])
+
+  useEffect(() => {
+    handleAnyEvtFilterType(selectedEvtListState)
+  }, [eventReportFilterType])
 
   return (
     <BoxContainer>
@@ -370,8 +386,12 @@ const DayCardContainer = styled.div`
     px-2
     rounded-3xl
     border
-    border-gray-200
+    border-gray-300
     cursor-pointer
+
+    transition
+    duration-200
+    ease-in-out
   `}
 
   .evt-status-box {
@@ -475,7 +495,7 @@ const DayCardContainer = styled.div`
 
   &.active {
     ${tw`
-        z-10
+      z-10
     `}
     box-shadow: 2px 3px 15px 3px rgba(0,0,0,0.45);
   }
