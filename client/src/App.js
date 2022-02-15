@@ -22,7 +22,7 @@ import {
   InfoPage,
   ErrorPage,
 } from './pages/index'
-import { MainWrapper, Header, NotifyTag } from './components/index'
+import { MainWrapper, Header, NotifyTag, EventCard } from './components/index'
 
 function App() {
   const userSignIn = useSelector((state) => state.userSignIn)
@@ -98,6 +98,7 @@ function App() {
             />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
+          <EventCard />
         </MainWrapper>
       </BrowserRouter>
     </ApolloProvider>

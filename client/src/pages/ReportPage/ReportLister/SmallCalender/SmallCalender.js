@@ -10,22 +10,56 @@ import { getMonth } from '../../../../utils/GlobalUtils'
 // Mui icons
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
-const SmallCalender = () => {
+const SmallCalender = ({
+  isOpen,
+  setPickedDate,
+  pickedDate,
+  setPickerControl,
+  isStart,
+  isEnd,
+}) => {
+  const [daySelected, setDaySelected] = useState()
   const [currentMonth, setCurrentMonth] = useState(getMonth())
   const [currentMonthIndex, setCurrentMonthIndex] = useState(dayjs().month())
 
   const calenderInfo = useSelector((state) => state.calenderInfo)
-  const { monthIndex, daySelected } = calenderInfo
+  const { monthIndex } = calenderInfo
 
-  const handlePrevMonth = () => {
+  const handlePrevMonth = (e) => {
+    e.stopPropagation()
     setCurrentMonthIndex(currentMonthIndex - 1)
   }
 
-  const handleNextMonth = () => {
+  const handleNextMonth = (e) => {
+    e.stopPropagation()
     setCurrentMonthIndex(currentMonthIndex + 1)
   }
 
-  const handleToSelectedDayMonth = (day) => {}
+  const handleToSelectedDayMonth = (e, day) => {
+    e.stopPropagation()
+
+    if (day !== 'All') {
+      setDaySelected(day)
+
+      if (isStart) {
+        setPickedDate({ ...pickedDate, startDate: day.format('YYYY-MM-DD') })
+      }
+
+      if (isEnd) {
+        setPickedDate({ ...pickedDate, endDate: day.format('YYYY-MM-DD') })
+      }
+    } else {
+      setDaySelected(null)
+
+      if (isStart) {
+        setPickedDate({ ...pickedDate, startDate: day })
+      }
+
+      if (isEnd) {
+        setPickedDate({ ...pickedDate, endDate: day })
+      }
+    }
+  }
 
   const getCurrentDay = (day) => {
     const nowDate = dayjs().format('DD-MM-YY')
@@ -52,44 +86,65 @@ const SmallCalender = () => {
   }, [currentMonthIndex])
 
   return (
-    <BoxContainer>
-      <div className="header-container">
-        <h3>
-          {dayjs(new Date(dayjs().year(), currentMonthIndex)).format(
-            'MMMM YYYY'
-          )}
-        </h3>
-        <div className="mth-btn">
-          <div className="prev-btn btn" onClick={() => handlePrevMonth()}>
-            <ChevronLeft className="icon" />
-          </div>
-          <div className="next-btn btn" onClick={() => handleNextMonth()}>
-            <ChevronRight className="icon" />
-          </div>
-        </div>
-      </div>
-      <div className="calender-container">
-        {currentMonth[0].map((day, i) => (
-          <span key={i} className="day-title">
-            {day.format('dd').charAt(0)}
-          </span>
-        ))}
-        {currentMonth.map((row, i) => (
-          <React.Fragment key={i}>
-            {row.map((day, idx) => (
-              <div
-                key={idx}
-                className={`day-btn`}
-                onClick={() => handleToSelectedDayMonth(day)}
-              >
-                <span className={`${getCurrentDay(day)}`}>
-                  {day.format('D')}
-                </span>
+    <BoxContainer
+      className={`${isOpen && 'active'}`}
+      onMouseLeave={() => {
+        setPickerControl({
+          isStartCalenderDrop: false,
+          isEndCalenderDrop: false,
+        })
+      }}
+    >
+      {isOpen && (
+        <>
+          <div className="header-container">
+            <h3>
+              {dayjs(new Date(dayjs().year(), currentMonthIndex)).format(
+                'MMMM YYYY'
+              )}
+            </h3>
+            <div className="mth-btn">
+              <div className="prev-btn btn" onClick={(e) => handlePrevMonth(e)}>
+                <ChevronLeft className="icon" />
               </div>
+              <div className="next-btn btn" onClick={(e) => handleNextMonth(e)}>
+                <ChevronRight className="icon" />
+              </div>
+            </div>
+          </div>
+          <div className="calender-container">
+            {currentMonth[0].map((day, i) => (
+              <span key={i} className="day-title">
+                {day.format('dd').charAt(0)}
+              </span>
             ))}
-          </React.Fragment>
-        ))}
-      </div>
+            {currentMonth.map((row, i) => (
+              <React.Fragment key={i}>
+                {row.map((day, idx) => (
+                  <div
+                    key={idx}
+                    className={`day-btn`}
+                    onClick={(e) => handleToSelectedDayMonth(e, day)}
+                  >
+                    <span className={`${getCurrentDay(day)}`}>
+                      {day.format('D')}
+                    </span>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
+          </div>
+          <div className="footer-container">
+            <div
+              className="all-btn"
+              onClick={(e) => handleToSelectedDayMonth(e, 'All')}
+            >
+              All {isStart && 'From Pass'}
+              {isEnd && 'From Start Date'}
+            </div>
+          </div>
+        </>
+      )}
     </BoxContainer>
   )
 }
@@ -100,12 +155,19 @@ const BoxContainer = styled.div`
     bottom-0
     right-0
     mb-4
-    w-56
-    h-56
+    w-0
+    h-0
+    opacity-0
     bg-white
     rounded-md
+    overflow-hidden
+    pointer-events-none
+
+    transition-all
+    duration-200
+    ease-in-out
   `}
-  transform: translateY(calc( 100% + 1rem));
+  transform: translateY(calc( 100% + 1.25rem));
   box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.25);
 
   .header-container {
@@ -227,6 +289,43 @@ const BoxContainer = styled.div`
         `}
       }
     }
+  }
+
+  .footer-container {
+    ${tw`
+      px-[0.7rem]
+      w-full
+    `}
+
+    .all-btn {
+      ${tw`
+        py-1
+        text-sm
+        text-gray-700
+        rounded-md
+        cursor-pointer
+
+        transition-all
+        duration-200
+        ease-in-out
+      `}
+
+      &:hover {
+        ${tw`
+          pl-2
+          bg-gray-200
+        `}
+      }
+    }
+  }
+
+  &.active {
+    ${tw`
+      w-56
+      h-60
+      opacity-100
+      pointer-events-auto
+    `}
   }
 `
 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
-import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 
 // Redux
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 //import { removeItemFromCart } from "../../redux/actions/orderAction";
 
 // Form Components
@@ -12,12 +12,7 @@ import MyProfile from './MyProfile/MyProfile'
 import MyContact from './MyContact/MyContact'
 
 // Material ui icons
-import {
-  KeyboardArrowDown,
-  AssignmentInd,
-  Bookmarks,
-  ViewList,
-} from '@mui/icons-material'
+import { AssignmentInd, Bookmarks } from '@mui/icons-material'
 
 const InfoPage = () => {
   const [isMobile, setIsMobile] = useState()

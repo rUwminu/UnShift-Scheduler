@@ -29,6 +29,8 @@ const ReportSection = styled.div`
     ${tw`
         flex
         flex-grow
+        w-full
+        h-full
     `}
   }
 `

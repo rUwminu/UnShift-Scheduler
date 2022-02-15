@@ -12,7 +12,7 @@ import CalenderSidebar from './CalenderSidebar/CalenderSidebar'
 import { getMonth } from '../../utils/GlobalUtils'
 
 // Global Components
-import { EventAdd, EventCard } from '../../components/index'
+import { EventAdd } from '../../components/index'
 
 const CalenderMain = () => {
   const calenderInfo = useSelector((state) => state.calenderInfo)
@@ -30,7 +30,6 @@ const CalenderMain = () => {
   return (
     <CalenderSection>
       {isAddOpen && <EventAdd />}
-      <EventCard />
       <CalenderHeader />
       <div className="body-container">
         <CalenderSidebar />

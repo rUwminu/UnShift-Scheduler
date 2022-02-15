@@ -104,7 +104,23 @@ const EventCard = ({ allEvt }) => {
 
     const bounding = elementRef.current.getBoundingClientRect()
 
-    dispatch(setEventBoxPosition(bounding))
+    const { innerWidth: width, innerHeight: height } = window
+
+    let leftWidth = width - bounding.left
+    let leftHeight = height - bounding.top
+
+    const fixPosition = {
+      top: bounding.top,
+      bottom: bounding.bottom,
+      left: bounding.left,
+      right: bounding.right,
+      isTooLeft: leftWidth > 850 ? true : false,
+      isTooBottom: leftHeight <= 350 ? true : false,
+    }
+
+    console.log(fixPosition)
+
+    dispatch(setEventBoxPosition(fixPosition))
     dispatch(setSelectEvent(allEvt))
   }
 

@@ -123,19 +123,7 @@ const EventCard = () => {
     setIsDropActive(false)
     setIsCancelClick({ isCancel: false, remark: '' })
 
-    const { innerWidth: width, innerHeight: height } = window
-
-    let leftWidth = width - position.left
-    let leftHeight = height - position.top
-
-    setRePosition({
-      top: position.top,
-      bottom: position.bottom,
-      left: position.left,
-      right: position.right,
-      isTooLeft: leftWidth > 850 ? true : false,
-      isTooBottom: leftHeight <= 350 ? true : false,
-    })
+    setRePosition({ ...position })
   }
 
   const autoGrowHeight = (e) => {
