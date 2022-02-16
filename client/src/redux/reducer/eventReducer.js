@@ -8,8 +8,7 @@ import {
   PUBSUB_SELF_EVENT_UPDATE,
   GET_SELF_EVENT_LIST,
   GET_OTHER_EVENT_LIST,
-  GET_SELF_REPORT_EVENT_LIST,
-  GET_OTHER_REPORT_EVENT_LIST,
+  GET_REPORT_EVENT_LIST,
   SET_SELECTED_EVENT,
   CLOSE_SELECTED_EVENT,
   SET_EVENT_BOX_POSITION,
@@ -94,11 +93,8 @@ export const eventsReducer = (state = {}, action) => {
         ),
         selectedEvent: state.isViewOpen ? action.payload : {},
       }
-    case GET_SELF_REPORT_EVENT_LIST: {
+    case GET_REPORT_EVENT_LIST: {
       return { ...state, eventReportList: action.payload }
-    }
-    case GET_OTHER_REPORT_EVENT_LIST: {
-      return { ...state, eventReportOtherList: action.payload }
     }
     case SET_SELECTED_DATE:
       return {
