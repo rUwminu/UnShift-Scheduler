@@ -33,12 +33,24 @@ const InfoPage = () => {
   }
 
   useEffect(() => {
-    if (user && name) setOptionType(name)
+    let isMounted = true
+    if (isMounted && user && name) setOptionType(name)
+
+    return () => {
+      isMounted = false
+    }
   }, [name, user])
 
   useEffect(() => {
-    handleResize()
-    window.addEventListener('resize', handleResize)
+    let isMounted = true
+    if (isMounted) {
+      handleResize()
+      window.addEventListener('resize', handleResize)
+    }
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return (

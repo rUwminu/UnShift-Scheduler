@@ -17,6 +17,9 @@ import ManagerLister from './ManagerLister/ManagerLister'
 const ReportLister = () => {
   const dispatch = useDispatch()
 
+  const userSignIn = useSelector((state) => state.userSignIn)
+  const { user } = userSignIn
+
   const eventInfo = useSelector((state) => state.eventInfo)
   const { isViewOpen } = eventInfo
 
@@ -90,7 +93,11 @@ const ReportLister = () => {
         </div>
       </div>
       <div className="list-body">
-        <UserLister pickedDate={pickedDate} />
+        {user && user.isManager ? (
+          <ManagerLister pickedDate={pickedDate} />
+        ) : (
+          <UserLister pickedDate={pickedDate} />
+        )}
       </div>
     </BoxContainer>
   )
@@ -110,6 +117,8 @@ const BoxContainer = styled.div`
     ${tw`
       flex
       flex-col
+      h-auto
+      w-full
     `}
 
     h1 {
@@ -184,8 +193,12 @@ const BoxContainer = styled.div`
 
   .list-body {
     ${tw`
-      w-full
       h-full
+      w-full
+      border
+    border-gray-400
+      overflow-y-scroll
+      scrollbar-hide
     `}
   }
 `

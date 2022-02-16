@@ -9,6 +9,9 @@ import { addReportEventFilterType } from '../../../redux/action/eventAction'
 const ReportSidebar = () => {
   const dispatch = useDispatch()
 
+  const contactBook = useSelector((state) => state.contactBook)
+  const { allUsers } = contactBook
+
   const eventInfo = useSelector((state) => state.eventInfo)
   const { eventReportFilterType } = eventInfo
 
@@ -18,54 +21,119 @@ const ReportSidebar = () => {
 
   return (
     <BoxContainer>
-      <div className="header-container">
-        <h3>My Report</h3>
-      </div>
       <div className="body-container">
-        <div
-          className="check-item"
-          onClick={() => handleAddFilterType('Completed')}
-        >
+        <div className="filter-list-box">
+          <div className="header">
+            <h3>My Report</h3>
+          </div>
+
           <div
-            className={`check-box comp-check-box ${
-              eventReportFilterType.includes('Completed') && 'in-active'
-            }`}
-          />
-          <span>Completed</span>
-        </div>
-        <div
-          className="check-item"
-          onClick={() => handleAddFilterType('Forecast')}
-        >
+            className="check-item"
+            onClick={() => handleAddFilterType('Completed')}
+          >
+            <div
+              className={`check-box comp-check-box ${
+                eventReportFilterType.includes('Completed') && 'in-active'
+              }`}
+            />
+            <span>Completed</span>
+          </div>
           <div
-            className={`check-box fore-check-box ${
-              eventReportFilterType.includes('Forecast') && 'in-active'
-            }`}
-          />
-          <span>Forecast</span>
-        </div>
-        <div
-          className="check-item"
-          onClick={() => handleAddFilterType('Cancelled')}
-        >
+            className="check-item"
+            onClick={() => handleAddFilterType('Forecast')}
+          >
+            <div
+              className={`check-box fore-check-box ${
+                eventReportFilterType.includes('Forecast') && 'in-active'
+              }`}
+            />
+            <span>Forecast</span>
+          </div>
           <div
-            className={`check-box cancel-check-box ${
-              eventReportFilterType.includes('Cancelled') && 'in-active'
-            }`}
-          />
-          <span>Cancelled</span>
-        </div>
-        <div
-          className="check-item"
-          onClick={() => handleAddFilterType('Rescheduled')}
-        >
+            className="check-item"
+            onClick={() => handleAddFilterType('Cancelled')}
+          >
+            <div
+              className={`check-box cancel-check-box ${
+                eventReportFilterType.includes('Cancelled') && 'in-active'
+              }`}
+            />
+            <span>Cancelled</span>
+          </div>
           <div
-            className={`check-box resc-check-box ${
-              eventReportFilterType.includes('Rescheduled') && 'in-active'
-            }`}
-          />
-          <span>Rescheduled</span>
+            className="check-item"
+            onClick={() => handleAddFilterType('Rescheduled')}
+          >
+            <div
+              className={`check-box resc-check-box ${
+                eventReportFilterType.includes('Rescheduled') && 'in-active'
+              }`}
+            />
+            <span>Rescheduled</span>
+          </div>
         </div>
+
+        <div className="filter-list-box">
+          <div className="header">
+            <h3>My Purpose</h3>
+          </div>
+
+          <div
+            className="check-item"
+            onClick={() => handleAddFilterType('Meetup')}
+          >
+            <div
+              className={`check-box default-check-box ${
+                eventReportFilterType.includes('Meetup') && 'in-active'
+              }`}
+            />
+            <span>Customer Meetup</span>
+          </div>
+          <div
+            className="check-item"
+            onClick={() => handleAddFilterType('Sample')}
+          >
+            <div
+              className={`check-box default-check-box ${
+                eventReportFilterType.includes('Sample') && 'in-active'
+              }`}
+            />
+            <span>Sample Deliver</span>
+          </div>
+          <div
+            className="check-item"
+            onClick={() => handleAddFilterType('Cheque')}
+          >
+            <div
+              className={`check-box default-check-box ${
+                eventReportFilterType.includes('Cheque') && 'in-active'
+              }`}
+            />
+            <span>Cheque Collect</span>
+          </div>
+        </div>
+
+        {allUsers && allUsers.length > 0 && (
+          <div className="filter-list-box">
+            <div className="header">
+              <h3>My Saleman</h3>
+            </div>
+            {allUsers.map((usr) => (
+              <div
+                key={usr.id}
+                className="check-item"
+                onClick={() => handleAddFilterType(usr.id.toString())}
+              >
+                <div
+                  className={`check-box default-check-box ${
+                    eventReportFilterType.includes(usr.id) && 'in-active'
+                  }`}
+                />
+                <span>{usr.username}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </BoxContainer>
   )
@@ -80,7 +148,7 @@ const BoxContainer = styled.div`
     md:max-w-[16.5rem]
   `}
 
-  .header-container {
+  .header {
     ${tw`
         w-full
     `}
@@ -101,6 +169,13 @@ const BoxContainer = styled.div`
         flex-col
         w-full
     `}
+
+    .filter-list-box {
+      ${tw`
+        mb-6
+        w-full
+      `}
+    }
 
     .check-item {
       ${tw`
@@ -130,17 +205,24 @@ const BoxContainer = styled.div`
         `}
       }
 
+      .default-check-box {
+        ${tw`
+          bg-blue-500
+          border-blue-500
+        `}
+      }
+
       .comp-check-box {
         ${tw`
-            bg-green-500
-            border-green-500
+          bg-green-500
+          border-green-500
         `}
       }
 
       .fore-check-box {
         ${tw`
-            bg-purple-500
-            border-purple-500
+          bg-purple-500
+          border-purple-500
         `}
       }
 
@@ -160,7 +242,7 @@ const BoxContainer = styled.div`
 
       .check-box.in-active {
         ${tw`
-            bg-transparent
+          bg-transparent
         `}
       }
 

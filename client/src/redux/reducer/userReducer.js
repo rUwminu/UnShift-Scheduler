@@ -1,4 +1,5 @@
 import {
+  ALL_USER_LIST,
   USER_SIGNIN_FAIL,
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_SUCCESS,
@@ -50,6 +51,8 @@ export const userContactBookReducer = (state = {}, action) => {
           (ct) => ct.id !== action.payload
         ),
       }
+    case ALL_USER_LIST:
+      return { ...state, allUsers: action.payload }
     case USER_SIGNOUT:
       return { ...state, allCustomerContact: [] }
     default:

@@ -2,11 +2,12 @@ import React, { useEffect, useState, useRef } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
-import { gql, useLazyQuery } from '@apollo/client'
+import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import _ from 'lodash'
 import dayjs from 'dayjs'
 
 // Redux action
+import { getAllUsers } from '../../../../redux/action/userAction'
 import {
   getReportEventList,
   setSelectEvent,
@@ -24,6 +25,14 @@ const ManagerLister = ({ pickedDate }) => {
 
   const eventInfo = useSelector((state) => state.eventInfo)
   const { eventReportList, eventReportFilterType } = eventInfo
+
+  const { data: usersData } = useQuery(GET_ALL_OTHER_USER, {
+    context: {
+      headers: {
+        Authorization: `Bearer${' '}${user && user.token}`,
+      },
+    },
+  })
 
   const [getAllSelectedEventList, { data: allData }] = useLazyQuery(
     GET_ALL_SELECTED_EVENT_LIST,
@@ -196,6 +205,20 @@ const ManagerLister = ({ pickedDate }) => {
               }),
             }
           })
+        } else {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter(
+                    (evt) => evt.user.id !== type
+                  ),
+                }
+              }),
+            }
+          })
         }
       })
 
@@ -230,6 +253,10 @@ const ManagerLister = ({ pickedDate }) => {
   }, [pickedDate])
 
   // API return data and format the data by year, month and date. then set state
+  useEffect(() => {
+    if (usersData) dispatch(getAllUsers(usersData.getUsers))
+  }, [usersData])
+
   useEffect(() => {
     if (allData && allData.getAllSelectedEvent) {
       dispatch(getReportEventList(allData.getAllSelectedEvent))
@@ -393,6 +420,15 @@ const DayEventCard = ({ event }) => {
     </DayCardContainer>
   )
 }
+
+const GET_ALL_OTHER_USER = gql`
+  query getUsers {
+    getUsers {
+      id
+      username
+    }
+  }
+`
 
 const GET_ALL_SELECTED_EVENT_LIST = gql`
   query getAllSelectedEvent($startDate: String, $endDate: String) {

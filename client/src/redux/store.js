@@ -35,6 +35,7 @@ const initialState = {
     user: decodeLocalUser(),
   },
   contactBook: {
+    allUsers: [],
     allCustomerContact: [],
   },
   calenderInfo: {

@@ -22,6 +22,7 @@ const ReportSection = styled.div`
     pt-20
     w-full
     h-screen
+    max-h-screen
   `}
 `
 

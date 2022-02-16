@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
 
 // Redux action
 import {
-  getSelfReportEventList,
+  getReportEventList,
   setSelectEvent,
   setEventBoxPosition,
 } from '../../../../redux/action/eventAction'
@@ -25,7 +25,7 @@ const UserLister = ({ pickedDate }) => {
   const eventInfo = useSelector((state) => state.eventInfo)
   const { eventReportList, eventReportFilterType } = eventInfo
 
-  const [getSelfSelectedEventList, { data }] = useLazyQuery(
+  const [getSelfSelectedEventList, { data: selfData }] = useLazyQuery(
     GET_SELF_SELECTED_EVENT_LIST,
     {
       context: {
@@ -46,8 +46,6 @@ const UserLister = ({ pickedDate }) => {
         ? ''
         : dayjs(pickedDate.endDate).format('YYYY-MM-DDTHH:mm:ss')
 
-    console.log(startDate + ' to ' + endDate)
-
     getSelfSelectedEventList({
       variables: {
         startDate,
@@ -56,39 +54,41 @@ const UserLister = ({ pickedDate }) => {
     })
   }
 
-  const handleFormatEvtListGroupByDate = (evts) => {
+  const handleFormatEvtListGroupByDate = async (evts) => {
     const tempArr = [...evts]
 
     var groupedByYear = _.groupBy(tempArr, (evt) => {
       return evt.planDate.substring(0, 4)
     })
 
-    const EvtByYear = Object.keys(groupedByYear).map((x) => {
-      var groupedByday = _.groupBy(groupedByYear[x], (evt) => {
-        return evt.planDate.substring(0, 10)
-      })
+    var EvtByYear = await Promise.all(
+      Object.keys(groupedByYear).map((x) => {
+        var groupedByday = _.groupBy(groupedByYear[x], (evt) => {
+          return evt.planDate.substring(0, 10)
+        })
 
-      const EvtByDate = Object.keys(groupedByday).map((evtDay) => {
-        return {
-          thisDay: evtDay,
-          thisDayEvt: groupedByday[evtDay],
-        }
-      })
+        const EvtByDate = Object.keys(groupedByday).map((evtDay) => {
+          return {
+            thisDay: evtDay,
+            thisDayEvt: groupedByday[evtDay],
+          }
+        })
 
-      return { year: x, evtList: EvtByDate }
-    })
+        return { year: x, evtList: EvtByDate }
+      })
+    )
 
     // Save a original cope
-    setSelectedEvtListState(EvtByYear)
+    setSelectedEvtListState(EvtByYear.reverse())
 
     // Trigger filter function
-    handleAnyEvtFilterType(EvtByYear)
+    handleAnyEvtFilterType(EvtByYear.reverse())
   }
 
   const handleAnyEvtFilterType = (allEvt) => {
-    if (eventReportFilterType.length > 0) {
-      var tempArr = allEvt
+    var tempArr = allEvt
 
+    if (eventReportFilterType.length > 0) {
       eventReportFilterType.forEach((type) => {
         if (type === 'Completed') {
           tempArr = tempArr.map((grp) => {
@@ -154,13 +154,55 @@ const UserLister = ({ pickedDate }) => {
               }),
             }
           })
+        } else if (type === 'Meetup') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter(
+                    (evt) => evt.title !== 'Customer Meetup'
+                  ),
+                }
+              }),
+            }
+          })
+        } else if (type === 'Sample') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter(
+                    (evt) => evt.title !== 'Sample Deliver'
+                  ),
+                }
+              }),
+            }
+          })
+        } else if (type === 'Cheque') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter(
+                    (evt) => evt.title !== 'Cheque Collect'
+                  ),
+                }
+              }),
+            }
+          })
         }
       })
 
-      setRenderList(tempArr)
-    } else {
-      setRenderList(allEvt)
+      return setRenderList(tempArr)
     }
+
+    return setRenderList(allEvt)
   }
 
   const getCurrentDay = (day) => {
@@ -175,7 +217,6 @@ const UserLister = ({ pickedDate }) => {
   }
 
   const checkIsThatDayEventFilterOut = (checked, idx) => {
-    console.log(checked)
     if (checked[idx] !== true) {
       return false
     } else {
@@ -190,10 +231,10 @@ const UserLister = ({ pickedDate }) => {
 
   // API return data and format the data by year, month and date. then set state
   useEffect(() => {
-    if (data && data.getSelfSelectedEvent) {
-      dispatch(getSelfReportEventList(data.getSelfSelectedEvent))
+    if (selfData && selfData.getSelfSelectedEvent) {
+      dispatch(getReportEventList(selfData.getSelfSelectedEvent))
     }
-  }, [data])
+  }, [selfData])
 
   // After Redux get data pass to the function to perform event grouping by date
   useEffect(() => {
@@ -204,28 +245,21 @@ const UserLister = ({ pickedDate }) => {
     handleAnyEvtFilterType(selectedEvtListState)
   }, [eventReportFilterType])
 
-  // console.log(
-  //   renderList.map((ls) =>
-  //     ls.evtList.map((x) => (x.thisDayEvt.length > 0 ? true : false))
-  //   )
-  // )
-
   return (
     <BoxContainer>
-      {renderList &&
-        renderList.length > 0 &&
+      {renderList.length > 0 &&
         renderList.map((ls, idx) => (
           <div key={idx} className="year-card">
             <h2>{ls.year}</h2>
             {ls.evtList.map((evtGroup, i) => (
-              <>
+              <div key={i} className="group-day-card-outer-container">
                 {checkIsThatDayEventFilterOut(
                   ls.evtList.map((x) =>
                     x.thisDayEvt.length > 0 ? true : false
                   ),
                   i
                 ) && (
-                  <div key={i} className="group-day-card">
+                  <div className="group-day-card">
                     <div className="card-left">
                       <div
                         className={`date-day-icon-box ${getCurrentDay(
@@ -250,7 +284,7 @@ const UserLister = ({ pickedDate }) => {
                     </div>
                   </div>
                 )}
-              </>
+              </div>
             ))}
           </div>
         ))}
@@ -268,6 +302,7 @@ const DayEventCard = ({ event }) => {
   const { selectedEvent } = eventInfo
 
   const {
+    title,
     customer: { personal, company },
     isCancelled,
     isCompleted,
@@ -344,6 +379,7 @@ const DayEventCard = ({ event }) => {
       </div>
       <div className="evt-info-box">
         <div className="evt-info-company">{company}</div>
+        <div className="evt-info-personal">{title}</div>
         <div className="evt-info-personal">{personal}</div>
       </div>
     </DayCardContainer>
@@ -373,12 +409,9 @@ const GET_SELF_SELECTED_EVENT_LIST = gql`
 
 const BoxContainer = styled.div`
   ${tw`
-    h-full
+    flex-grow
     w-full
-    border
-    border-gray-400
-    overflow-y-scroll
-    scrollbar-hide
+    pb-32
   `}
 
   .year-card {
@@ -394,6 +427,13 @@ const BoxContainer = styled.div`
         text-lg
         text-gray-700
         font-semibold
+      `}
+    }
+
+    .group-day-card-outer-container {
+      ${tw`
+        h-auto
+        w-full
       `}
     }
 
@@ -475,8 +515,6 @@ const DayCardContainer = styled.div`
     py-1
     px-2
     rounded-3xl
-    border
-    border-gray-300
     cursor-pointer
 
     transition

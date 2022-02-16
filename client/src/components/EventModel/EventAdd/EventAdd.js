@@ -24,7 +24,7 @@ const dropTitleDefaultValue = [
   'F&B Visit',
   'Customer Meetup',
   'Sample Deliver',
-  'Check Collect',
+  'Cheque Collect',
 ]
 
 const EventAdd = () => {

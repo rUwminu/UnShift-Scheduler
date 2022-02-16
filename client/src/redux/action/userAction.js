@@ -1,5 +1,6 @@
 import {
   USER_INFO,
+  ALL_USER_LIST,
   USER_SIGNIN_FAIL,
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_SUCCESS,
@@ -52,6 +53,10 @@ export const updateProfile = (data) => (dispatch) => {
 
 export const getSingleUser = (data) => (dispatch) => {
   dispatch({ type: USER_INFO, payload: data })
+}
+
+export const getAllUsers = (data) => (dispatch) => {
+  dispatch({ type: ALL_USER_LIST, payload: data })
 }
 
 export const getSelfContactBook = (data) => (dispatch) => {
