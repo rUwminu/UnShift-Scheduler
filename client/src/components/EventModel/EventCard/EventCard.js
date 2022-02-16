@@ -50,7 +50,7 @@ const EventCard = () => {
   const [updateEventComplete] = useMutation(UPDATE_EVENT_COMPLETE, {
     context: {
       headers: {
-        Authorization: `Bearer${' '}${user.token}`,
+        Authorization: `Bearer${' '}${user && user.token}`,
       },
     },
     update() {
@@ -66,7 +66,7 @@ const EventCard = () => {
   const [updateEventForecast] = useMutation(UPDATE_EVENT_FORECAST, {
     context: {
       headers: {
-        Authorization: `Bearer${' '}${user.token}`,
+        Authorization: `Bearer${' '}${user && user.token}`,
       },
     },
     update(_, { data }) {
@@ -82,7 +82,7 @@ const EventCard = () => {
   const [updateEventReschedule] = useMutation(UPDATE_EVENT_RESCHEDULE, {
     context: {
       headers: {
-        Authorization: `Bearer${' '}${user.token}`,
+        Authorization: `Bearer${' '}${user && user.token}`,
       },
     },
     update(data) {
@@ -96,7 +96,7 @@ const EventCard = () => {
   const [updateEventCancel] = useMutation(UPDATE_EVENT_CANCEL, {
     context: {
       headers: {
-        Authorization: `Bearer${' '}${user.token}`,
+        Authorization: `Bearer${' '}${user && user.token}`,
       },
     },
     update() {

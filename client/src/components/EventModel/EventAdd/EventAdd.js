@@ -20,7 +20,12 @@ import {
   ArrowDropDown,
 } from '@mui/icons-material'
 
-const dropTitleDefaultValue = ['F&B Visit', 'Customer Meetup', 'Sample Deliver']
+const dropTitleDefaultValue = [
+  'F&B Visit',
+  'Customer Meetup',
+  'Sample Deliver',
+  'Check Collect',
+]
 
 const EventAdd = () => {
   const dispatch = useDispatch()
