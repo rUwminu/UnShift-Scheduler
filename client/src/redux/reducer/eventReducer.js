@@ -16,11 +16,12 @@ import {
   TOGGLE_EVENT_LIST_OPEN,
   TOGGLE_EVENT_LIST_CLOSE,
   ADD_EVENT_FILTER_TYPE,
+  ADD_REPORT_EVENT_FILTER_TYPE,
   RESET_EVENT_DETAIL,
 } from '../constant/eventConstants'
 
 export const eventsReducer = (state = {}, action) => {
-  const isExist = null
+  let isExist = null
 
   switch (action.type) {
     case TOGGLE_MODEL_OPEN:
@@ -82,6 +83,7 @@ export const eventsReducer = (state = {}, action) => {
           eventReportList: state.eventReportList.map((evt) =>
             evt.id === action.payload.id ? action.payload : evt
           ),
+          selectedEvent: state.isViewOpen ? action.payload : {},
         }
       }
 
@@ -142,6 +144,27 @@ export const eventsReducer = (state = {}, action) => {
           ...state,
           isViewOpen: false,
           eventFilterType: [...state.eventFilterType, action.payload],
+        }
+      }
+    case ADD_REPORT_EVENT_FILTER_TYPE:
+      if (state.eventReportFilterType.includes(action.payload)) {
+        return {
+          ...state,
+          position: {},
+          isViewOpen: false,
+          selectedEvent: {},
+          eventReportFilterType: state.eventReportFilterType.filter(
+            (x) => x !== action.payload
+          ),
+        }
+      } else {
+        return {
+          ...state,
+          isViewOpen: false,
+          eventReportFilterType: [
+            ...state.eventReportFilterType,
+            action.payload,
+          ],
         }
       }
     case SET_EVENT_BOX_POSITION:

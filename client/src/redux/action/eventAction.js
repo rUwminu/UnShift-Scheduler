@@ -15,6 +15,7 @@ import {
   TOGGLE_EVENT_LIST_OPEN,
   TOGGLE_EVENT_LIST_CLOSE,
   ADD_EVENT_FILTER_TYPE,
+  ADD_REPORT_EVENT_FILTER_TYPE,
 } from '../constant/eventConstants'
 
 export const toggleEventCardOpen = () => (dispatch) => {
@@ -76,6 +77,10 @@ export const toggleEventListClose = () => (dispatch) => {
 
 export const addEventFilterType = (type) => (dispatch) => {
   dispatch({ type: ADD_EVENT_FILTER_TYPE, payload: type })
+}
+
+export const addReportEventFilterType = (type) => (dispatch) => {
+  dispatch({ type: ADD_REPORT_EVENT_FILTER_TYPE, payload: type })
 }
 
 export const setEventBoxPosition = (position) => (dispatch) => {

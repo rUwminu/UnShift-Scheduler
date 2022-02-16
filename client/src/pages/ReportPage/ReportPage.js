@@ -9,10 +9,8 @@ import ReportLister from './ReportLister/ReportLister'
 const ReportPage = () => {
   return (
     <ReportSection>
-      <div className="body-container">
-        <ReportSidebar />
-        <ReportLister />
-      </div>
+      <ReportSidebar />
+      <ReportLister />
     </ReportSection>
   )
 }
@@ -20,19 +18,11 @@ const ReportPage = () => {
 const ReportSection = styled.div`
   ${tw`
     relative
+    flex
     pt-20
     w-full
     h-screen
   `}
-
-  .body-container {
-    ${tw`
-        flex
-        flex-grow
-        w-full
-        h-full
-    `}
-  }
 `
 
 export default ReportPage

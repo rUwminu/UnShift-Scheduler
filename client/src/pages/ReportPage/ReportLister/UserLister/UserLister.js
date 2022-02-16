@@ -9,7 +9,6 @@ import dayjs from 'dayjs'
 // Redux action
 import {
   getSelfReportEventList,
-  getOtherReportEventList,
   setSelectEvent,
   setEventBoxPosition,
 } from '../../../../redux/action/eventAction'
@@ -79,9 +78,6 @@ const UserLister = ({ pickedDate }) => {
       return { year: x, evtList: EvtByDate }
     })
 
-    // Test
-    dispatch(getOtherReportEventList(EvtByYear))
-
     // Save a original cope
     setSelectedEvtListState(EvtByYear)
 
@@ -91,7 +87,77 @@ const UserLister = ({ pickedDate }) => {
 
   const handleAnyEvtFilterType = (allEvt) => {
     if (eventReportFilterType.length > 0) {
-      // Filter the list
+      var tempArr = allEvt
+
+      eventReportFilterType.forEach((type) => {
+        if (type === 'Completed') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter((evt) =>
+                    evt.isCancelled
+                      ? evt
+                      : evt.isRescheduled
+                      ? evt
+                      : evt.isCompleted !== true
+                  ),
+                }
+              }),
+            }
+          })
+        } else if (type === 'Forecast') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter((evt) =>
+                    evt.isCancelled
+                      ? evt
+                      : evt.isRescheduled
+                      ? evt
+                      : evt.isCompleted !== false
+                  ),
+                }
+              }),
+            }
+          })
+        } else if (type === 'Cancelled') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter((evt) =>
+                    evt.isRescheduled ? evt : evt.isCancelled !== true
+                  ),
+                }
+              }),
+            }
+          })
+        } else if (type === 'Rescheduled') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter(
+                    (evt) => evt.isRescheduled !== true
+                  ),
+                }
+              }),
+            }
+          })
+        }
+      })
+
+      setRenderList(tempArr)
     } else {
       setRenderList(allEvt)
     }
@@ -105,6 +171,15 @@ const UserLister = ({ pickedDate }) => {
       return 'active'
     } else {
       return null
+    }
+  }
+
+  const checkIsThatDayEventFilterOut = (checked, idx) => {
+    console.log(checked)
+    if (checked[idx] !== true) {
+      return false
+    } else {
+      return true
     }
   }
 
@@ -129,6 +204,12 @@ const UserLister = ({ pickedDate }) => {
     handleAnyEvtFilterType(selectedEvtListState)
   }, [eventReportFilterType])
 
+  // console.log(
+  //   renderList.map((ls) =>
+  //     ls.evtList.map((x) => (x.thisDayEvt.length > 0 ? true : false))
+  //   )
+  // )
+
   return (
     <BoxContainer>
       {renderList &&
@@ -137,30 +218,39 @@ const UserLister = ({ pickedDate }) => {
           <div key={idx} className="year-card">
             <h2>{ls.year}</h2>
             {ls.evtList.map((evtGroup, i) => (
-              <div key={i} className="group-day-card">
-                <div className="card-left">
-                  <div
-                    className={`date-day-icon-box ${getCurrentDay(
-                      evtGroup.thisDay
-                    )}`}
-                  >
-                    {dayjs(evtGroup.thisDay).format('DD')}
-                  </div>
-                  <div
-                    className={`date-month-day ${getCurrentDay(
-                      evtGroup.thisDay
-                    )}`}
-                  >
-                    {dayjs(evtGroup.thisDay).format('MMM, ddd')}
-                  </div>
-                </div>
+              <>
+                {checkIsThatDayEventFilterOut(
+                  ls.evtList.map((x) =>
+                    x.thisDayEvt.length > 0 ? true : false
+                  ),
+                  i
+                ) && (
+                  <div key={i} className="group-day-card">
+                    <div className="card-left">
+                      <div
+                        className={`date-day-icon-box ${getCurrentDay(
+                          evtGroup.thisDay
+                        )}`}
+                      >
+                        {dayjs(evtGroup.thisDay).format('DD')}
+                      </div>
+                      <div
+                        className={`date-month-day ${getCurrentDay(
+                          evtGroup.thisDay
+                        )}`}
+                      >
+                        {dayjs(evtGroup.thisDay).format('MMM, ddd')}
+                      </div>
+                    </div>
 
-                <div className="evt-ls-container">
-                  {evtGroup.thisDayEvt.map((evt) => (
-                    <DayEventCard key={evt.id} event={evt} />
-                  ))}
-                </div>
-              </div>
+                    <div className="evt-ls-container">
+                      {evtGroup.thisDayEvt.map((evt) => (
+                        <DayEventCard key={evt.id} event={evt} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             ))}
           </div>
         ))}
