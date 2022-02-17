@@ -43,11 +43,12 @@ const EventCard = () => {
     remark: '',
   })
   const [isDropActive, setIsDropActive] = useState(false)
+  const [isShow, setIsShow] = useState(false)
   const [rePosition, setRePosition] = useState({
-    top: '',
-    bottom: '',
-    left: '',
-    right: '',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
     isTooLeft: false,
     isTooBottom: false,
   })
@@ -160,11 +161,17 @@ const EventCard = () => {
     })
   }
 
-  const handleResize = () => {
+  const handleResize = async () => {
     setIsDropActive(false)
     setIsCancelClick({ isCancel: false, remark: '' })
 
-    setRePosition({ ...position })
+    if (isViewOpen) {
+      await setRePosition({ ...position })
+
+      setIsShow(true)
+    } else {
+      setIsShow(false)
+    }
   }
 
   const autoGrowHeight = (e) => {
@@ -180,9 +187,9 @@ const EventCard = () => {
   }, [position])
 
   return (
-    <>
-      {isViewOpen && selectedEvent && (
-        <BoxContainer rePosition={rePosition}>
+    <BoxContainer rePosition={rePosition} className={`${isShow && 'active'}`}>
+      {isShow && isViewOpen && selectedEvent && (
+        <>
           <div className="card-header">
             {!selectedEvent.isCancelled && !selectedEvent.isRescheduled && (
               <div
@@ -399,9 +406,9 @@ const EventCard = () => {
               </div>
             )}
           </div>
-        </BoxContainer>
+        </>
       )}
-    </>
+    </BoxContainer>
   )
 }
 
@@ -454,7 +461,9 @@ const BoxContainer = styled.div`
     min-h-[14rem]
     max-h-[22rem]
     bg-white
+    opacity-0
     rounded-md
+    pointer-events-none
     overflow-y-scroll
     scrollbar-hide
     z-[100]
@@ -870,6 +879,13 @@ const BoxContainer = styled.div`
         }
       }
     }
+  }
+
+  &.active {
+    ${tw`
+      opacity-100
+      pointer-events-auto
+    `}
   }
 `
 

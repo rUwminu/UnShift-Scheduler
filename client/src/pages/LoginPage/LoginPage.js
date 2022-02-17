@@ -8,6 +8,9 @@ import { gql, useMutation } from '@apollo/client'
 // Redux Action
 import { signin } from '../../redux/action/userAction'
 
+// Svg
+import { DatePicker } from '../../assets/index'
+
 const LoginPage = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -161,20 +164,10 @@ const LoginPage = () => {
         </div>
       </div>
       <div className="banner-container">
-        <AnimaCard
-          size="lg"
-          position={{ left: 50, top: 40 }}
-          color={'green'}
-          zIdx={5}
-        >
-          <div className={`title-ph title-smp`}>Group Meeting</div>
-          <div className={`desc-ph`}>&nbsp;</div>
-          <div className={`desc-ph`}>&nbsp;</div>
-          <div className={`desc-ph`}>&nbsp;</div>
-        </AnimaCard>
+        <img src={DatePicker} alt="banner-svg" />
         <AnimaCard
           size="md"
-          position={{ left: 15, top: 56 }}
+          position={{ left: 0, top: 56 }}
           color={'purple'}
           zIdx={4}
         >
@@ -184,7 +177,7 @@ const LoginPage = () => {
         </AnimaCard>
         <AnimaCard
           size="md"
-          position={{ left: 34, top: 63 }}
+          position={{ left: 6, top: 26 }}
           color={'red'}
           zIdx={3}
         >
@@ -195,7 +188,7 @@ const LoginPage = () => {
         </AnimaCard>
         <AnimaCard
           size="md"
-          position={{ left: 70, top: 25 }}
+          position={{ left: 94, top: 15 }}
           color={'green'}
           zIdx={3}
         >
@@ -206,7 +199,7 @@ const LoginPage = () => {
         </AnimaCard>
         <AnimaCard
           size="sm"
-          position={{ left: 50, top: 90 }}
+          position={{ left: 80, top: 6 }}
           color={'purple'}
           zIdx={4}
         >
@@ -216,7 +209,7 @@ const LoginPage = () => {
         </AnimaCard>
         <AnimaCard
           size="sm"
-          position={{ left: 74, top: 76 }}
+          position={{ left: 93, top: 53 }}
           color={'red'}
           zIdx={4}
         >
@@ -226,7 +219,7 @@ const LoginPage = () => {
         </AnimaCard>
         <AnimaCard
           size="sm"
-          position={{ left: 25, top: 20 }}
+          position={{ left: 9, top: 64 }}
           color={'red'}
           zIdx={4}
         >
@@ -436,10 +429,20 @@ const BoxContainer = styled.div`
     ${tw`
       relative
       flex-grow
+      flex
+      items-center
+      justify-center
       h-full
       w-full
       min-h-[24rem]
     `}
+
+    img {
+      ${tw`
+        w-full
+        object-cover
+      `}
+    }
   }
 `
 

@@ -106,7 +106,12 @@ export const eventsReducer = (state = {}, action) => {
     case SET_SELECTED_EVENT:
       return { ...state, isViewOpen: true, selectedEvent: action.payload }
     case CLOSE_SELECTED_EVENT:
-      return { ...state, isViewOpen: false, selectedEvent: {}, position: {} }
+      return {
+        ...state,
+        isViewOpen: false,
+        selectedEvent: {},
+        position: { top: 0, bottom: 0, left: 0, right: 0 },
+      }
     case TOGGLE_EVENT_LIST_OPEN:
       return {
         ...state,

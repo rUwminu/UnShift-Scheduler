@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,6 +18,7 @@ import {
 } from '@mui/icons-material'
 
 const Header = () => {
+  const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
 
@@ -28,6 +29,7 @@ const Header = () => {
 
   const handleUserLogout = () => {
     dispatch(signout())
+    navigate('login')
   }
 
   return (
