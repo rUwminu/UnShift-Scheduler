@@ -3,10 +3,13 @@ import moment from 'moment'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { gql, useMutation } from '@apollo/client'
+import dayjs from 'dayjs'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { closeSelectedEvent } from '../../../redux/action/eventAction'
 import { toggleNotifyTagOpen } from '../../../redux/action/notifyAction'
+
+import { SmallCalender } from '../../index'
 
 // MUi icons
 import {
@@ -18,14 +21,22 @@ import {
   NoteAlt,
   EventBusy,
   PeopleAlt,
+  ArrowDropDown,
 } from '@mui/icons-material'
 
 const EventCard = () => {
   const dispatch = useDispatch()
 
-  const [isRescheduleClick, setIsRescheduled] = useState({
+  const userSignIn = useSelector((state) => state.userSignIn)
+  const { user } = userSignIn
+
+  const eventInfo = useSelector((state) => state.eventInfo)
+  const { isViewOpen, position, selectedEvent } = eventInfo
+
+  const [isRescheduled, setIsRescheduled] = useState({
     isReschedule: false,
-    planDate: '',
+    isDrop: false,
+    planDate: selectedEvent && dayjs(selectedEvent.planDate).add(1, 'day'),
   })
   const [isCancelClick, setIsCancelClick] = useState({
     isCancel: false,
@@ -40,12 +51,6 @@ const EventCard = () => {
     isTooLeft: false,
     isTooBottom: false,
   })
-
-  const userSignIn = useSelector((state) => state.userSignIn)
-  const { user } = userSignIn
-
-  const eventInfo = useSelector((state) => state.eventInfo)
-  const { isViewOpen, position, selectedEvent } = eventInfo
 
   const [updateEventComplete] = useMutation(UPDATE_EVENT_COMPLETE, {
     context: {
@@ -85,8 +90,8 @@ const EventCard = () => {
         Authorization: `Bearer${' '}${user && user.token}`,
       },
     },
-    update(data) {
-      console.log(data)
+    update() {
+      setIsRescheduled({ ...isRescheduled, isDrop: false, isReschedule: false })
     },
     onError(err) {
       console.log(err)
@@ -119,6 +124,36 @@ const EventCard = () => {
     dispatch(closeSelectedEvent())
   }
 
+  const handleGetDate = (type, date) => {
+    if (date !== 'All') {
+      setIsRescheduled({
+        ...isRescheduled,
+        planDate: dayjs(date).format('YYYY-MM-DDTHH:mm:ss'),
+      })
+    }
+  }
+
+  const handleToggleCalenderOpen = () => {
+    setIsRescheduled({ ...isRescheduled, isDrop: !isRescheduled.isDrop })
+  }
+
+  const handleCancelEvent = () => {
+    if (isCancelClick.remark.trim() !== '') {
+      updateEventCancel({
+        variables: {
+          evtId: selectedEvent.id,
+          remark: isCancelClick.remark,
+        },
+      })
+    }
+  }
+
+  const handleRescheduleEvent = () => {
+    updateEventReschedule({
+      variables: { evtId: selectedEvent.id, planDate: isRescheduled.planDate },
+    })
+  }
+
   const handleResize = () => {
     setIsDropActive(false)
     setIsCancelClick({ isCancel: false, remark: '' })
@@ -143,7 +178,7 @@ const EventCard = () => {
       {isViewOpen && selectedEvent && (
         <BoxContainer rePosition={rePosition}>
           <div className="card-header">
-            {!selectedEvent.isCancelled && (
+            {!selectedEvent.isCancelled && !selectedEvent.isRescheduled && (
               <div
                 className="icon-box btn"
                 onClick={() => setIsDropActive(!isDropActive)}
@@ -158,8 +193,8 @@ const EventCard = () => {
                       className="drop-item"
                       onClick={() =>
                         setIsRescheduled({
-                          ...isRescheduleClick,
-                          isReschedule: !isRescheduleClick.isReschedule,
+                          ...isRescheduled,
+                          isReschedule: !isRescheduled.isReschedule,
                         })
                       }
                     >
@@ -214,9 +249,30 @@ const EventCard = () => {
               <Event className="icon mt-2" />
               <div className="info-box">
                 <h1>{selectedEvent.title}</h1>
-                <span className="span-sm">
-                  {moment(selectedEvent.planDate).format('dddd, MMMM D')}
-                </span>
+                <div className="info-date-picker-box">
+                  <span className="span-sm">
+                    {moment(selectedEvent.planDate).format('dddd, MMMM D')}
+                  </span>
+                  {isRescheduled.isReschedule && (
+                    <div
+                      className="date-picker"
+                      onClick={() => handleToggleCalenderOpen()}
+                    >
+                      <span className="span-sm mr-2">To</span>
+                      <span className="span-sm">
+                        {dayjs(isRescheduled.planDate).format('dddd, MMMM D')}
+                      </span>
+                      <ArrowDropDown className="icon" />
+                      <SmallCalender
+                        isOpen={isRescheduled.isDrop}
+                        handleToggleCalenderOpen={handleToggleCalenderOpen}
+                        handleGetDate={handleGetDate}
+                        isStartEnd={false}
+                        isStart={false}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             <div className="card-item">
@@ -293,19 +349,10 @@ const EventCard = () => {
                 </div>
                 <div className="card-item items-center">
                   <AddTask className="icon hide" />
-                  <div className="cancel-btn-box">
+                  <div className="btn-box">
                     <div
                       className="cancel-btn btn"
-                      onClick={() => {
-                        if (isCancelClick.remark.trim() !== '') {
-                          updateEventCancel({
-                            variables: {
-                              evtId: selectedEvent.id,
-                              remark: isCancelClick.remark,
-                            },
-                          })
-                        }
-                      }}
+                      onClick={() => handleCancelEvent()}
                     >
                       Cancel Plan
                     </div>
@@ -320,6 +367,30 @@ const EventCard = () => {
                   </div>
                 </div>
               </>
+            )}
+            {isRescheduled.isReschedule && (
+              <div className="card-item items-center">
+                <AddTask className="icon hide" />
+                <div className="btn-box">
+                  <div
+                    className="resc-btn btn"
+                    onClick={() => handleRescheduleEvent()}
+                  >
+                    Reschedule Plan
+                  </div>
+                  <div
+                    className="discard-btn btn"
+                    onClick={() =>
+                      setIsRescheduled({
+                        ...isRescheduled,
+                        isReschedule: false,
+                      })
+                    }
+                  >
+                    Discard Change
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </BoxContainer>
@@ -373,7 +444,7 @@ const BoxContainer = styled.div`
     fixed
     p-4
     w-full
-    max-w-sm
+    max-w-md
     min-h-[14rem]
     max-h-[22rem]
     bg-white
@@ -443,6 +514,7 @@ const BoxContainer = styled.div`
           rounded-md
           overflow-hidden
           pointer-events-none
+          z-10
 
           transition-all
           duration-200
@@ -549,10 +621,42 @@ const BoxContainer = styled.div`
           `}
         }
 
-        span {
+        .info-date-picker-box {
           ${tw`
-            w-full
-          `}
+              flex
+              items-center
+              justify-start
+            `}
+
+          .date-picker {
+            ${tw`
+              relative
+              flex
+              items-center
+              font-semibold
+              py-1
+              px-2
+              min-w-[14rem]
+              rounded-md
+              cursor-pointer
+
+              transition
+              duration-200
+              ease-in-out
+            `}
+
+            .icon {
+              ${tw`
+                ml-1
+              `}
+            }
+
+            &:hover {
+              ${tw`
+                  bg-gray-200
+                `}
+            }
+          }
         }
 
         .span-base {
@@ -680,7 +784,7 @@ const BoxContainer = styled.div`
         `}
       }
 
-      .cancel-btn-box {
+      .btn-box {
         ${tw`
           flex
           items-center
@@ -712,6 +816,19 @@ const BoxContainer = styled.div`
           &:hover {
             ${tw`
               bg-red-600
+            `}
+          }
+        }
+
+        .resc-btn {
+          ${tw`
+            bg-yellow-500
+            text-gray-50
+          `}
+
+          &:hover {
+            ${tw`
+              bg-yellow-600
             `}
           }
         }
