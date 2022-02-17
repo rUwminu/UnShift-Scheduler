@@ -375,9 +375,7 @@ const DayEventCard = ({ event }) => {
       {event && (
         <DayCardContainer
           ref={elementRef}
-          className={`${user.id === id && 'self-evt-active'} ${
-            isSelected && 'active'
-          }`}
+          className={`${isSelected && 'active'}`}
           onClick={(e) => handleSelectedEventAndShowModel(e)}
         >
           <div className="evt-status-box">
@@ -567,7 +565,6 @@ const DayCardContainer = styled.div`
     py-1
     px-2
     rounded-3xl
-   
     cursor-pointer
 
     transition
@@ -674,9 +671,10 @@ const DayCardContainer = styled.div`
     }
   }
 
-  &.self-evt-active {
+  &:hover {
     ${tw`
-      
+      ring-1
+      ring-gray-400
     `}
   }
 

@@ -1133,6 +1133,7 @@ const ContactAddCardContainer = styled.div`
 
     .err-info {
       ${tw`
+        mr-3
         text-sm
         text-red-500
         font-semibold

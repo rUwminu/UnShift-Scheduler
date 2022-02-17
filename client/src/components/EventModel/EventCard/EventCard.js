@@ -121,6 +121,12 @@ const EventCard = () => {
   const handleCloseWindow = () => {
     setIsDropActive(false)
     setIsCancelClick({ isCancel: false, remark: '' })
+    setIsRescheduled({
+      isReschedule: false,
+      isDrop: false,
+      planDate: '',
+    })
+
     dispatch(closeSelectedEvent())
   }
 

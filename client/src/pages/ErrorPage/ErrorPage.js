@@ -1,32 +1,32 @@
-import React, { useState } from 'react'
+import React from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 
-const ErrorPage = () => {
-  const tempArr = [1, 2, 3, 4, 5]
+import ErrorSvg from './ErrorSvg'
 
-  return <BoxContainer>hello</BoxContainer>
+const ErrorPage = () => {
+  return (
+    <BoxContainer>
+      <div className="error-svg-box">
+        <ErrorSvg />
+      </div>
+    </BoxContainer>
+  )
 }
 
 const BoxContainer = styled.div`
   ${tw`
-    w-full
-    h-full
+    flex
+    items-center
+    justify-center
+    w-screen
+    h-screen
   `}
 
-  .inner-container {
+  .error-svg-box {
     ${tw`
-        border-2
-        border-black
-        flex
-        items-center
-        justify-start
-        mx-auto
-        h-full
-        w-full
-        max-w-6xl
-        overflow-x-scroll
-        scrollbar-hide
+      w-full
+      max-w-xl
     `}
   }
 `

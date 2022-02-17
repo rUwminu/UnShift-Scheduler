@@ -517,7 +517,7 @@ const DayCardContainer = styled.div`
     rounded-3xl
     cursor-pointer
 
-    transition
+    transition-all
     duration-200
     ease-in-out
   `}
@@ -619,6 +619,13 @@ const DayCardContainer = styled.div`
         text-gray-600
       `}
     }
+  }
+
+  &:hover {
+    ${tw`
+      ring-1
+      ring-gray-400
+    `}
   }
 
   &.active {
