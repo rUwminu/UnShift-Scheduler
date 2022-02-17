@@ -197,6 +197,8 @@ const EventCard = ({ allEvt, cardType }) => {
           className={`card-tag ${
             allEvt.isCancelled
               ? 'cancel-tag'
+              : allEvt.isRescheduled
+              ? 'resc-tag'
               : allEvt.isCompleted
               ? 'comp-tag'
               : 'fore-tag'
@@ -204,6 +206,8 @@ const EventCard = ({ allEvt, cardType }) => {
         >
           {allEvt.isCancelled
             ? 'Cancelled'
+            : allEvt.isRescheduled
+            ? 'Rescheduled'
             : allEvt.isCompleted
             ? 'Completed'
             : 'Forecast'}
@@ -410,6 +414,13 @@ const ListContainer = styled.div`
           ${tw`
             text-red-500
             border-red-500
+          `}
+        }
+
+        .resc-tag {
+          ${tw`
+            text-yellow-500
+            border-yellow-500
           `}
         }
 

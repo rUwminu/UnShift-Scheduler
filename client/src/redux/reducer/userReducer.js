@@ -54,7 +54,7 @@ export const userContactBookReducer = (state = {}, action) => {
     case ALL_USER_LIST:
       return { ...state, allUsers: action.payload }
     case USER_SIGNOUT:
-      return { ...state, allCustomerContact: [] }
+      return { ...state, allCustomerContact: [], allUsers: [] }
     default:
       return state
   }

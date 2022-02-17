@@ -371,53 +371,57 @@ const DayEventCard = ({ event }) => {
   }, [selectedEvent])
 
   return (
-    <DayCardContainer
-      ref={elementRef}
-      className={`${user.id === id && 'self-evt-active'} ${
-        isSelected && 'active'
-      }`}
-      onClick={(e) => handleSelectedEventAndShowModel(e)}
-    >
-      <div className="evt-status-box">
-        <div
-          className={`evt-status-dot ${
-            isCancelled
-              ? 'cancel-dot'
-              : isRescheduled
-              ? 'resc-dot'
-              : isCompleted
-              ? 'comp-dot'
-              : 'fore-dot'
+    <>
+      {event && (
+        <DayCardContainer
+          ref={elementRef}
+          className={`${user.id === id && 'self-evt-active'} ${
+            isSelected && 'active'
           }`}
-        />
-        <div
-          className={`evt-status-tag ${
-            isCancelled
-              ? 'cancel-tag'
-              : isRescheduled
-              ? 'resc-tag'
-              : isCompleted
-              ? 'comp-tag'
-              : 'fore-tag'
-          }`}
+          onClick={(e) => handleSelectedEventAndShowModel(e)}
         >
-          {isCancelled
-            ? 'Cancelled'
-            : isRescheduled
-            ? 'Rescheduled'
-            : isCompleted
-            ? 'Completed'
-            : 'Forecast'}
-        </div>
-      </div>
-      <div className="evt-info-box">
-        <div className="evt-info-company">{company}</div>
-        <div className="evt-info-personal">{title}</div>
-        <div className="evt-info-personal">
-          {user.id === id ? personal : username}
-        </div>
-      </div>
-    </DayCardContainer>
+          <div className="evt-status-box">
+            <div
+              className={`evt-status-dot ${
+                isCancelled
+                  ? 'cancel-dot'
+                  : isRescheduled
+                  ? 'resc-dot'
+                  : isCompleted
+                  ? 'comp-dot'
+                  : 'fore-dot'
+              }`}
+            />
+            <div
+              className={`evt-status-tag ${
+                isCancelled
+                  ? 'cancel-tag'
+                  : isRescheduled
+                  ? 'resc-tag'
+                  : isCompleted
+                  ? 'comp-tag'
+                  : 'fore-tag'
+              }`}
+            >
+              {isCancelled
+                ? 'Cancelled'
+                : isRescheduled
+                ? 'Rescheduled'
+                : isCompleted
+                ? 'Completed'
+                : 'Forecast'}
+            </div>
+          </div>
+          <div className="evt-info-box">
+            <div className="evt-info-company">{company}</div>
+            <div className="evt-info-personal">{title}</div>
+            <div className="evt-info-personal">
+              {user.id === id ? personal : username}
+            </div>
+          </div>
+        </DayCardContainer>
+      )}
+    </>
   )
 }
 

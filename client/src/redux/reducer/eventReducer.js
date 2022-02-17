@@ -171,6 +171,8 @@ export const eventsReducer = (state = {}, action) => {
         eventList: [],
         eventOtherList: [],
         eventFilterType: [],
+        eventReportList: [],
+        eventReportFilterType: [],
       }
     default:
       return state

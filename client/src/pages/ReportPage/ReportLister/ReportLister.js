@@ -45,6 +45,18 @@ const ReportLister = () => {
           endDate: dayjs(date).format('YYYY-MM-DD'),
         })
       }
+    } else {
+      if (type) {
+        setPickedDate({
+          ...pickedDate,
+          startDate: 'All',
+        })
+      } else if (!type) {
+        setPickedDate({
+          ...pickedDate,
+          endDate: 'All',
+        })
+      }
     }
   }
 
