@@ -11,3 +11,6 @@ export { default as EventList } from './EventModel/EventList/EventList'
 
 // Notify Tag Component
 export { default as NotifyTag } from './NotifyTag/NotifyTag'
+
+// Utils Components
+export { default as SmallCalender } from './SmallCalender/SmallCalender'

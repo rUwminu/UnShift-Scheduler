@@ -5,18 +5,17 @@ import styled from 'styled-components'
 import { useSelector } from 'react-redux'
 
 // Util
-import { getMonth } from '../../../../utils/GlobalUtils'
+import { getMonth } from '../../utils/GlobalUtils'
 
 // Mui icons
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 
 const SmallCalender = ({
   isOpen,
-  setPickedDate,
-  pickedDate,
-  setPickerControl,
+  handleToggleCalenderOpen,
+  handleGetDate,
+  isStartEnd,
   isStart,
-  isEnd,
 }) => {
   const [daySelected, setDaySelected] = useState()
   const [currentMonth, setCurrentMonth] = useState(getMonth())
@@ -40,25 +39,11 @@ const SmallCalender = ({
 
     if (day !== 'All') {
       setDaySelected(day)
-
-      if (isStart) {
-        setPickedDate({ ...pickedDate, startDate: day.format('YYYY-MM-DD') })
-      }
-
-      if (isEnd) {
-        setPickedDate({ ...pickedDate, endDate: day.format('YYYY-MM-DD') })
-      }
     } else {
       setDaySelected(null)
-
-      if (isStart) {
-        setPickedDate({ ...pickedDate, startDate: day })
-      }
-
-      if (isEnd) {
-        setPickedDate({ ...pickedDate, endDate: day })
-      }
     }
+
+    handleGetDate(isStart, day)
   }
 
   const getCurrentDay = (day) => {
@@ -88,12 +73,7 @@ const SmallCalender = ({
   return (
     <BoxContainer
       className={`${isOpen && 'active'}`}
-      onMouseLeave={() => {
-        setPickerControl({
-          isStartCalenderDrop: false,
-          isEndCalenderDrop: false,
-        })
-      }}
+      onMouseLeave={() => handleToggleCalenderOpen(isStart)}
     >
       {isOpen && (
         <>
@@ -134,15 +114,16 @@ const SmallCalender = ({
               </React.Fragment>
             ))}
           </div>
-          <div className="footer-container">
-            <div
-              className="all-btn"
-              onClick={(e) => handleToSelectedDayMonth(e, 'All')}
-            >
-              All {isStart && 'From Pass'}
-              {isEnd && 'From Start Date'}
+          {isStartEnd && (
+            <div className="footer-container">
+              <div
+                className="all-btn"
+                onClick={(e) => handleToSelectedDayMonth(e, 'All')}
+              >
+                All {isStart ? 'From Pass' : 'From Start Date'}
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
     </BoxContainer>

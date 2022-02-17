@@ -10,7 +10,7 @@ import { closeSelectedEvent } from '../../../redux/action/eventAction'
 import { ArrowDropDown } from '@mui/icons-material'
 
 // Child components
-import SmallCalender from './SmallCalender/SmallCalender'
+import { SmallCalender } from '../../../components/index'
 import UserLister from './UserLister/UserLister'
 import ManagerLister from './ManagerLister/ManagerLister'
 
@@ -31,6 +31,36 @@ const ReportLister = () => {
     isStartCalenderDrop: false,
     isEndCalenderDrop: false,
   })
+
+  const handleGetDate = (type, date) => {
+    if (date !== 'All') {
+      if (type) {
+        setPickedDate({
+          ...pickedDate,
+          startDate: dayjs(date).format('YYYY-MM-DD'),
+        })
+      } else if (!type) {
+        setPickedDate({
+          ...pickedDate,
+          endDate: dayjs(date).format('YYYY-MM-DD'),
+        })
+      }
+    }
+  }
+
+  const handleToggleCalenderOpen = (type) => {
+    if (type) {
+      setPickerControl({
+        ...pickerControl,
+        isStartCalenderDrop: !pickerControl.isStartCalenderDrop,
+      })
+    } else if (!type) {
+      setPickerControl({
+        ...pickerControl,
+        isEndCalenderDrop: !pickerControl.isEndCalenderDrop,
+      })
+    }
+  }
 
   useEffect(() => {
     if (isViewOpen)
@@ -58,11 +88,10 @@ const ReportLister = () => {
             <ArrowDropDown className="icon" />
             <SmallCalender
               isOpen={pickerControl.isStartCalenderDrop}
-              setPickedDate={setPickedDate}
-              pickedDate={pickedDate}
-              setPickerControl={setPickerControl}
+              handleToggleCalenderOpen={handleToggleCalenderOpen}
+              handleGetDate={handleGetDate}
+              isStartEnd={true}
               isStart={true}
-              isEnd={false}
             />
           </div>
           <span className="date-spacer" />
@@ -82,12 +111,10 @@ const ReportLister = () => {
             <ArrowDropDown className="icon" />
             <SmallCalender
               isOpen={pickerControl.isEndCalenderDrop}
-              setPickedDate={setPickedDate}
-              pickedDate={pickedDate}
-              setPickerControl={setPickerControl}
-              pickerControl={pickerControl}
+              handleToggleCalenderOpen={handleToggleCalenderOpen}
+              handleGetDate={handleGetDate}
+              isStartEnd={true}
               isStart={false}
-              isEnd={true}
             />
           </div>
         </div>
