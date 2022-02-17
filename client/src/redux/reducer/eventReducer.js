@@ -20,7 +20,7 @@ import {
 } from '../constant/eventConstants'
 
 export const eventsReducer = (state = {}, action) => {
-  let isExist = null
+  let isExist
 
   switch (action.type) {
     case TOGGLE_MODEL_OPEN:
@@ -43,10 +43,8 @@ export const eventsReducer = (state = {}, action) => {
       }
     case PUBSUB_EVENT_UPDATE:
       isExist =
-        state.eventReportOtherList.length > 0
-          ? state.eventReportOtherList.some(
-              (evt) => evt.id === action.payload.id
-            )
+        state.eventReportList.length > 0
+          ? state.eventReportList.some((evt) => evt.id === action.payload.id)
           : false
 
       if (isExist) {
@@ -55,9 +53,10 @@ export const eventsReducer = (state = {}, action) => {
           eventOtherList: state.eventOtherList.map((evt) =>
             evt.id === action.payload.id ? action.payload : evt
           ),
-          eventReportOtherList: state.eventReportOtherList.map((evt) =>
+          eventReportList: state.eventReportList.map((evt) =>
             evt.id === action.payload.id ? action.payload : evt
           ),
+          selectedEvent: state.isViewOpen ? action.payload : {},
         }
       }
 
@@ -66,6 +65,7 @@ export const eventsReducer = (state = {}, action) => {
         eventOtherList: state.eventOtherList.map((evt) =>
           evt.id === action.payload.id ? action.payload : evt
         ),
+        selectedEvent: state.isViewOpen ? action.payload : {},
       }
     case PUBSUB_SELF_EVENT_UPDATE:
       isExist =
