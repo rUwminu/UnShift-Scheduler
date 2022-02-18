@@ -316,11 +316,17 @@ const DayEventCard = ({ event }) => {
 
     const { innerHeight: height } = window
 
+    let isEleAtMiddle =
+      bounding.top >= height / 2 - 50 && bounding.top <= height + 50
+        ? true
+        : false
     let leftHeight = height - bounding.top
 
     const fixPosition = {
       top: bounding.top,
-      bottom: bounding.bottom,
+      bottom: isEleAtMiddle
+        ? bounding.bottom + bounding.bottom / 2
+        : bounding.bottom,
       left: bounding.left + 260,
       right: bounding.right,
       isTooLeft: true,

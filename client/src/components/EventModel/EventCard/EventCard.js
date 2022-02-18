@@ -33,6 +33,8 @@ const EventCard = () => {
   const eventInfo = useSelector((state) => state.eventInfo)
   const { isViewOpen, position, selectedEvent } = eventInfo
 
+  const [isShow, setIsShow] = useState(false)
+  const [isDropActive, setIsDropActive] = useState(false)
   const [isRescheduled, setIsRescheduled] = useState({
     isReschedule: false,
     isDrop: false,
@@ -42,8 +44,6 @@ const EventCard = () => {
     isCancel: false,
     remark: '',
   })
-  const [isDropActive, setIsDropActive] = useState(false)
-  const [isShow, setIsShow] = useState(false)
   const [rePosition, setRePosition] = useState({
     top: 0,
     bottom: 0,
@@ -119,6 +119,7 @@ const EventCard = () => {
     },
   })
 
+  // Handles control component view/show -----------------------------------------------
   const handleCloseWindow = () => {
     setIsDropActive(false)
     setIsCancelClick({ isCancel: false, remark: '' })
@@ -131,6 +132,38 @@ const EventCard = () => {
     dispatch(closeSelectedEvent())
   }
 
+  const handleToggleRescheduleOpen = () => {
+    // Reset Other open events
+    if (isCancelClick.isCancel) {
+      setIsCancelClick({
+        isCancel: false,
+        remark: '',
+      })
+    }
+
+    setIsRescheduled({
+      ...isRescheduled,
+      isReschedule: !isRescheduled.isReschedule,
+    })
+  }
+
+  const handleToggleCancelOpen = () => {
+    // Reset Other open events
+    if (isRescheduled.isReschedule) {
+      setIsRescheduled({ ...isRescheduled, isReschedule: false })
+    }
+
+    setIsCancelClick({
+      isCancel: !isCancelClick.isCancel,
+      remark: '',
+    })
+  }
+
+  const handleToggleCalenderOpen = () => {
+    setIsRescheduled({ ...isRescheduled, isDrop: !isRescheduled.isDrop })
+  }
+
+  // Handles perform save and get data ----------------------------------------------
   const handleGetDate = (type, date) => {
     if (date !== 'All') {
       setIsRescheduled({
@@ -138,10 +171,6 @@ const EventCard = () => {
         planDate: dayjs(date).format('YYYY-MM-DDTHH:mm:ss'),
       })
     }
-  }
-
-  const handleToggleCalenderOpen = () => {
-    setIsRescheduled({ ...isRescheduled, isDrop: !isRescheduled.isDrop })
   }
 
   const handleCancelEvent = () => {
@@ -161,6 +190,7 @@ const EventCard = () => {
     })
   }
 
+  // Handles control components position and style changes --------------------------
   const handleResize = async () => {
     setIsDropActive(false)
     setIsCancelClick({ isCancel: false, remark: '' })
@@ -184,7 +214,7 @@ const EventCard = () => {
     if (position) {
       handleResize()
     }
-  }, [position])
+  }, [position, isViewOpen])
 
   return (
     <BoxContainer rePosition={rePosition} className={`${isShow && 'active'}`}>
@@ -204,12 +234,7 @@ const EventCard = () => {
                   {!selectedEvent.isCompleted && (
                     <div
                       className="drop-item"
-                      onClick={() =>
-                        setIsRescheduled({
-                          ...isRescheduled,
-                          isReschedule: !isRescheduled.isReschedule,
-                        })
-                      }
+                      onClick={() => handleToggleRescheduleOpen()}
                     >
                       Reschedule Plan
                     </div>
@@ -240,12 +265,7 @@ const EventCard = () => {
                   {!selectedEvent.isCompleted && (
                     <div
                       className="drop-item"
-                      onClick={() =>
-                        setIsCancelClick({
-                          ...isCancelClick,
-                          isCancel: !isCancelClick.isCancel,
-                        })
-                      }
+                      onClick={() => handleToggleCancelOpen()}
                     >
                       Cancel
                     </div>
@@ -371,9 +391,7 @@ const EventCard = () => {
                     </div>
                     <div
                       className="discard-btn btn"
-                      onClick={() =>
-                        setIsCancelClick({ ...isCancelClick, isCancel: false })
-                      }
+                      onClick={() => handleToggleCancelOpen()}
                     >
                       Discard Change
                     </div>
@@ -459,7 +477,7 @@ const BoxContainer = styled.div`
     w-full
     max-w-md
     min-h-[14rem]
-    max-h-[22rem]
+    max-h-[24rem]
     bg-white
     opacity-0
     rounded-md

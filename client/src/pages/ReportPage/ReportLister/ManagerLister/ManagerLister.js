@@ -15,6 +15,7 @@ import {
 } from '../../../../redux/action/eventAction'
 
 const ManagerLister = ({ pickedDate }) => {
+  const parentEleRef = useRef()
   const dispatch = useDispatch()
 
   const [renderList, setRenderList] = useState([])
@@ -304,9 +305,13 @@ const ManagerLister = ({ pickedDate }) => {
                       </div>
                     </div>
 
-                    <div className="evt-ls-container">
+                    <div className="evt-ls-container" ref={parentEleRef}>
                       {evtGroup.thisDayEvt.map((evt) => (
-                        <DayEventCard key={evt.id} event={evt} />
+                        <DayEventCard
+                          key={evt.id}
+                          event={evt}
+                          parentEleRef={parentEleRef}
+                        />
                       ))}
                     </div>
                   </div>
@@ -319,7 +324,7 @@ const ManagerLister = ({ pickedDate }) => {
   )
 }
 
-const DayEventCard = ({ event }) => {
+const DayEventCard = ({ event, parentEleRef }) => {
   const elementRef = useRef()
   const dispatch = useDispatch()
 
@@ -347,11 +352,17 @@ const DayEventCard = ({ event }) => {
 
     const { innerHeight: height } = window
 
+    let isEleAtMiddle =
+      bounding.top >= height / 2 - 20 && bounding.top <= height / 2 + 20
+        ? true
+        : false
     let leftHeight = height - bounding.top
 
     const fixPosition = {
       top: bounding.top,
-      bottom: bounding.bottom,
+      bottom: isEleAtMiddle
+        ? bounding.bottom + bounding.bottom / 2
+        : bounding.bottom + 16,
       left: bounding.left + 260,
       right: bounding.right,
       isTooLeft: true,
