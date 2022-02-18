@@ -242,6 +242,38 @@ const BoxContainer = styled.div`
       `}
     }
 
+    .list-control-box {
+      ${tw`
+        flex
+        items-center
+        justify-start
+        mb-1
+      `}
+
+      .generate-btn {
+        ${tw`
+          ml-6
+          py-1
+          px-4
+          font-semibold
+          bg-blue-500
+          text-gray-50
+          cursor-pointer
+          rounded-md
+
+          transition
+          duration-200
+          ease-in-out
+        `}
+
+        &:hover {
+          ${tw`
+            bg-blue-600
+          `}
+        }
+      }
+    }
+
     .datetime-picker-container {
       ${tw`
         flex

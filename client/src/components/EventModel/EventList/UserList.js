@@ -118,8 +118,6 @@ const EventCard = ({ allEvt }) => {
       isTooBottom: leftHeight <= 350 ? true : false,
     }
 
-    console.log(fixPosition)
-
     dispatch(setEventBoxPosition(fixPosition))
     dispatch(setSelectEvent(allEvt))
   }
@@ -139,6 +137,8 @@ const EventCard = ({ allEvt }) => {
           className={`card-tag ${
             allEvt.isCancelled
               ? 'cancel-tag'
+              : allEvt.isRescheduled
+              ? 'resc-tag'
               : allEvt.isCompleted
               ? 'comp-tag'
               : 'fore-tag'
@@ -146,6 +146,8 @@ const EventCard = ({ allEvt }) => {
         >
           {allEvt.isCancelled
             ? 'Cancelled'
+            : allEvt.isRescheduled
+            ? 'Rescheduled'
             : allEvt.isCompleted
             ? 'Completed'
             : 'Forecast'}
@@ -259,6 +261,13 @@ const ListContainer = styled.div`
           `}
         }
 
+        .resc-tag {
+          ${tw`
+            text-yellow-500
+            border-yellow-500
+          `}
+        }
+
         .comp-tag {
           ${tw`
             text-green-500
@@ -278,6 +287,12 @@ const ListContainer = styled.div`
     .card-all-evt {
       ${tw`
         border-blue-500
+      `}
+    }
+
+    .card-resc-evt {
+      ${tw`
+        border-yellow-500
       `}
     }
 

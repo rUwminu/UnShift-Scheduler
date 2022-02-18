@@ -392,7 +392,7 @@ const DayEventCard = ({ event }) => {
     const { innerHeight: height } = window
 
     let isEleAtMiddle =
-      bounding.top >= height / 2 - 50 && bounding.top <= height + 50
+      bounding.top >= height / 2 - 20 && bounding.top <= height / 2 + 20
         ? true
         : false
     let leftHeight = height - bounding.top
@@ -401,7 +401,7 @@ const DayEventCard = ({ event }) => {
       top: bounding.top,
       bottom: isEleAtMiddle
         ? bounding.bottom + bounding.bottom / 2
-        : bounding.bottom,
+        : bounding.bottom + 16,
       left: bounding.left + 260,
       right: bounding.right,
       isTooLeft: true,
