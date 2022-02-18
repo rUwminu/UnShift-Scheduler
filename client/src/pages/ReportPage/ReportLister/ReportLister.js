@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import * as XLSX from 'xlsx'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
@@ -31,6 +32,7 @@ const ReportLister = () => {
     isStartCalenderDrop: false,
     isEndCalenderDrop: false,
   })
+  const [reportList, setReportList] = useState([])
 
   const handleGetDate = (type, date) => {
     if (date !== 'All') {
@@ -74,6 +76,70 @@ const ReportLister = () => {
     }
   }
 
+  const handleGenerateReport = () => {
+    const exportDateTime = dayjs().format().toString()
+
+    const newData = reportList.map((evt) => {
+      const {
+        user: docUser,
+        customer,
+        title,
+        description,
+        planDate,
+        compDate,
+        remark,
+        isCancelled,
+        isCompleted,
+        isRescheduled,
+      } = evt
+
+      return {
+        aSaleman: docUser ? docUser.username : user.username,
+        bCustomer: customer.company,
+        cPersonal: customer.personal,
+        dTitle: title,
+        eDescription: description,
+        'fPlan Date': dayjs(planDate).format('DD/MM/YYYY'),
+        'gLast Update':
+          compDate !== '' ? dayjs(compDate).format('DD/MM/YYYY') : '',
+        hStatus: isCancelled
+          ? 'Cancel'
+          : isRescheduled
+          ? 'Reschedule'
+          : isCompleted
+          ? 'Complete'
+          : 'Forecast',
+        'iCancel Remark': remark,
+      }
+    })
+
+    var wscols = [
+      { wch: 16 },
+      { wch: 40 },
+      { wch: 20 },
+      { wch: 20 },
+      { wch: 40 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 40 },
+    ]
+
+    const workSheet = XLSX.utils.json_to_sheet(newData)
+    const workBook = XLSX.utils.book_new()
+
+    workSheet['!cols'] = wscols
+
+    XLSX.utils.book_append_sheet(workBook, workSheet, 'Events Report')
+
+    //Buffer
+    let buf = XLSX.write(workBook, { bookType: 'xlsx', type: 'buffer' })
+    //Binary string
+    XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
+    //Download
+    XLSX.writeFile(workBook, `EventReport${exportDateTime}.xlsx`)
+  }
+
   useEffect(() => {
     if (isViewOpen)
       setPickerControl({ isStartCalenderDrop: false, isEndCalenderDrop: false })
@@ -83,59 +149,67 @@ const ReportLister = () => {
     <BoxContainer>
       <div className="list-header">
         <h1>Scheduled Event</h1>
-        <div className="datetime-picker-container">
-          <div
-            className="date-picker"
-            onClick={() => {
-              setPickerControl({
-                isStartCalenderDrop: !pickedDate.isStartCalenderDrop,
-                isEndCalenderDrop: false,
-              })
+        <div className="list-control-box">
+          <div className="datetime-picker-container">
+            <div
+              className="date-picker"
+              onClick={() => {
+                setPickerControl({
+                  isStartCalenderDrop: !pickedDate.isStartCalenderDrop,
+                  isEndCalenderDrop: false,
+                })
 
-              if (isViewOpen) dispatch(closeSelectedEvent())
-            }}
-          >
-            <h2>From</h2>
-            <p>{pickedDate.startDate}</p>
-            <ArrowDropDown className="icon" />
-            <SmallCalender
-              isOpen={pickerControl.isStartCalenderDrop}
-              handleToggleCalenderOpen={handleToggleCalenderOpen}
-              handleGetDate={handleGetDate}
-              isStartEnd={true}
-              isStart={true}
-            />
+                if (isViewOpen) dispatch(closeSelectedEvent())
+              }}
+            >
+              <h2>From</h2>
+              <p>{pickedDate.startDate}</p>
+              <ArrowDropDown className="icon" />
+              <SmallCalender
+                isOpen={pickerControl.isStartCalenderDrop}
+                handleToggleCalenderOpen={handleToggleCalenderOpen}
+                handleGetDate={handleGetDate}
+                isStartEnd={true}
+                isStart={true}
+              />
+            </div>
+            <span className="date-spacer" />
+            <div
+              className="date-picker"
+              onClick={() => {
+                setPickerControl({
+                  isStartCalenderDrop: false,
+                  isEndCalenderDrop: !pickedDate.isEndCalenderDrop,
+                })
+
+                if (isViewOpen) dispatch(closeSelectedEvent())
+              }}
+            >
+              <h2>To</h2>
+              <p>{pickedDate.endDate}</p>
+              <ArrowDropDown className="icon" />
+              <SmallCalender
+                isOpen={pickerControl.isEndCalenderDrop}
+                handleToggleCalenderOpen={handleToggleCalenderOpen}
+                handleGetDate={handleGetDate}
+                isStartEnd={true}
+                isStart={false}
+              />
+            </div>
           </div>
-          <span className="date-spacer" />
-          <div
-            className="date-picker"
-            onClick={() => {
-              setPickerControl({
-                isStartCalenderDrop: false,
-                isEndCalenderDrop: !pickedDate.isEndCalenderDrop,
-              })
-
-              if (isViewOpen) dispatch(closeSelectedEvent())
-            }}
-          >
-            <h2>To</h2>
-            <p>{pickedDate.endDate}</p>
-            <ArrowDropDown className="icon" />
-            <SmallCalender
-              isOpen={pickerControl.isEndCalenderDrop}
-              handleToggleCalenderOpen={handleToggleCalenderOpen}
-              handleGetDate={handleGetDate}
-              isStartEnd={true}
-              isStart={false}
-            />
+          <div className="generate-btn" onClick={() => handleGenerateReport()}>
+            Get Report
           </div>
         </div>
       </div>
       <div className="list-body">
         {user && user.isManager ? (
-          <ManagerLister pickedDate={pickedDate} />
+          <ManagerLister
+            pickedDate={pickedDate}
+            setReportList={setReportList}
+          />
         ) : (
-          <UserLister pickedDate={pickedDate} />
+          <UserLister pickedDate={pickedDate} setReportList={setReportList} />
         )}
       </div>
     </BoxContainer>

@@ -13,7 +13,7 @@ import {
   setEventBoxPosition,
 } from '../../../../redux/action/eventAction'
 
-const UserLister = ({ pickedDate }) => {
+const UserLister = ({ pickedDate, setReportList }) => {
   const dispatch = useDispatch()
 
   const [renderList, setRenderList] = useState([])
@@ -83,6 +83,53 @@ const UserLister = ({ pickedDate }) => {
 
     // Trigger filter function
     handleAnyEvtFilterType(EvtByYear.reverse())
+
+    // Triger filter for report generate
+    handleReportEvetFilterType(tempArr)
+  }
+
+  const handleReportEvetFilterType = async (allEvt) => {
+    var tempArr = allEvt
+
+    if (eventReportFilterType.length > 0) {
+      await eventReportFilterType.forEach((type) => {
+        if (type === 'Completed') {
+          tempArr = tempArr.filter((evt) =>
+            evt.isCancelled
+              ? evt
+              : evt.isRescheduled
+              ? evt
+              : evt.isCompleted !== true
+          )
+        } else if (type === 'Forecast') {
+          tempArr = tempArr.filter((evt) =>
+            evt.isCancelled
+              ? evt
+              : evt.isRescheduled
+              ? evt
+              : evt.isCompleted !== false
+          )
+        } else if (type === 'Cancelled') {
+          tempArr = tempArr.filter((evt) =>
+            evt.isRescheduled ? evt : evt.isCancelled !== true
+          )
+        } else if (type === 'Rescheduled') {
+          tempArr = tempArr.filter((evt) => evt.isRescheduled !== true)
+        } else if (type === 'Meetup') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Customer Meetup')
+        } else if (type === 'Sample') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Sample Deliver')
+        } else if (type === 'Test') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Sample Test')
+        } else if (type === 'Goods') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Goods Deliver')
+        } else if (type === 'Cheque') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Cheque Collect')
+        }
+      })
+    }
+
+    setReportList(tempArr)
   }
 
   const handleAnyEvtFilterType = (allEvt) => {
@@ -177,6 +224,34 @@ const UserLister = ({ pickedDate }) => {
                   ...ls,
                   thisDayEvt: ls.thisDayEvt.filter(
                     (evt) => evt.title !== 'Sample Deliver'
+                  ),
+                }
+              }),
+            }
+          })
+        } else if (type === 'Test') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter(
+                    (evt) => evt.title !== 'Sample Test'
+                  ),
+                }
+              }),
+            }
+          })
+        } else if (type === 'Goods') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter(
+                    (evt) => evt.title !== 'Goods Deliver'
                   ),
                 }
               }),

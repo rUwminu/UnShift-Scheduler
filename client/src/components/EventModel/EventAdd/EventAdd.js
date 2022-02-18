@@ -21,9 +21,10 @@ import {
 } from '@mui/icons-material'
 
 const dropTitleDefaultValue = [
-  'F&B Visit',
   'Customer Meetup',
   'Sample Deliver',
+  'Sample Test',
+  'Goods Deliver',
   'Cheque Collect',
 ]
 
