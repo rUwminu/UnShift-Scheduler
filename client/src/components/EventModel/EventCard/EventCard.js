@@ -61,7 +61,10 @@ const EventCard = () => {
     },
     update() {
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: true, info: 'Schedule Updated' })
+        toggleNotifyTagOpen({
+          isSuccess: true,
+          info: 'Schedule Updated',
+        })
       )
     },
     onError(err) {
@@ -77,7 +80,10 @@ const EventCard = () => {
     },
     update(_, { data }) {
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: true, info: 'Schedule Updated' })
+        toggleNotifyTagOpen({
+          isSuccess: true,
+          info: 'Schedule Updated',
+        })
       )
     },
     onError(err) {
@@ -93,6 +99,10 @@ const EventCard = () => {
     },
     update() {
       setIsRescheduled({ ...isRescheduled, isDrop: false, isReschedule: false })
+      toggleNotifyTagOpen({
+        isSuccess: true,
+        info: 'Plan Rescheduled',
+      })
     },
     onError(err) {
       console.log(err)
@@ -111,7 +121,10 @@ const EventCard = () => {
         remark: '',
       })
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: false, info: 'Schedule Cancelled' })
+        toggleNotifyTagOpen({
+          isSuccess: false,
+          info: 'Schedule Cancelled',
+        })
       )
     },
     onError(err) {

@@ -5,23 +5,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toggleNotifyTagOpen } from '../../redux/action/notifyAction'
 
 const NotifyTag = () => {
+  var initialTimeout
   const dispatch = useDispatch()
 
   const notifyInfo = useSelector((state) => state.notifyInfo)
   const { isShow, isSuccess, info } = notifyInfo
-
-  useEffect(() => {
-    if (isShow) {
-      setTimeout(() => {
-        dispatch(
-          toggleNotifyTagOpen({
-            isSuccess: null,
-            info: '',
-          })
-        )
-      }, 5000)
-    }
-  }, [isShow])
 
   return (
     <BoxContainer isShow={isShow} isSuccess={isSuccess}>

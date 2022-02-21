@@ -65,12 +65,19 @@ const EventAdd = () => {
     },
     update() {
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: true, info: 'Schedule Created' })
+        toggleNotifyTagOpen({
+          isSuccess: true,
+          info: 'Schedule Created',
+        })
       )
     },
     onError(err) {
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: false, info: 'Error Create Event' })
+        toggleNotifyTagOpen({
+          isShow: true,
+          isSuccess: false,
+          info: 'Error Create Event',
+        })
       )
     },
   })
