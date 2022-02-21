@@ -125,6 +125,8 @@ const UserLister = ({ pickedDate, setReportList }) => {
           tempArr = tempArr.filter((evt) => evt.title !== 'Goods Deliver')
         } else if (type === 'Cheque') {
           tempArr = tempArr.filter((evt) => evt.title !== 'Cheque Collect')
+        } else if (type === 'Other') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Other')
         }
       })
 
@@ -266,6 +268,20 @@ const UserLister = ({ pickedDate, setReportList }) => {
                   ...ls,
                   thisDayEvt: ls.thisDayEvt.filter(
                     (evt) => evt.title !== 'Cheque Collect'
+                  ),
+                }
+              }),
+            }
+          })
+        } else if (type === 'Other') {
+          tempArr = tempArr.map((grp) => {
+            return {
+              ...grp,
+              evtList: grp.evtList.map((ls) => {
+                return {
+                  ...ls,
+                  thisDayEvt: ls.thisDayEvt.filter(
+                    (evt) => evt.title !== 'Other'
                   ),
                 }
               }),

@@ -133,6 +133,17 @@ const ReportSidebar = () => {
             />
             <span>Cheque Collect</span>
           </div>
+          <div
+            className="check-item"
+            onClick={() => handleAddFilterType('Other')}
+          >
+            <div
+              className={`check-box default-check-box ${
+                eventReportFilterType.includes('Other') && 'in-active'
+              }`}
+            />
+            <span>Other</span>
+          </div>
         </div>
 
         {allUsers && allUsers.length > 0 && (

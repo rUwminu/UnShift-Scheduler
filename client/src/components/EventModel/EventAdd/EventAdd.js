@@ -26,6 +26,7 @@ const dropTitleDefaultValue = [
   'Sample Test',
   'Goods Deliver',
   'Cheque Collect',
+  'Other',
 ]
 
 const EventAdd = () => {
