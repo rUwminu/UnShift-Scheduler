@@ -127,9 +127,9 @@ const UserLister = ({ pickedDate, setReportList }) => {
           tempArr = tempArr.filter((evt) => evt.title !== 'Cheque Collect')
         }
       })
-    }
 
-    setReportList(tempArr)
+      return setReportList(tempArr)
+    }
   }
 
   const handleAnyEvtFilterType = (allEvt) => {
@@ -367,7 +367,7 @@ const UserLister = ({ pickedDate, setReportList }) => {
   )
 }
 
-const DayEventCard = ({ event }) => {
+const DayEventCard = ({ event, setReportList }) => {
   const elementRef = useRef()
   const dispatch = useDispatch()
 

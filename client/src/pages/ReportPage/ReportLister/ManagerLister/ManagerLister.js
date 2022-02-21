@@ -256,8 +256,6 @@ const ManagerLister = ({ pickedDate, setReportList }) => {
 
       return setRenderList(tempArr)
     }
-
-    return setRenderList(allEvt)
   }
 
   const handleReportEvetFilterType = async (allEvt) => {

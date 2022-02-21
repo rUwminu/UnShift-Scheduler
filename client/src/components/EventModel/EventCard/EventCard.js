@@ -38,7 +38,7 @@ const EventCard = () => {
   const [isRescheduled, setIsRescheduled] = useState({
     isReschedule: false,
     isDrop: false,
-    planDate: selectedEvent && dayjs(selectedEvent.planDate).add(1, 'day'),
+    planDate: '',
   })
   const [isCancelClick, setIsCancelClick] = useState({
     isCancel: false,
@@ -122,7 +122,7 @@ const EventCard = () => {
       })
       dispatch(
         toggleNotifyTagOpen({
-          isSuccess: false,
+          isSuccess: true,
           info: 'Schedule Cancelled',
         })
       )
@@ -198,9 +198,24 @@ const EventCard = () => {
   }
 
   const handleRescheduleEvent = () => {
-    updateEventReschedule({
-      variables: { evtId: selectedEvent.id, planDate: isRescheduled.planDate },
-    })
+    if (
+      selectedEvent.planDate !==
+      dayjs(isRescheduled.planDate).format('YYYY-MM-DDTHH:mm:ss')
+    ) {
+      updateEventReschedule({
+        variables: {
+          evtId: selectedEvent.id,
+          planDate: isRescheduled.planDate,
+        },
+      })
+    } else {
+      dispatch(
+        toggleNotifyTagOpen({
+          isSuccess: false,
+          info: 'Reschedule To Same Date',
+        })
+      )
+    }
   }
 
   // Handles control components position and style changes --------------------------
@@ -228,6 +243,14 @@ const EventCard = () => {
       handleResize()
     }
   }, [position, isViewOpen])
+
+  useEffect(() => {
+    if (selectedEvent)
+      setIsRescheduled({
+        ...isRescheduled,
+        planDate: dayjs(selectedEvent.planDate).add(1, 'day'),
+      })
+  }, [selectedEvent])
 
   return (
     <BoxContainer rePosition={rePosition} className={`${isShow && 'active'}`}>
