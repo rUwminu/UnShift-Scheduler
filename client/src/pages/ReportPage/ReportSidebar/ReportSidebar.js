@@ -168,6 +168,9 @@ const BoxContainer = styled.div`
     h-full
     w-full
     md:max-w-[16.5rem]
+
+    overflow-y-scroll
+    scrollbar-hide
   `}
 
   .header {

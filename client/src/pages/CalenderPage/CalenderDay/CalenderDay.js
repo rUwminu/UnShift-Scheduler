@@ -128,7 +128,11 @@ const CalenderDay = ({ day, rowIdx }) => {
         </div>
       )}
       <div className="evt-container">
-        {todayEvt && todayEvt.map((x, idx) => <EvtDot key={idx} x={x} />)}
+        {todayEvt &&
+          todayEvt.slice(0, 5).map((x, idx) => <EvtDot key={idx} x={x} />)}
+        {todayEvt.length > 5 && (
+          <div className="evt-more">+{todayEvt.length - 5}</div>
+        )}
       </div>
     </BoxContainer>
   )
@@ -353,6 +357,14 @@ const BoxContainer = styled.div`
           transform: translateX(calc(-100% + -3px));
         }
       }
+    }
+
+    .evt-more {
+      ${tw`
+        text-sm
+        font-bold
+        text-gray-600
+      `}
     }
   }
 `
