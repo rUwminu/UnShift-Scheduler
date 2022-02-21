@@ -111,6 +111,7 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
   const [inputValue, setInputValue] = useState({
     company: '',
     personal: '',
+    position: '',
     companycontact: '',
     personalcontact: '',
     address: '',
@@ -130,6 +131,7 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
       setInputValue({
         company: '',
         personal: '',
+        position: '',
         companycontact: '',
         personalcontact: '',
         address: '',
@@ -152,7 +154,8 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
       errType: '',
     })
 
-    let isEmpty = Object.values(inputValue).some(
+    const { personalcontact, ...restInputValue } = inputValue
+    let isEmpty = Object.values(restInputValue).some(
       (x) => x === null || x.trim() === ''
     )
 
@@ -166,11 +169,12 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
       const cContact = inputValue.companycontact
 
       const addDashToPContact =
-        pContact.substring(0, 3) + '-' + pContact.substring(3)
-      const addSpaceToPContact =
-        addDashToPContact.substring(0, addDashToPContact.length - 4) +
-        ' ' +
-        addDashToPContact.substring(addDashToPContact.length - 4)
+        pContact && pContact.substring(0, 3) + '-' + pContact.substring(3)
+      const addSpaceToPContact = pContact
+        ? addDashToPContact.substring(0, addDashToPContact.length - 4) +
+          ' ' +
+          addDashToPContact.substring(addDashToPContact.length - 4)
+        : ''
 
       const addSpaceToCContact =
         cContact.substring(0, 2) + ' ' + cContact.substring(2)
@@ -231,10 +235,25 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
           </div>
         </div>
         <div className="card-item items-center">
+          <PersonAdd className="icon hide" />
+          <div className="input-box">
+            <input
+              type="text"
+              className="input"
+              value={inputValue.position}
+              onChange={(e) =>
+                setInputValue({ ...inputValue, position: e.target.value })
+              }
+              placeholder="Personal Position"
+              required
+            />
+          </div>
+        </div>
+        <div className="card-item items-center">
           <PhoneIphone className="icon" />
           <div className="input-box input-box-short">
             <input
-              type="text"
+              type="tel"
               className="input"
               value={inputValue.personalcontact}
               onChange={(e) =>
@@ -244,7 +263,7 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
                 })
               }
               placeholder="Personal Contact"
-              required
+              pattern="(\01)[0-9]{9,10}"
             />
           </div>
         </div>
@@ -252,7 +271,7 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
           <Apartment className="icon" />
           <div className="input-box input-box-short">
             <input
-              type="text"
+              type="tel"
               className="input"
               value={inputValue.companycontact}
               onChange={(e) =>
@@ -262,6 +281,7 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
                 })
               }
               placeholder="Company Contact"
+              pattern="(0)[0-9]{8}"
               required
             />
           </div>
@@ -328,8 +348,26 @@ const ContactCard = ({
   }
 
   const handleSaveChange = () => {
+    const pContact = mutContact.personalcontact
+    const cContact = mutContact.companycontact.replace(/\s/g, '')
+
+    const addDashToPContact =
+      pContact && pContact.substring(0, 3) + '-' + pContact.substring(3)
+    const addSpaceToPContact = pContact
+      ? addDashToPContact.substring(0, addDashToPContact.length - 4) +
+        ' ' +
+        addDashToPContact.substring(addDashToPContact.length - 4)
+      : ''
+
+    const addSpaceToCContact =
+      cContact.substring(0, 2) + ' ' + cContact.substring(2)
+
     updateCustomerDetail({
-      variables: { ...mutContact },
+      variables: {
+        ...mutContact,
+        personalcontact: addSpaceToPContact,
+        companycontact: addSpaceToCContact,
+      },
     })
 
     setEditControl({ isEdit: false, isChange: false })
@@ -403,35 +441,73 @@ const ContactCard = ({
               </div>
             </div>
           </div>
-          <input
-            className="input-box personal-input"
-            type="text"
-            value={
-              editControl.isEdit ? mutContact.personal : oriContact.personal
-            }
-            onChange={(e) =>
-              setMutContact({ ...mutContact, personal: e.target.value })
-            }
-          />
+          <div className="personal-info-box">
+            <input
+              className="input-box personal-input"
+              type="text"
+              value={
+                editControl.isEdit ? mutContact.personal : oriContact.personal
+              }
+              onChange={(e) =>
+                setMutContact({ ...mutContact, personal: e.target.value })
+              }
+            />
+            <input
+              className="input-box personal-input"
+              type="text"
+              value={
+                editControl.isEdit ? mutContact.position : oriContact.position
+              }
+              onChange={(e) =>
+                setMutContact({ ...mutContact, position: e.target.value })
+              }
+            />
+          </div>
+
           <div className="contact-number-box">
-            <div className="contact-number-input-box">
-              <span>P:</span>
-              <input
-                className="input-box contact-input"
-                type="text"
-                value={
-                  editControl.isEdit
-                    ? mutContact.personalcontact
-                    : oriContact.personalcontact
-                }
-                onChange={(e) =>
-                  setMutContact({
-                    ...mutContact,
-                    personalcontact: e.target.value,
-                  })
-                }
-              />
-            </div>
+            {oriContact.personalcontact !== '' ? (
+              <div className="contact-number-input-box">
+                <span>P:</span>
+                <input
+                  className="input-box contact-input"
+                  type="tel"
+                  value={
+                    editControl.isEdit
+                      ? mutContact.personalcontact
+                      : oriContact.personalcontact
+                  }
+                  onChange={(e) =>
+                    setMutContact({
+                      ...mutContact,
+                      personalcontact: e.target.value,
+                    })
+                  }
+                  pattern="(\01)[0-9]{9,10}"
+                />
+              </div>
+            ) : (
+              editControl.isEdit && (
+                <div className="contact-number-input-box">
+                  <span>P:</span>
+                  <input
+                    className="input-box contact-input"
+                    type="tel"
+                    value={
+                      editControl.isEdit
+                        ? mutContact.personalcontact
+                        : oriContact.personalcontact
+                    }
+                    onChange={(e) =>
+                      setMutContact({
+                        ...mutContact,
+                        personalcontact: e.target.value,
+                      })
+                    }
+                    pattern="(\01)[0-9]{9,10}"
+                  />
+                </div>
+              )
+            )}
             <div className="contact-number-input-box">
               <span>C:</span>
               <input
@@ -448,6 +524,8 @@ const ContactCard = ({
                     companycontact: e.target.value,
                   })
                 }
+                pattern="(0)[0-9]{8}"
+                required
               />
             </div>
           </div>
@@ -483,7 +561,8 @@ const CREATE_CUSTOMER_CONTACT = gql`
   mutation createNewCustomer(
     $personal: String!
     $company: String!
-    $personalcontact: String!
+    $position: String!
+    $personalcontact: String
     $companycontact: String!
     $address: String!
   ) {
@@ -491,6 +570,7 @@ const CREATE_CUSTOMER_CONTACT = gql`
       createCustomerInput: {
         personal: $personal
         company: $company
+        position: $position
         personalcontact: $personalcontact
         companycontact: $companycontact
         address: $address
@@ -499,6 +579,7 @@ const CREATE_CUSTOMER_CONTACT = gql`
       id
       personal
       company
+      position
       personalcontact
       companycontact
       address
@@ -509,17 +590,19 @@ const CREATE_CUSTOMER_CONTACT = gql`
 const UPDATE_CUSTOMER_DETAIL = gql`
   mutation updateExistCustomer(
     $id: ID!
-    $personal: String
-    $company: String
+    $personal: String!
+    $company: String!
+    $position: String!
     $personalcontact: String
-    $companycontact: String
-    $address: String
+    $companycontact: String!
+    $address: String!
   ) {
     updateExistCustomer(
       updateCustomerInput: {
         id: $id
         personal: $personal
         company: $company
+        position: $position
         personalcontact: $personalcontact
         companycontact: $companycontact
         address: $address
@@ -528,6 +611,7 @@ const UPDATE_CUSTOMER_DETAIL = gql`
       id
       personal
       company
+      position
       personalcontact
       companycontact
       address
@@ -757,6 +841,16 @@ const MainContainer = styled.div`
         }
       }
 
+      .personal-info-box {
+        ${tw`
+          flex
+          items-center
+          justify-start
+          w-full
+          max-w-md
+        `}
+      }
+
       .contact-number-box {
         ${tw`
           flex
@@ -796,7 +890,6 @@ const MainContainer = styled.div`
       .personal-input {
         ${tw`
           w-full
-          max-w-md
           text-xs
           md:text-sm
         `}

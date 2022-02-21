@@ -156,6 +156,7 @@ const GET_SELF_CONTACT_BOOK = gql`
       id
       personal
       company
+      position
       personalcontact
       companycontact
       address
@@ -171,6 +172,7 @@ const GET_SELF_EVENT_LIST = gql`
       customer {
         cusId
         personal
+        position
         company
       }
       description
@@ -196,6 +198,7 @@ const GET_ALL_EVENT_LIST = gql`
       customer {
         cusId
         personal
+        position
         company
       }
       description
@@ -221,6 +224,7 @@ const CREATED_EVENT_SUBSCRIPTION = gql`
       customer {
         cusId
         personal
+        position
         company
       }
       description
@@ -246,6 +250,7 @@ const UPDATED_EVENT_SUBSCRIPTION = gql`
       customer {
         cusId
         personal
+        position
         company
       }
       description

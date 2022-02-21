@@ -43,6 +43,7 @@ const EventAdd = () => {
     customer: {
       cusId: '',
       personal: '',
+      position: '',
       company: '',
     },
     description: '',
@@ -224,6 +225,7 @@ const EventAdd = () => {
                         customer: {
                           cusId: x.id,
                           personal: x.personal,
+                          position: x.position,
                           company: x.company,
                         },
                       })

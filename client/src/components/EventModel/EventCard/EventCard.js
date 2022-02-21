@@ -352,6 +352,8 @@ const EventCard = () => {
                 </span>
                 <span className="span-sm">
                   Meet with {selectedEvent.customer.personal}
+                  {', '}
+                  {selectedEvent.customer.position}
                 </span>
               </div>
             </div>
