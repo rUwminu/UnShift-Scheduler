@@ -95,7 +95,55 @@ const ManagerLister = ({ pickedDate, setReportList }) => {
     handleAnyEvtFilterType(EvtByYear.reverse())
 
     // Triger filter for report generate
-    handleReportEvetFilterType(tempArr)
+    handleReportEvtFilterType(tempArr)
+  }
+
+  const handleReportEvtFilterType = async (allEvt) => {
+    var tempArr = allEvt
+
+    if (eventReportFilterType.length > 0) {
+      await eventReportFilterType.forEach((type) => {
+        if (type === 'Completed') {
+          tempArr = tempArr.filter((evt) =>
+            evt.isCancelled
+              ? evt
+              : evt.isRescheduled
+              ? evt
+              : evt.isCompleted !== true
+          )
+        } else if (type === 'Forecast') {
+          tempArr = tempArr.filter((evt) =>
+            evt.isCancelled
+              ? evt
+              : evt.isRescheduled
+              ? evt
+              : evt.isCompleted !== false
+          )
+        } else if (type === 'Cancelled') {
+          tempArr = tempArr.filter((evt) =>
+            evt.isRescheduled ? evt : evt.isCancelled !== true
+          )
+        } else if (type === 'Rescheduled') {
+          tempArr = tempArr.filter((evt) => evt.isRescheduled !== true)
+        } else if (type === 'Meetup') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Customer Meetup')
+        } else if (type === 'Sample') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Sample Deliver')
+        } else if (type === 'Test') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Sample Test')
+        } else if (type === 'Goods') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Goods Deliver')
+        } else if (type === 'Cheque') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Cheque Collect')
+        } else if (type === 'Other') {
+          tempArr = tempArr.filter((evt) => evt.title !== 'Other')
+        } else {
+          tempArr = tempArr.filter((evt) => evt.user.id !== type)
+        }
+      })
+    }
+
+    setReportList(tempArr)
   }
 
   const handleAnyEvtFilterType = (allEvt) => {
@@ -270,54 +318,8 @@ const ManagerLister = ({ pickedDate, setReportList }) => {
 
       return setRenderList(tempArr)
     }
-  }
 
-  const handleReportEvetFilterType = async (allEvt) => {
-    var tempArr = allEvt
-
-    if (eventReportFilterType.length > 0) {
-      await eventReportFilterType.forEach((type) => {
-        if (type === 'Completed') {
-          tempArr = tempArr.filter((evt) =>
-            evt.isCancelled
-              ? evt
-              : evt.isRescheduled
-              ? evt
-              : evt.isCompleted !== true
-          )
-        } else if (type === 'Forecast') {
-          tempArr = tempArr.filter((evt) =>
-            evt.isCancelled
-              ? evt
-              : evt.isRescheduled
-              ? evt
-              : evt.isCompleted !== false
-          )
-        } else if (type === 'Cancelled') {
-          tempArr = tempArr.filter((evt) =>
-            evt.isRescheduled ? evt : evt.isCancelled !== true
-          )
-        } else if (type === 'Rescheduled') {
-          tempArr = tempArr.filter((evt) => evt.isRescheduled !== true)
-        } else if (type === 'Meetup') {
-          tempArr = tempArr.filter((evt) => evt.title !== 'Customer Meetup')
-        } else if (type === 'Sample') {
-          tempArr = tempArr.filter((evt) => evt.title !== 'Sample Deliver')
-        } else if (type === 'Test') {
-          tempArr = tempArr.filter((evt) => evt.title !== 'Sample Test')
-        } else if (type === 'Goods') {
-          tempArr = tempArr.filter((evt) => evt.title !== 'Goods Deliver')
-        } else if (type === 'Cheque') {
-          tempArr = tempArr.filter((evt) => evt.title !== 'Cheque Collect')
-        } else if (type === 'Other') {
-          tempArr = tempArr.filter((evt) => evt.title !== 'Other')
-        } else {
-          tempArr = tempArr.filter((evt) => evt.user.id !== type)
-        }
-      })
-    }
-
-    setReportList(tempArr)
+    return setRenderList(allEvt)
   }
 
   const getCurrentDay = (day) => {
@@ -362,7 +364,7 @@ const ManagerLister = ({ pickedDate, setReportList }) => {
 
   useEffect(() => {
     handleAnyEvtFilterType(selectedEvtListState)
-    handleReportEvetFilterType(eventReportList)
+    handleReportEvtFilterType(eventReportList)
   }, [eventReportFilterType])
 
   return (

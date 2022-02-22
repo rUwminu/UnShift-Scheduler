@@ -285,7 +285,6 @@ const BoxContainer = styled.div`
       flex
       items-center
       justify-center
-      z-10
     `}
 
     .line-active {
@@ -355,12 +354,6 @@ const BoxContainer = styled.div`
       }
     }
   }
-
-  .right-container.active {
-    ${tw`
-      z-30
-    `}
-  }
 `
 
 const UserIcon = styled.div`
@@ -372,6 +365,7 @@ const UserIcon = styled.div`
     w-11
     h-11
     rounded-full
+    z-10
   `}
 
   &:hover {
@@ -493,7 +487,7 @@ const Burger = styled.div`
     transition
     duration-200
     ease-in-out
-    z-30
+    z-10
   `}
 
   div {

@@ -85,10 +85,10 @@ const UserLister = ({ pickedDate, setReportList }) => {
     handleAnyEvtFilterType(EvtByYear.reverse())
 
     // Triger filter for report generate
-    handleReportEvetFilterType(tempArr)
+    handleReportEvtFilterType(tempArr)
   }
 
-  const handleReportEvetFilterType = async (allEvt) => {
+  const handleReportEvtFilterType = async (allEvt) => {
     var tempArr = allEvt
 
     if (eventReportFilterType.length > 0) {
@@ -334,6 +334,7 @@ const UserLister = ({ pickedDate, setReportList }) => {
 
   useEffect(() => {
     handleAnyEvtFilterType(selectedEvtListState)
+    handleReportEvtFilterType(eventReportList)
   }, [eventReportFilterType])
 
   return (
