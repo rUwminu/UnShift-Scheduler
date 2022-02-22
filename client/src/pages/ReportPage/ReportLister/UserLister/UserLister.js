@@ -491,6 +491,7 @@ const GET_SELF_SELECTED_EVENT_LIST = gql`
       customer {
         cusId
         personal
+        position
         company
       }
       description

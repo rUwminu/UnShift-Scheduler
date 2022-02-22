@@ -100,6 +100,11 @@ const CalenderHeader = () => {
           listListener && listListener.isListOpen && 'active'
         }`}
       >
+        <div className="nav-links">
+          <Link to={`/info/type?name=contact`} className="link-item">
+            Customer Contact
+          </Link>
+        </div>
         <UserIcon>
           <span
             className="user-name"
@@ -296,6 +301,57 @@ const BoxContainer = styled.div`
       .line-3 {
         width: 1.5rem;
         transform: rotate(45deg) translate(-5px, -5px);
+      }
+    }
+
+    .nav-links {
+      ${tw`
+        flex
+        items-center
+        justify-start
+      `}
+
+      .link-item {
+        ${tw`
+          relative
+          mr-6
+          pr-2
+          py-1
+          font-semibold
+          text-gray-600
+
+          transition-all
+          duration-200
+          ease-in-out
+        `}
+
+        &::after {
+          content: '';
+          ${tw`
+            absolute
+            left-0
+            bottom-0
+            h-[2.6px]
+            w-0
+            bg-blue-600
+
+            transition-all
+            duration-200
+            ease-in-out
+          `}
+        }
+
+        &:hover {
+          ${tw`
+            text-gray-900
+          `}
+
+          &::after {
+            ${tw`
+              w-full
+            `}
+          }
+        }
       }
     }
   }
