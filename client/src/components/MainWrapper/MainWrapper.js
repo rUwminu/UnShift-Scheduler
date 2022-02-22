@@ -60,25 +60,47 @@ const MainWrapper = ({ children }) => {
   const { data: subUpdateEvent } = useSubscription(UPDATED_EVENT_SUBSCRIPTION)
 
   const handleGetSelectedMonthEvent = () => {
-    const selectedMonth = dayjs(new Date(dayjs().year(), monthIndex))
-      .format('MM YYYY')
-      .split(' ')
+    // Get selected month info
+    const thisyear = dayjs().year()
+    const thisMonthDays = dayjs(dayjs().month(monthIndex)).daysInMonth()
+    const thisMonthFirstDayIndex = dayjs(
+      new Date(thisyear, monthIndex, 1)
+    ).day()
+    // Get selected month last and current overdue day in calender
+    const thisMonthLastOverDue = thisMonthDays + thisMonthFirstDayIndex
+    const thisMonthOverDue =
+      thisMonthLastOverDue > 35
+        ? 42 - thisMonthLastOverDue
+        : 35 - thisMonthLastOverDue
+    // Get Start and End Date of selected month calender
+    const thisMonthStartQueryDay = new Date(
+      thisyear,
+      monthIndex,
+      -thisMonthFirstDayIndex + 1
+    )
+    const thisMonthLastQueryDay = new Date(
+      thisyear,
+      monthIndex + 1,
+      thisMonthOverDue + 1
+    )
 
     getSelfContactBookListItem()
 
     if (user.isManager) {
       getAllEventListItem({
         variables: {
-          month: parseInt(selectedMonth[0]),
-          year: parseInt(selectedMonth[1]),
+          startDate: dayjs(thisMonthStartQueryDay).format(
+            'YYYY-MM-DDTHH:mm:ss'
+          ),
+          endDate: dayjs(thisMonthLastQueryDay).format('YYYY-MM-DDTHH:mm:ss'),
         },
       })
     }
 
     getSelfEventListItem({
       variables: {
-        month: parseInt(selectedMonth[0]),
-        year: parseInt(selectedMonth[1]),
+        startDate: dayjs(thisMonthStartQueryDay).format('YYYY-MM-DDTHH:mm:ss'),
+        endDate: dayjs(thisMonthLastQueryDay).format('YYYY-MM-DDTHH:mm:ss'),
       },
     })
   }
@@ -165,8 +187,8 @@ const GET_SELF_CONTACT_BOOK = gql`
 `
 
 const GET_SELF_EVENT_LIST = gql`
-  query getSelfEvent($month: Int!, $year: Int!) {
-    getSelfEvent(month: $month, year: $year) {
+  query getSelfEvent($startDate: String!, $endDate: String!) {
+    getSelfEvent(startDate: $startDate, endDate: $endDate) {
       id
       title
       customer {
@@ -187,8 +209,8 @@ const GET_SELF_EVENT_LIST = gql`
 `
 
 const GET_ALL_EVENT_LIST = gql`
-  query getAllEvent($month: Int!, $year: Int!) {
-    getAllEvent(month: $month, year: $year) {
+  query getAllEvent($startDate: String!, $endDate: String!) {
+    getAllEvent(startDate: $startDate, endDate: $endDate) {
       id
       user {
         id
