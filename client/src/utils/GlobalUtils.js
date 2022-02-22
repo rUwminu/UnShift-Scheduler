@@ -1,16 +1,31 @@
 import dayjs from 'dayjs'
 
 export const getMonth = (month = dayjs().month()) => {
+  const thisMonth = dayjs().month(month)
+  const thisMonthDays = dayjs(thisMonth).daysInMonth()
   const year = dayjs().year()
   const firstDayOftheMonth = dayjs(new Date(year, month, 1)).day()
 
+  var daysMatrix
   let currentMonthCount = 0 - firstDayOftheMonth
-  const daysMatrix = new Array(5).fill([]).map(() => {
-    return new Array(7).fill(null).map(() => {
-      currentMonthCount++
-      return dayjs(new Date(year, month, currentMonthCount))
+  let thisMonthCalenderTotalDayShow =
+    thisMonthDays + Math.abs(currentMonthCount)
+
+  if (thisMonthCalenderTotalDayShow > 35) {
+    daysMatrix = new Array(6).fill([]).map(() => {
+      return new Array(7).fill(null).map(() => {
+        currentMonthCount++
+        return dayjs(new Date(year, month, currentMonthCount))
+      })
     })
-  })
+  } else {
+    daysMatrix = new Array(5).fill([]).map(() => {
+      return new Array(7).fill(null).map(() => {
+        currentMonthCount++
+        return dayjs(new Date(year, month, currentMonthCount))
+      })
+    })
+  }
 
   return daysMatrix
 }

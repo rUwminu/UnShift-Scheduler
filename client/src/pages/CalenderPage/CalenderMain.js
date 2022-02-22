@@ -21,7 +21,9 @@ const CalenderMain = () => {
   const eventInfo = useSelector((state) => state.eventInfo)
   const { isAddOpen } = eventInfo
 
-  const [currentMonth, setCurrentMonth] = useState(getMonth(monthIndex))
+  const [currentMonth, setCurrentMonth] = useState(
+    getMonth(monthIndex, monthIndex)
+  )
 
   useEffect(() => {
     setCurrentMonth(getMonth(monthIndex))
