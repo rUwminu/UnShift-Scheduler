@@ -17,6 +17,7 @@ import {
   TOGGLE_EVENT_LIST_CLOSE,
   ADD_EVENT_FILTER_TYPE,
   ADD_REPORT_EVENT_FILTER_TYPE,
+  RESET_MODEL_OPEN,
 } from '../constant/eventConstants'
 
 export const toggleEventCardOpen = () => (dispatch) => {
@@ -67,6 +68,7 @@ export const getReportEventList = (evt) => (dispatch) => {
 
 // Control components view and reset value ---------------------------------------------------
 export const setSelectEvent = (data) => (dispatch) => {
+  dispatch({ type: RESET_MODEL_OPEN })
   dispatch({ type: SET_SELECTED_EVENT, payload: data })
 }
 

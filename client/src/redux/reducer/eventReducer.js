@@ -18,6 +18,7 @@ import {
   TOGGLE_EVENT_LIST_CLOSE,
   ADD_EVENT_FILTER_TYPE,
   ADD_REPORT_EVENT_FILTER_TYPE,
+  RESET_MODEL_OPEN,
   RESET_EVENT_DETAIL,
 } from '../constant/eventConstants'
 
@@ -26,7 +27,15 @@ export const eventsReducer = (state = {}, action) => {
 
   switch (action.type) {
     case TOGGLE_MODEL_OPEN:
-      return { ...state, isAddOpen: true, isViewOpen: false }
+      return {
+        ...state,
+        isAddOpen: true,
+        isViewOpen: false,
+        listListener: {
+          isListOpen: false,
+          isSelectedDate: null,
+        },
+      }
     case TOGGLE_MODEL_CLOSE:
       return { ...state, isAddOpen: false, selectedEvent: {} }
     case GET_SELF_EVENT_LIST:
@@ -167,6 +176,7 @@ export const eventsReducer = (state = {}, action) => {
     case TOGGLE_EVENT_LIST_OPEN:
       return {
         ...state,
+        isAddOpen: false,
         isViewOpen: false,
         listListener: {
           ...state.listListener,
@@ -222,6 +232,16 @@ export const eventsReducer = (state = {}, action) => {
       }
     case SET_EVENT_BOX_POSITION:
       return { ...state, position: action.payload }
+    case RESET_MODEL_OPEN:
+      return {
+        ...state,
+        isAddOpen: false,
+        isViewOpen: false,
+        listListener: {
+          isListOpen: false,
+          isSelectedDate: null,
+        },
+      }
     case RESET_EVENT_DETAIL:
       return {
         ...state,
@@ -230,6 +250,12 @@ export const eventsReducer = (state = {}, action) => {
         eventFilterType: [],
         eventReportList: [],
         eventReportFilterType: [],
+        isAddOpen: false,
+        isViewOpen: false,
+        listListener: {
+          isListOpen: false,
+          isSelectedDate: null,
+        },
       }
     default:
       return state

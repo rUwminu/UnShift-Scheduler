@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { RESET_MODEL_OPEN } from '../constant/eventConstants'
 import {
   GET_MONTH_LIST,
   SET_SELECTED_DATE,
@@ -21,9 +22,11 @@ export const resetCurrentMonth = () => (dispatch) => {
 }
 
 export const toggleNextPrevMonth = (index) => (dispatch) => {
+  dispatch({ type: RESET_MODEL_OPEN })
   dispatch({ type: TOGGLE_MONTH_INDEX, payload: index })
 }
 
 export const jumpToSelectedDayMonth = (data) => (dispatch) => {
+  dispatch({ type: RESET_MODEL_OPEN })
   dispatch({ type: JUMP_MONTH_INDEX, payload: data })
 }
