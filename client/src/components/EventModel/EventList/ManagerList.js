@@ -104,7 +104,8 @@ const ManagerList = () => {
     <BoxContainer>
       <div className="inner-container">
         {selfEvt && <ListBox title={'My Schedule'} eventList={selfEvt} />}
-        {otherEvt &&
+        {eventOtherList.length > 0 &&
+          otherEvt &&
           otherEvt.map((evt, idx) => (
             <ListBox key={idx} title={evt.username} eventList={evt.eventList} />
           ))}

@@ -118,19 +118,23 @@ const CalenderDay = ({ day, rowIdx }) => {
           {day.format('DD')}
         </p>
       </div>
-      {user.isManager && todayOtherUser && (
+      {user.isManager && eventOtherList.length > 0 && todayOtherUser && (
         <div className="evt-user-container">
-          {todayOtherUser.map((usr, idx) => (
+          {todayOtherUser.slice(0, 3).map((usr, idx) => (
             <div key={idx} className="evt-user-tag">
               {getFirstName(usr)}
             </div>
           ))}
+          {todayOtherUser.length > 3 && (
+            <div className="evt-more">+{todayOtherUser.length - 3}</div>
+          )}
         </div>
       )}
       <div className="evt-container">
-        {todayEvt &&
+        {eventList.length > 0 &&
+          todayEvt &&
           todayEvt.slice(0, 5).map((x, idx) => <EvtDot key={idx} x={x} />)}
-        {todayEvt.length > 5 && (
+        {eventList.length > 0 && todayEvt.length > 5 && (
           <div className="evt-more">+{todayEvt.length - 5}</div>
         )}
       </div>
@@ -358,14 +362,14 @@ const BoxContainer = styled.div`
         }
       }
     }
+  }
 
-    .evt-more {
-      ${tw`
-        text-sm
-        font-bold
-        text-gray-600
-      `}
-    }
+  .evt-more {
+    ${tw`
+      text-sm
+      font-bold
+      text-gray-600
+    `}
   }
 `
 
