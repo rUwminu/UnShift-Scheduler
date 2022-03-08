@@ -365,6 +365,7 @@ const BoxContainer = styled.div`
             text-lg
             font-semibold
             text-gray-600
+            pointer-events-none
 
             transition-all
             duration-200

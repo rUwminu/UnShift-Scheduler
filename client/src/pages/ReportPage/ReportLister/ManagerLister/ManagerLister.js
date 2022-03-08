@@ -369,7 +369,7 @@ const ManagerLister = ({ pickedDate, setReportList }) => {
 
   return (
     <BoxContainer>
-      {renderList.length > 0 &&
+      {renderList.length > 0 ? (
         renderList.map((ls, idx) => (
           <div key={idx} className="year-card">
             <h2>{ls.year}</h2>
@@ -413,7 +413,12 @@ const ManagerLister = ({ pickedDate, setReportList }) => {
               </div>
             ))}
           </div>
-        ))}
+        ))
+      ) : (
+        <div className="empty-title">
+          Seem empty. Try search from different date.
+        </div>
+      )}
     </BoxContainer>
   )
 }
@@ -660,6 +665,15 @@ const BoxContainer = styled.div`
         `}
       }
     }
+  }
+
+  .empty-title {
+    ${tw`
+        py-2
+        px-4
+        font-semibold
+        text-gray-700
+    `}
   }
 `
 

@@ -74,6 +74,7 @@ const SmallCalender = ({
     <BoxContainer
       className={`${isOpen && 'active'}`}
       onMouseLeave={() => handleToggleCalenderOpen(isStart)}
+      isBigger={currentMonth.length > 5 ? true : false}
     >
       {isOpen && (
         <>
@@ -303,10 +304,10 @@ const BoxContainer = styled.div`
   &.active {
     ${tw`
       w-56
-      h-60
       opacity-100
       pointer-events-auto
     `}
+    height: ${(props) => (props.isBigger ? '17rem' : '15rem')};
   }
 `
 
