@@ -185,6 +185,7 @@ const EventAdd = () => {
               value={inputValue.customer.company}
               placeholder="Where to meetup?"
               required
+              disabled
             />
 
             <div

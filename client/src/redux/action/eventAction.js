@@ -5,6 +5,8 @@ import {
   PUBSUB_SELF_EVENT_NEW,
   PUBSUB_EVENT_UPDATE,
   PUBSUB_SELF_EVENT_UPDATE,
+  PUBSUB_EVENT_DELETE,
+  PUBSUB_SELF_EVENT_DELETE,
   GET_SELF_EVENT_LIST,
   GET_OTHER_EVENT_LIST,
   GET_REPORT_EVENT_LIST,
@@ -47,6 +49,16 @@ export const getPubSubEventUpdate = (evt) => (dispatch) => {
 
 export const getPubSubSelfEventUpdate = (evt) => (dispatch) => {
   dispatch({ type: PUBSUB_SELF_EVENT_UPDATE, payload: evt })
+}
+
+export const getPubSubEventDelete = (evtId) => (dispatch) => {
+  dispatch({ type: CLOSE_SELECTED_EVENT })
+  dispatch({ type: PUBSUB_EVENT_DELETE, payload: evtId })
+}
+
+export const getPubSubSelfEventDelete = (evtId) => (dispatch) => {
+  dispatch({ type: CLOSE_SELECTED_EVENT })
+  dispatch({ type: PUBSUB_SELF_EVENT_DELETE, payload: evtId })
 }
 
 export const getReportEventList = (evt) => (dispatch) => {

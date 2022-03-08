@@ -6,6 +6,8 @@ import {
   PUBSUB_SELF_EVENT_NEW,
   PUBSUB_EVENT_UPDATE,
   PUBSUB_SELF_EVENT_UPDATE,
+  PUBSUB_EVENT_DELETE,
+  PUBSUB_SELF_EVENT_DELETE,
   GET_SELF_EVENT_LIST,
   GET_OTHER_EVENT_LIST,
   GET_REPORT_EVENT_LIST,
@@ -93,6 +95,56 @@ export const eventsReducer = (state = {}, action) => {
         ),
         selectedEvent: state.isViewOpen ? action.payload : {},
       }
+    case PUBSUB_EVENT_DELETE: {
+      isExist =
+        state.eventReportList.length > 0
+          ? state.eventReportList.some((evt) => evt.id === action.payload)
+          : false
+
+      if (isExist) {
+        return {
+          ...state,
+          eventOtherList: state.eventOtherList.filter(
+            (evt) => evt.id !== action.payload
+          ),
+          eventReportList: state.eventReportList.filter(
+            (evt) => evt.id !== action.payload
+          ),
+          selectedEvent: {},
+          isViewOpen: false,
+        }
+      }
+
+      return {
+        ...state,
+        eventOtherList: state.eventOtherList.filter(
+          (evt) => evt.id !== action.payload
+        ),
+        selectedEvent: {},
+        isViewOpen: false,
+      }
+    }
+    case PUBSUB_SELF_EVENT_DELETE: {
+      isExist =
+        state.eventReportList.length > 0
+          ? state.eventReportList.some((evt) => evt.id === action.payload)
+          : false
+
+      if (isExist) {
+        return {
+          ...state,
+          eventList: state.eventList.filter((evt) => evt.id !== action.payload),
+          eventReportList: state.eventReportList.filter(
+            (evt) => evt.id !== action.payload
+          ),
+        }
+      }
+
+      return {
+        ...state,
+        eventList: state.eventList.filter((evt) => evt.id !== action.payload),
+      }
+    }
     case GET_REPORT_EVENT_LIST: {
       return { ...state, eventReportList: action.payload }
     }

@@ -132,6 +132,25 @@ const EventCard = () => {
     },
   })
 
+  const [updateDeleteEvent] = useMutation(UPDATE_EVENT_DELETE, {
+    context: {
+      headers: {
+        Authorization: `Bearer${' '}${user && user.token}`,
+      },
+    },
+    update() {
+      dispatch(
+        toggleNotifyTagOpen({
+          isSuccess: true,
+          info: 'Schedule Deleted',
+        })
+      )
+    },
+    onError(err) {
+      console.log(err)
+    },
+  })
+
   // Handles control component view/show -----------------------------------------------
   const handleCloseWindow = () => {
     setIsDropActive(false)
@@ -218,6 +237,14 @@ const EventCard = () => {
     }
   }
 
+  const handleDeleteEvent = () => {
+    updateDeleteEvent({
+      variables: {
+        evtId: selectedEvent.id,
+      },
+    })
+  }
+
   // Handles control components position and style changes --------------------------
   const handleResize = async () => {
     setIsDropActive(false)
@@ -298,6 +325,12 @@ const EventCard = () => {
                       Mark as done
                     </div>
                   )}
+                  <div
+                    className="drop-item"
+                    onClick={() => handleDeleteEvent()}
+                  >
+                    Delete Event
+                  </div>
                   {!selectedEvent.isCompleted && (
                     <div
                       className="drop-item"
@@ -505,6 +538,12 @@ const UPDATE_EVENT_CANCEL = gql`
       remark
       isCancelled
     }
+  }
+`
+
+const UPDATE_EVENT_DELETE = gql`
+  mutation updateDeleteEvent($evtId: ID!) {
+    deleteEvent(evtId: $evtId)
   }
 `
 

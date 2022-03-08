@@ -13,6 +13,8 @@ import {
   getPubSubSelfEventNew,
   getPubSubEventUpdate,
   getPubSubSelfEventUpdate,
+  getPubSubEventDelete,
+  getPubSubSelfEventDelete,
 } from '../../redux/action/eventAction'
 
 const MainWrapper = ({ children }) => {
@@ -58,6 +60,8 @@ const MainWrapper = ({ children }) => {
   const { data: subNewEvent } = useSubscription(CREATED_EVENT_SUBSCRIPTION)
 
   const { data: subUpdateEvent } = useSubscription(UPDATED_EVENT_SUBSCRIPTION)
+
+  const { data: subDeleteEvent } = useSubscription(DELETED_EVENT_SUBSCRIPTION)
 
   const handleGetSelectedMonthEvent = () => {
     // Get selected month info
@@ -112,10 +116,12 @@ const MainWrapper = ({ children }) => {
       // If user Not manager, check subscription event is created by him
       if (TempArr.user.id === user.id) {
         dispatch(getPubSubSelfEventNew(TempArr))
+        return
       }
       // If user is manager, get and push to all other user event list
       else if (user.isManager) {
         dispatch(getPubSubEventNew(TempArr))
+        return
       }
       // Else user not manager, ignore the event add by other
     }
@@ -128,12 +134,29 @@ const MainWrapper = ({ children }) => {
       // If user Not manager, check subscription event is created by him
       if (TempArr.user.id === user.id) {
         dispatch(getPubSubSelfEventUpdate(TempArr))
+        return
       }
       // If user is manager, get and push to all other user event list
       else if (user.isManager) {
         dispatch(getPubSubEventUpdate(TempArr))
+        return
       }
       // Else user not manager, ignore the event add by other
+    }
+  }
+
+  const handleGetSubscriptionDeleteEvent = () => {
+    if (subDeleteEvent && subDeleteEvent.eventDeleted) {
+      const evtId = subDeleteEvent.eventDeleted.id
+      const userId = subDeleteEvent.eventDeleted.user.id
+
+      if (userId === user.id) {
+        dispatch(getPubSubSelfEventDelete(evtId))
+        return
+      } else if (user.isManager) {
+        dispatch(getPubSubEventDelete(evtId))
+        return
+      }
     }
   }
 
@@ -168,6 +191,10 @@ const MainWrapper = ({ children }) => {
   useEffect(() => {
     handleGetSubscriptionUpdateEvent()
   }, [subUpdateEvent])
+
+  useEffect(() => {
+    handleGetSubscriptionDeleteEvent()
+  }, [subDeleteEvent])
 
   return <MainContainer>{children}</MainContainer>
 }
@@ -282,6 +309,17 @@ const UPDATED_EVENT_SUBSCRIPTION = gql`
       isRescheduled
       isCancelled
       remark
+    }
+  }
+`
+
+const DELETED_EVENT_SUBSCRIPTION = gql`
+  subscription {
+    eventDeleted {
+      id
+      user {
+        id
+      }
     }
   }
 `
