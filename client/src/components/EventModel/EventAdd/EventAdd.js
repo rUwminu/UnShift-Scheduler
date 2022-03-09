@@ -38,6 +38,7 @@ const EventAdd = () => {
     statusDrop: false,
   })
   const [isCompleted, setIsCompleted] = useState(false)
+  const [textInput, setTextInput] = useState('')
   const [inputValue, setInputValue] = useState({
     title: '',
     customer: {
@@ -49,6 +50,7 @@ const EventAdd = () => {
     description: '',
     isCompleted: false,
   })
+  const [filteredSuggestions, setFilteredSuggestions] = useState([])
 
   const userSignIn = useSelector((state) => state.userSignIn)
   const { user } = userSignIn
@@ -86,6 +88,51 @@ const EventAdd = () => {
 
   const handleCloseWindow = () => {
     dispatch(toggleEventCardClose())
+  }
+
+  const handleSearchItem = (e) => {
+    let userInput = e.target.value
+
+    if (userInput === '') {
+      setTextInput('')
+      setDropStatusControl({ ...dropStatusControl, personalDrop: false })
+      setFilteredSuggestions([])
+      return
+    }
+
+    const filterSearchList = allCustomerContact.filter(
+      (suggestion) =>
+        suggestion.company.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+    )
+
+    setTextInput(e.target.value)
+    setFilteredSuggestions(filterSearchList)
+    setDropStatusControl({ ...dropStatusControl, personalDrop: true })
+  }
+
+  const handleSelectItemFromList = (suggestion) => {
+    const { id, personal, position, company } = suggestion
+
+    setFilteredSuggestions([])
+    setTextInput(suggestion.company)
+    setInputValue({
+      ...inputValue,
+      customer: {
+        cusId: id,
+        personal,
+        position,
+        company,
+      },
+    })
+    setDropStatusControl({ ...dropStatusControl, personalDrop: false })
+  }
+
+  const handleDropBtnClick = () => {
+    setDropStatusControl({
+      ...dropStatusControl,
+      personalDrop: !dropStatusControl.personalDrop,
+    })
+    setFilteredSuggestions([...allCustomerContact])
   }
 
   const handleCreateEvent = () => {
@@ -182,21 +229,15 @@ const EventAdd = () => {
             <input
               type="text"
               className="input"
-              value={inputValue.customer.company}
+              value={textInput}
+              onChange={(e) => handleSearchItem(e)}
               placeholder="Where to meetup?"
               required
-              disabled
             />
 
             <div
               className="drop-icon-box absolute-icon-box"
-              onClick={() =>
-                setDropStatusControl({
-                  titleDrop: false,
-                  statusDrop: false,
-                  personalDrop: !dropStatusControl.personalDrop,
-                })
-              }
+              onClick={() => handleDropBtnClick()}
             >
               <ArrowDropDown className="drop-icon" />
             </div>
@@ -211,26 +252,12 @@ const EventAdd = () => {
                 })
               }
             >
-              {allCustomerContact && allCustomerContact.length > 0 ? (
-                allCustomerContact.map((x, idx) => (
+              {filteredSuggestions && filteredSuggestions.length > 0 ? (
+                filteredSuggestions.map((x, idx) => (
                   <div
                     key={idx}
                     className="drop-option"
-                    onClick={() => {
-                      setDropStatusControl({
-                        ...dropStatusControl,
-                        personalDrop: false,
-                      })
-                      setInputValue({
-                        ...inputValue,
-                        customer: {
-                          cusId: x.id,
-                          personal: x.personal,
-                          position: x.position,
-                          company: x.company,
-                        },
-                      })
-                    }}
+                    onClick={() => handleSelectItemFromList(x)}
                   >
                     {x.company}
                   </div>
