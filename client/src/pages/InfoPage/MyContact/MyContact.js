@@ -61,7 +61,10 @@ const MyContact = () => {
       },
     },
     update(_, { data: deletedData }) {
-      dispatch(deleteSelfContactBook(deletedData.id))
+      dispatch(
+        toggleNotifyTagOpen({ isSuccess: true, info: 'Contact Deleted' })
+      )
+      dispatch(deleteSelfContactBook(deletedData.deleteExistCustomer.id))
     },
     onError(err) {
       dispatch(toggleNotifyTagOpen({ isSuccess: false, info: 'Error Delete' }))

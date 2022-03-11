@@ -68,7 +68,7 @@ export const getReportEventList = (evt) => (dispatch) => {
 
 // Control components view and reset value ---------------------------------------------------
 export const setSelectEvent = (data) => (dispatch) => {
-  dispatch({ type: RESET_MODEL_OPEN })
+  //dispatch({ type: RESET_MODEL_OPEN })
   dispatch({ type: SET_SELECTED_EVENT, payload: data })
 }
 

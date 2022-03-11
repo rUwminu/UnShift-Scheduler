@@ -24,6 +24,8 @@ const UserList = () => {
 
   var tempArr = []
   var selectedDay
+  const selectedMonth = dayjs(isSelectedDate).format('MM')
+  const selectedYear = dayjs(isSelectedDate).format('YYYY')
   const currentMonth = dayjs().month(monthIndex).format('MM')
   const currentYear = dayjs().month(monthIndex).format('YYYY')
 
@@ -34,8 +36,8 @@ const UserList = () => {
       var [year, month, day] = e.planDate.split('-')
 
       return (
-        currentMonth === month &&
-        currentYear === year &&
+        selectedMonth === month &&
+        selectedYear === year &&
         selectedDay === day.slice(0, 2)
       )
     })
