@@ -71,6 +71,8 @@ const MyContact = () => {
     },
   })
 
+  console.log([...allCustomerContact].reverse())
+
   return (
     <MainContainer>
       <div className="form-header">
@@ -91,14 +93,16 @@ const MyContact = () => {
       </div>
       <div className="form-contact-container">
         {allCustomerContact && allCustomerContact.length > 0 ? (
-          allCustomerContact.map((ct) => (
-            <ContactCard
-              key={ct.id}
-              contact={ct}
-              updateCustomerDetail={updateCustomerDetail}
-              deleteCustomerDetail={deleteCustomerDetail}
-            />
-          ))
+          [...allCustomerContact]
+            .reverse()
+            .map((ct) => (
+              <ContactCard
+                key={ct.id}
+                contact={ct}
+                updateCustomerDetail={updateCustomerDetail}
+                deleteCustomerDetail={deleteCustomerDetail}
+              />
+            ))
         ) : (
           <div className="form-empty-container">
             <h2>Seem Empty Here...</h2>

@@ -35,7 +35,7 @@ export const userContactBookReducer = (state = {}, action) => {
     case USER_CREATE_CONTACT_BOOK:
       return {
         ...state,
-        allCustomerContact: [action.payload, ...state.allCustomerContact],
+        allCustomerContact: [...state.allCustomerContact, action.payload],
       }
     case USER_UPDATE_CONTACT_BOOK:
       return {

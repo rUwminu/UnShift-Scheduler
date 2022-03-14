@@ -335,6 +335,7 @@ const BoxContainer = styled.div`
           px-2
           min-w-[6rem]
           max-w-[8rem]
+          max-h-[10rem]
           text-sm
           opacity-0
           text-gray-50
