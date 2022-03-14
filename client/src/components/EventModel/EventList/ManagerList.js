@@ -192,7 +192,7 @@ const EventCard = ({ allEvt, cardType }) => {
       onClick={(e) => handleClick(e)}
     >
       <div className="card-left">
-        <h3>{allEvt.title}</h3>
+        <h3>{allEvt.customer.company}</h3>
         <span>{moment(allEvt.planDate).format('dddd, MMMM D')}</span>
       </div>
       <div className="card-right">

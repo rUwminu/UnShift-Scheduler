@@ -21,7 +21,6 @@ const EventList = () => {
 
   const eventInfo = useSelector((state) => state.eventInfo)
   const {
-    eventList,
     listListener: { isListOpen, isSelectedDate },
   } = eventInfo
 

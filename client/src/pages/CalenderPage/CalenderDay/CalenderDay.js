@@ -188,13 +188,13 @@ const EvtDot = ({ x }) => {
           x.isCancelled
             ? 'bg-red-600'
             : x.isRescheduled
-            ? 'bg-amber-400'
+            ? 'bg-amber-500'
             : x.isCompleted
-            ? 'bg-green-400'
-            : 'bg-purple-400'
+            ? 'bg-green-500'
+            : 'bg-purple-500'
         }`}
       >
-        {x.title}
+        {x.customer.company}
       </div>
     </div>
   )
@@ -339,6 +339,7 @@ const BoxContainer = styled.div`
           opacity-0
           text-gray-50
           pointer-events-none
+          overflow-hidden
           rounded-md
 
           transition-all
