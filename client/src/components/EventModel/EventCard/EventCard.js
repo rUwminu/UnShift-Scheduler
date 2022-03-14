@@ -197,12 +197,10 @@ const EventCard = () => {
 
   // Handles perform save and get data ----------------------------------------------
   const handleGetDate = (type, date) => {
-    if (date !== 'All') {
-      setIsRescheduled({
-        ...isRescheduled,
-        planDate: dayjs(date).format('YYYY-MM-DDTHH:mm:ss'),
-      })
-    }
+    setIsRescheduled({
+      ...isRescheduled,
+      planDate: dayjs(date).format('YYYY-MM-DDTHH:mm:ss'),
+    })
   }
 
   const handleCancelEvent = () => {
@@ -224,7 +222,7 @@ const EventCard = () => {
       updateEventReschedule({
         variables: {
           evtId: selectedEvent.id,
-          planDate: isRescheduled.planDate,
+          planDate: dayjs(isRescheduled.planDate).format('YYYY-MM-DDTHH:mm:ss'),
         },
       })
     } else {

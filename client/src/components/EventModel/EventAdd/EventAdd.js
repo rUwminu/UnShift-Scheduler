@@ -183,6 +183,7 @@ const EventAdd = () => {
               }
               placeholder="Add title"
               required
+              disabled
             />
             <div
               className="drop-icon-box absolute-icon-box"
