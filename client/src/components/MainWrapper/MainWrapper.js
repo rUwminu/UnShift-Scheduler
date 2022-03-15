@@ -5,7 +5,10 @@ import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { gql, useLazyQuery, useSubscription } from '@apollo/client'
 // Redux Action
-import { getSelfContactBook } from '../../redux/action/userAction'
+import {
+  getSelfContactBook,
+  createSelfContactBook,
+} from '../../redux/action/userAction'
 import {
   getSelfEventList,
   getOtherEventList,
@@ -63,6 +66,14 @@ const MainWrapper = ({ children }) => {
 
   const { data: subDeleteEvent } = useSubscription(DELETED_EVENT_SUBSCRIPTION)
 
+  const { data: subNewCustomer } = useSubscription(
+    CREATED_CUSTOMER_SUBSCRIPTION
+  )
+
+  const { data: subNewDirectCustomer } = useSubscription(
+    CREATED_DIRECT_CUSTOMER_SUBSCRIPTION
+  )
+
   const handleGetSelectedMonthEvent = () => {
     // Get selected month info
     const thisyear = dayjs().year()
@@ -116,12 +127,10 @@ const MainWrapper = ({ children }) => {
       // If user Not manager, check subscription event is created by him
       if (TempArr.user.id === user.id) {
         dispatch(getPubSubSelfEventNew(TempArr))
-        return
       }
       // If user is manager, get and push to all other user event list
       else if (user.isManager) {
         dispatch(getPubSubEventNew(TempArr))
-        return
       }
       // Else user not manager, ignore the event add by other
     }
@@ -134,12 +143,10 @@ const MainWrapper = ({ children }) => {
       // If user Not manager, check subscription event is created by him
       if (TempArr.user.id === user.id) {
         dispatch(getPubSubSelfEventUpdate(TempArr))
-        return
       }
       // If user is manager, get and push to all other user event list
       else if (user.isManager) {
         dispatch(getPubSubEventUpdate(TempArr))
-        return
       }
       // Else user not manager, ignore the event add by other
     }
@@ -152,10 +159,8 @@ const MainWrapper = ({ children }) => {
 
       if (userId === user.id) {
         dispatch(getPubSubSelfEventDelete(evtId))
-        return
       } else if (user.isManager) {
         dispatch(getPubSubEventDelete(evtId))
-        return
       }
     }
   }
@@ -195,6 +200,15 @@ const MainWrapper = ({ children }) => {
   useEffect(() => {
     handleGetSubscriptionDeleteEvent()
   }, [subDeleteEvent])
+
+  useEffect(() => {
+    if (subNewCustomer) {
+      dispatch(createSelfContactBook(subNewCustomer.customerCreated))
+    }
+    if (subNewDirectCustomer) {
+      dispatch(createSelfContactBook(subNewDirectCustomer.eventCustomerCreated))
+    }
+  }, [subNewCustomer, subNewDirectCustomer])
 
   return <MainContainer>{children}</MainContainer>
 }
@@ -320,6 +334,34 @@ const DELETED_EVENT_SUBSCRIPTION = gql`
       user {
         id
       }
+    }
+  }
+`
+
+const CREATED_CUSTOMER_SUBSCRIPTION = gql`
+  subscription {
+    customerCreated {
+      id
+      personal
+      company
+      position
+      personalcontact
+      companycontact
+      address
+    }
+  }
+`
+
+const CREATED_DIRECT_CUSTOMER_SUBSCRIPTION = gql`
+  subscription {
+    eventCustomerCreated {
+      id
+      personal
+      company
+      position
+      personalcontact
+      companycontact
+      address
     }
   }
 `

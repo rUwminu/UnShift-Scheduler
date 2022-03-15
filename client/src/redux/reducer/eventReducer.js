@@ -39,7 +39,7 @@ export const eventsReducer = (state = {}, action) => {
     case TOGGLE_MODEL_CLOSE:
       return { ...state, isAddOpen: false, selectedEvent: {} }
     case GET_SELF_EVENT_LIST:
-      return { ...state, eventList: action.payload }
+      return { ...state, eventList: action.payload ? action.payload : [] }
     case GET_OTHER_EVENT_LIST:
       return { ...state, eventOtherList: action.payload }
     case PUBSUB_EVENT_NEW:

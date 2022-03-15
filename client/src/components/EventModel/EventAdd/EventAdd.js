@@ -43,8 +43,6 @@ const EventAdd = () => {
     title: '',
     customer: {
       cusId: '',
-      personal: '',
-      position: '',
       company: '',
     },
     description: '',
@@ -119,8 +117,6 @@ const EventAdd = () => {
       ...inputValue,
       customer: {
         cusId: id,
-        personal,
-        position,
         company,
       },
     })
@@ -136,23 +132,23 @@ const EventAdd = () => {
   }
 
   const handleCreateEvent = () => {
-    if (inputValue.title !== '' && inputValue.customer.cusId !== '') {
-      if (!isCompleted) {
-        createNewEvent({
-          variables: {
-            ...inputValue,
-            planDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
+    if (inputValue.title !== '' && textInput !== '') {
+      createNewEvent({
+        variables: {
+          ...inputValue,
+          customer: {
+            ...inputValue.customer,
+            company:
+              inputValue.customer.cusId === ''
+                ? textInput
+                : inputValue.customer.company,
           },
-        })
-      } else {
-        createNewEvent({
-          variables: {
-            ...inputValue,
-            planDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
-            compDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
-          },
-        })
-      }
+          planDate: dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss'),
+          compDate: isCompleted
+            ? dayjs(daySelected).format('YYYY-MM-DDTHH:mm:ss')
+            : '',
+        },
+      })
     }
   }
 

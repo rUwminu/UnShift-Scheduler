@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // Redux Action
 import {
-  createSelfContactBook,
   updateSelfContactBook,
   deleteSelfContactBook,
 } from '../../../redux/action/userAction'
@@ -71,7 +70,7 @@ const MyContact = () => {
     },
   })
 
-  console.log([...allCustomerContact].reverse())
+  //console.log([...allCustomerContact].reverse())
 
   return (
     <MainContainer>
@@ -134,7 +133,7 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
         Authorization: `Bearer${' '}${user.token}`,
       },
     },
-    update(_, { data: createdData }) {
+    update(_) {
       setInputValue({
         company: '',
         personal: '',
@@ -144,7 +143,6 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
         address: '',
       })
       dispatch(toggleNotifyTagOpen({ isSuccess: true, info: 'Contact Added' }))
-      dispatch(createSelfContactBook(createdData.createNewCustomer))
 
       setIsAddOpen(false)
     },
