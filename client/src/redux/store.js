@@ -37,6 +37,7 @@ const initialState = {
   contactBook: {
     allUsers: [],
     allCustomerContact: [],
+    otherCustomerContact: [],
   },
   calenderInfo: {
     monthIndex: getCurrentMonthIndex(),

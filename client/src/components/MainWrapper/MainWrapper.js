@@ -40,14 +40,16 @@ const MainWrapper = ({ children }) => {
     }
   )
 
-  const [getSelfEventListItem, { error: selfListError, data: selfListData }] =
-    useLazyQuery(GET_SELF_EVENT_LIST, {
+  const [getSelfEventListItem, { data: selfListData }] = useLazyQuery(
+    GET_SELF_EVENT_LIST,
+    {
       context: {
         headers: {
           Authorization: `Bearer${' '}${user && user.token}`,
         },
       },
-    })
+    }
+  )
 
   const [getAllEventListItem, { data: allListData }] = useLazyQuery(
     GET_ALL_EVENT_LIST,
@@ -134,6 +136,8 @@ const MainWrapper = ({ children }) => {
       }
       // Else user not manager, ignore the event add by other
     }
+
+    return
   }
 
   const handleGetSubscriptionUpdateEvent = () => {
@@ -150,6 +154,8 @@ const MainWrapper = ({ children }) => {
       }
       // Else user not manager, ignore the event add by other
     }
+
+    return
   }
 
   const handleGetSubscriptionDeleteEvent = () => {
@@ -163,43 +169,35 @@ const MainWrapper = ({ children }) => {
         dispatch(getPubSubEventDelete(evtId))
       }
     }
+
+    return
   }
 
   useEffect(() => {
     if (user) handleGetSelectedMonthEvent()
   }, [monthIndex, user])
 
-  // Get Data UseEffect
-  useEffect(() => {
-    if (selfContactData) {
-      dispatch(getSelfContactBook(selfContactData.getSelfCustomers))
-    }
-  }, [selfContactData])
-
+  // Get Basic Data UseEffect
   useEffect(() => {
     if (selfListData) {
       dispatch(getSelfEventList(selfListData.getSelfEvent))
     }
-  }, [selfListData])
 
-  useEffect(() => {
     if (allListData) {
       dispatch(getOtherEventList(allListData.getAllEvent))
     }
-  }, [allListData])
 
-  // Subscription UseEffect
-  useEffect(() => {
-    handleGetSubscriptionNewEvent()
-  }, [subNewEvent])
+    if (selfContactData) {
+      dispatch(getSelfContactBook(selfContactData.getSelfCustomers))
+    }
+  }, [selfListData, allListData, selfContactData])
 
+  // Get Subscription UseEffect
   useEffect(() => {
-    handleGetSubscriptionUpdateEvent()
-  }, [subUpdateEvent])
-
-  useEffect(() => {
-    handleGetSubscriptionDeleteEvent()
-  }, [subDeleteEvent])
+    if (subNewEvent) handleGetSubscriptionNewEvent()
+    if (subUpdateEvent) handleGetSubscriptionUpdateEvent()
+    if (subDeleteEvent) handleGetSubscriptionDeleteEvent()
+  }, [subNewEvent, subUpdateEvent, subDeleteEvent])
 
   useEffect(() => {
     if (subNewCustomer) {

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import _ from 'lodash'
 import tw from 'twin.macro'
 import styled from 'styled-components'
-import { gql, useMutation } from '@apollo/client'
+import { gql, useMutation, useLazyQuery } from '@apollo/client'
 import { useDispatch, useSelector } from 'react-redux'
 
 // Redux Action
 import {
+  getAllContactBook,
   updateSelfContactBook,
   deleteSelfContactBook,
 } from '../../../redux/action/userAction'
@@ -24,17 +25,34 @@ import {
   PhoneIphone,
   AccessTime,
   Apartment,
+  Search,
 } from '@mui/icons-material'
 
 const MyContact = () => {
   const dispatch = useDispatch()
+
   const [isAddOpen, setIsAddOpen] = useState(false)
+  const [isSearchOpen, setIsSearchopen] = useState(false)
+  const [isOtherListOpen, setIsOtherListOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+  const [filteredSuggestions, setFilteredSuggestions] = useState([])
 
   const userSignIn = useSelector((state) => state.userSignIn)
   const { user } = userSignIn
 
   const contactBook = useSelector((state) => state.contactBook)
-  const { allCustomerContact } = contactBook
+  const { allCustomerContact, otherCustomerContact } = contactBook
+
+  const [getAllContactBookListItem, { data: allContactData }] = useLazyQuery(
+    GET_ALL_CONTACT_BOOK,
+    {
+      context: {
+        headers: {
+          Authorization: `Bearer${' '}${user && user.token}`,
+        },
+      },
+    }
+  )
 
   const [updateCustomerDetail] = useMutation(UPDATE_CUSTOMER_DETAIL, {
     context: {
@@ -70,49 +88,123 @@ const MyContact = () => {
     },
   })
 
+  const handleSearchItem = () => {
+    if (searchValue === '') {
+      setSearchValue('')
+      setFilteredSuggestions(
+        isOtherListOpen ? otherCustomerContact : allCustomerContact
+      )
+      return
+    }
+
+    const filterSearchList = isOtherListOpen
+      ? otherCustomerContact.filter(
+          (suggestion) =>
+            suggestion.company
+              .toLowerCase()
+              .indexOf(searchValue.toLowerCase()) > -1
+        )
+      : allCustomerContact.filter(
+          (suggestion) =>
+            suggestion.company
+              .toLowerCase()
+              .indexOf(searchValue.toLowerCase()) > -1
+        )
+
+    setFilteredSuggestions(filterSearchList)
+  }
+
   //console.log([...allCustomerContact].reverse())
+
+  // Filter List useEffect
+  useEffect(() => {
+    handleSearchItem()
+  }, [searchValue, isOtherListOpen, allCustomerContact, otherCustomerContact])
+
+  // Trigger Get Data useEffect
+  useEffect(() => {
+    if (isOtherListOpen) getAllContactBookListItem()
+  }, [isOtherListOpen])
+
+  // Dispatch Data useEffect
+  useEffect(() => {
+    if (allContactData)
+      dispatch(getAllContactBook(allContactData.getAllCustomers))
+  }, [allContactData])
 
   return (
     <MainContainer>
       <div className="form-header">
-        <h1 className="form-title">My Contact</h1>
-        <div className="relative">
-          <div
-            className="icon-box add-icon-box"
-            onClick={() => setIsAddOpen(!isAddOpen)}
-          >
-            <Add className="icon" />
+        <div className="form-header-left">
+          <h1 className="form-title" onClick={() => setIsOtherListOpen(false)}>
+            My Contact
+          </h1>
+          {user.isManager && (
+            <h1
+              className={`form-other-title ${isOtherListOpen && 'active'}`}
+              onClick={() => setIsOtherListOpen(!isOtherListOpen)}
+            >
+              Other Contact
+            </h1>
+          )}
+        </div>
+        <div className="form-btn-box">
+          <div className={`form-searchbar-box ${isSearchOpen && 'active'}`}>
+            <input
+              type="text"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder="Search a contact"
+            />
+            {!isSearchOpen ? (
+              <div
+                className="icon-box search-icon-box"
+                onClick={() => {
+                  setSearchValue('')
+                  setIsSearchopen(true)
+                }}
+              >
+                <Search className="icon" />
+              </div>
+            ) : (
+              <div
+                className="icon-box search-icon-box"
+                onClick={() => {
+                  setSearchValue('')
+                  setIsSearchopen(false)
+                }}
+              >
+                <Close className="icon" />
+              </div>
+            )}
           </div>
-          <ContactAddCard
-            setIsAddOpen={setIsAddOpen}
-            isAddOpen={isAddOpen}
-            user={user}
-          />
+          <div className="form-add-box">
+            <div
+              className="icon-box add-icon-box"
+              onClick={() => setIsAddOpen(!isAddOpen)}
+            >
+              <Add className="icon" />
+            </div>
+            <ContactAddCard
+              setSearchValue={setSearchValue}
+              setIsAddOpen={setIsAddOpen}
+              isAddOpen={isAddOpen}
+              user={user}
+            />
+          </div>
         </div>
       </div>
-      <div className="form-contact-container">
-        {allCustomerContact && allCustomerContact.length > 0 ? (
-          [...allCustomerContact]
-            .reverse()
-            .map((ct) => (
-              <ContactCard
-                key={ct.id}
-                contact={ct}
-                updateCustomerDetail={updateCustomerDetail}
-                deleteCustomerDetail={deleteCustomerDetail}
-              />
-            ))
-        ) : (
-          <div className="form-empty-container">
-            <h2>Seem Empty Here...</h2>
-          </div>
-        )}
-      </div>
+      <ContactListContainer
+        toEdit={isOtherListOpen ? false : true}
+        filteredSuggestions={filteredSuggestions}
+        updateCustomerDetail={updateCustomerDetail}
+        deleteCustomerDetail={deleteCustomerDetail}
+      />
     </MainContainer>
   )
 }
 
-const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
+const ContactAddCard = ({ setSearchValue, setIsAddOpen, isAddOpen, user }) => {
   const dispatch = useDispatch()
   const [inputValue, setInputValue] = useState({
     company: '',
@@ -144,6 +236,7 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
       })
       dispatch(toggleNotifyTagOpen({ isSuccess: true, info: 'Contact Added' }))
 
+      setSearchValue('')
       setIsAddOpen(false)
     },
     onError(err) {
@@ -204,7 +297,13 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
     <ContactAddCardContainer isAddOpen={isAddOpen}>
       <div className="card-header">
         <PlaylistAdd className="card-icon" />
-        <div className="icon-box btn" onClick={() => setIsAddOpen(false)}>
+        <div
+          className="icon-box btn"
+          onClick={() => {
+            setSearchValue('')
+            setIsAddOpen(false)
+          }}
+        >
           <Close className="icon" />
         </div>
       </div>
@@ -216,9 +315,10 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
               type="text"
               className="input title-input"
               value={inputValue.company}
-              onChange={(e) =>
+              onChange={(e) => {
+                setSearchValue(e.target.value)
                 setInputValue({ ...inputValue, company: e.target.value })
-              }
+              }}
               placeholder="Company Name"
               required
             />
@@ -322,7 +422,37 @@ const ContactAddCard = ({ setIsAddOpen, isAddOpen, user }) => {
   )
 }
 
+const ContactListContainer = ({
+  toEdit,
+  filteredSuggestions,
+  updateCustomerDetail,
+  deleteCustomerDetail,
+}) => {
+  return (
+    <div className="form-contact-container">
+      {filteredSuggestions && filteredSuggestions.length > 0 ? (
+        [...filteredSuggestions]
+          .reverse()
+          .map((ct) => (
+            <ContactCard
+              toEdit={toEdit}
+              key={ct.id}
+              contact={ct}
+              updateCustomerDetail={updateCustomerDetail}
+              deleteCustomerDetail={deleteCustomerDetail}
+            />
+          ))
+      ) : (
+        <div className="form-empty-container">
+          <h2>Seem Empty Here...</h2>
+        </div>
+      )}
+    </div>
+  )
+}
+
 const ContactCard = ({
+  toEdit,
   contact,
   updateCustomerDetail,
   deleteCustomerDetail,
@@ -419,32 +549,34 @@ const ContactCard = ({
                 setMutContact({ ...mutContact, company: e.target.value })
               }
             />
-            <div className="icon-container">
-              <div
-                className={`icon-box edit-icon-box`}
-                onClick={() => setIsDropActive(!isDropActive)}
-              >
-                <MoreVert className="icon edit-icon" />
+            {toEdit && (
+              <div className="icon-container">
                 <div
-                  className={`drop-list ${isDropActive && 'active'}`}
-                  onMouseLeave={() => setIsDropActive(false)}
+                  className={`icon-box edit-icon-box`}
+                  onClick={() => setIsDropActive(!isDropActive)}
                 >
+                  <MoreVert className="icon edit-icon" />
                   <div
-                    className="drop-item"
-                    onClick={(e) => handleDeleteContact(e)}
+                    className={`drop-list ${isDropActive && 'active'}`}
+                    onMouseLeave={() => setIsDropActive(false)}
                   >
-                    Delete Contact
+                    <div
+                      className="drop-item"
+                      onClick={(e) => handleDeleteContact(e)}
+                    >
+                      Delete Contact
+                    </div>
+                    <div className="drop-item">Cancel</div>
                   </div>
-                  <div className="drop-item">Cancel</div>
+                </div>
+                <div
+                  className={`icon-box edit-icon-box`}
+                  onClick={(e) => handleToggleEdit(e)}
+                >
+                  <Edit className="icon edit-icon" />
                 </div>
               </div>
-              <div
-                className={`icon-box edit-icon-box`}
-                onClick={(e) => handleToggleEdit(e)}
-              >
-                <Edit className="icon edit-icon" />
-              </div>
-            </div>
+            )}
           </div>
           <div className="personal-info-box">
             <input
@@ -562,6 +694,20 @@ const ContactCard = ({
   )
 }
 
+const GET_ALL_CONTACT_BOOK = gql`
+  query getAllCustomers {
+    getAllCustomers {
+      id
+      personal
+      company
+      position
+      personalcontact
+      companycontact
+      address
+    }
+  }
+`
+
 const CREATE_CUSTOMER_CONTACT = gql`
   mutation createNewCustomer(
     $personal: String!
@@ -663,6 +809,7 @@ const MainContainer = styled.div`
         w-9
         h-9
         p-2
+        min-w-[2.25rem]
         rounded-full
         cursor-pointer
 
@@ -741,46 +888,8 @@ const MainContainer = styled.div`
 
       .icon {
         ${tw`
-            text-gray-700
-          `}
-      }
-    }
-  }
-
-  .add-icon-box {
-    ${tw`
-      bg-white
-    `}
-    box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.25);
-
-    &::after {
-      content: 'Add Contact';
-      ${tw`
-        absolute
-        top-1/2
-        left-0
-        py-1
-        w-20
-        text-xs
-        text-center
-        font-semibold
-        opacity-0
-        bg-gray-700
-        text-gray-50
-        rounded-md
-        pointer-events-none
-
-        transition-all
-        duration-200
-        ease-in-out
-      `}
-      transform: translate(-50%, -50%);
-    }
-
-    &:hover {
-      &::after {
-        opacity: 1;
-        transform: translate(calc(-100% - 5px), -50%);
+          text-gray-700
+        `}
       }
     }
   }
@@ -789,17 +898,188 @@ const MainContainer = styled.div`
     ${tw`
       flex
       items-end
-      justify-between
+      justify-start
       mb-6
       w-full
     `}
 
-    .form-title {
+    .form-header-left {
       ${tw`
-        text-xl
-        md:text-2xl
-        font-semibold
+        flex-grow
+        flex
+        items-center
+        justify-start
       `}
+
+      h1 {
+        ${tw`
+          transition
+          duration-200
+          ease-in-out
+          cursor-pointer
+        `}
+      }
+
+      .form-title {
+        ${tw`
+          text-xl
+          md:text-2xl
+          font-semibold
+          leading-none
+        `}
+      }
+
+      .form-other-title {
+        ${tw`
+          mt-1
+          ml-5
+          font-semibold
+          leading-none
+        `}
+
+        &.active {
+          ${tw`
+            text-blue-500
+          `}
+        }
+      }
+    }
+
+    .form-btn-box {
+      ${tw`
+        relative
+        flex
+        items-center
+        ml-auto
+      `}
+    }
+
+    .form-searchbar-box {
+      ${tw`
+        relative
+        flex
+        items-center
+        justify-center
+        mr-3
+        h-9
+        w-9
+        bg-white
+        rounded-full
+
+        transition-all
+        duration-500
+        ease-in-out
+      `}
+      box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.2);
+
+      input {
+        ${tw`
+          hidden
+          pl-3
+          pr-10
+          w-full
+          h-full
+          outline-none
+          rounded-3xl
+        `}
+      }
+
+      .search-icon-box {
+        ${tw`
+          absolute
+          top-0
+          right-0
+        `}
+
+        &::after {
+          content: 'Search Contact';
+          ${tw`
+            absolute
+            top-1/2
+            right-0
+            py-1
+            w-24
+            text-xs
+            text-center
+            font-semibold
+            opacity-0
+            bg-gray-700
+            text-gray-50
+            rounded-md
+            pointer-events-none
+
+            transition-all
+            duration-200
+            ease-in-out
+          `}
+          transform: translate(-70%, -50%);
+        }
+
+        &:hover {
+          &::after {
+            opacity: 1;
+            transform: translate(calc(-45% - 5px), -50%);
+          }
+        }
+      }
+
+      &.active {
+        ${tw`
+          w-72
+          rounded-3xl
+        `}
+
+        input {
+          ${tw`
+            inline-flex
+          `}
+        }
+
+        .search-icon-box {
+          box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
+        }
+      }
+    }
+
+    .form-add-box {
+      ${tw`
+        relative
+      `}
+
+      .add-icon-box {
+        box-shadow: 2px 3px 15px 3px rgba(0, 0, 0, 0.25);
+
+        &::after {
+          content: 'Add Contact';
+          ${tw`
+            absolute
+            top-1/2
+            right-0
+            py-1
+            w-20
+            text-xs
+            text-center
+            font-semibold
+            opacity-0
+            bg-gray-700
+            text-gray-50
+            rounded-md
+            pointer-events-none
+
+            transition-all
+            duration-200
+            ease-in-out
+          `}
+          transform: translate(-70%, -50%);
+        }
+
+        &:hover {
+          &::after {
+            opacity: 1;
+            transform: translate(calc(-50% - 5px), -50%);
+          }
+        }
+      }
     }
   }
 
