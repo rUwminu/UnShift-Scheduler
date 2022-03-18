@@ -283,7 +283,7 @@ const ContactAddCard = ({ setSearchValue, setIsAddOpen, isAddOpen, user }) => {
       errType: '',
     })
 
-    const { personalcontact, ...restInputValue } = inputValue
+    const { personalcontact, companycontact, ...restInputValue } = inputValue
     let isEmpty = Object.values(restInputValue).some(
       (x) => x === null || x.trim() === ''
     )
@@ -305,8 +305,9 @@ const ContactAddCard = ({ setSearchValue, setIsAddOpen, isAddOpen, user }) => {
           addDashToPContact.substring(addDashToPContact.length - 4)
         : ''
 
-      const addSpaceToCContact =
-        cContact.substring(0, 2) + ' ' + cContact.substring(2)
+      const addSpaceToCContact = cContact
+        ? cContact.substring(0, 2) + ' ' + cContact.substring(2)
+        : ''
 
       createCustomerContact({
         variables: {
@@ -582,7 +583,7 @@ const ContactCard = ({
             />
             {toEdit && (
               <div className="icon-container">
-                <div
+                {/* <div
                   className={`icon-box edit-icon-box`}
                   onClick={() => setIsDropActive(!isDropActive)}
                 >
@@ -599,7 +600,7 @@ const ContactCard = ({
                     </div>
                     <div className="drop-item">Cancel</div>
                   </div>
-                </div>
+                </div> */}
                 <div
                   className={`icon-box edit-icon-box`}
                   onClick={(e) => handleToggleEdit(e)}
@@ -745,7 +746,7 @@ const CREATE_CUSTOMER_CONTACT = gql`
     $company: String!
     $position: String!
     $personalcontact: String
-    $companycontact: String!
+    $companycontact: String
     $address: String!
   ) {
     createNewCustomer(

@@ -98,9 +98,10 @@ const NotifyCard = ({ notify }) => {
 
 const MainContainer = styled.div`
   ${tw`
+    relative
     flex
-    items-start
-    justify-start
+    items-center
+    justify-center
     w-screen
     h-screen
   `}
@@ -112,6 +113,7 @@ const MainContainer = styled.div`
       right-6
       w-full
       max-w-xs
+      z-[100]
     `}
   }
 `

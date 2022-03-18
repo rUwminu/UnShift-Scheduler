@@ -365,14 +365,7 @@ const CREATED_DIRECT_CUSTOMER_SUBSCRIPTION = gql`
 `
 
 const MainContainer = styled.div`
-  ${tw`
-    relative
-    flex
-    items-center
-    justify-center
-    w-screen
-    h-screen
-  `}
+  ${tw``}
 `
 
 export default MainWrapper
