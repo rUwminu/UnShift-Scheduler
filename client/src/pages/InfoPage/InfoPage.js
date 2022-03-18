@@ -104,7 +104,7 @@ const MainContainer = styled.div`
     w-full
     overflow-y-scroll
     overflow-x-hidden
-    scrollbar-hide
+
   `}
 
   .inner-container {

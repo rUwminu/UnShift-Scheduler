@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import _ from 'lodash'
+import { v4 } from 'uuid'
+import moment from 'moment'
 import tw from 'twin.macro'
 import styled from 'styled-components'
-import _ from 'lodash'
-import moment from 'moment'
 import { gql, useMutation } from '@apollo/client'
 import { useDispatch, useSelector } from 'react-redux'
 
 // Redux Action
 import { updateProfile } from '../../../redux/action/userAction'
-import { toggleNotifyTagOpen } from '../../../redux/action/notifyAction'
+import { addNotifications } from '../../../redux/action/notifyAction'
 
 import { Visibility } from '@mui/icons-material'
 
@@ -33,12 +34,20 @@ const MyProfile = () => {
     update(_, { data: updatedData }) {
       dispatch(updateProfile(updatedData.updateProfile))
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: true, info: 'Profile Updated' })
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Profile Updated',
+        })
       )
     },
     onError(err) {
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: false, info: 'Error Create Contact' })
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Update',
+        })
       )
     },
   })

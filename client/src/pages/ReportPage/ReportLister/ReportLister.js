@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as XLSX from 'xlsx'
+import { v4 } from 'uuid'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
@@ -7,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // Redux action
 import { closeSelectedEvent } from '../../../redux/action/eventAction'
+import { addNotifications } from '../../../redux/action/notifyAction'
 
 import { ArrowDropDown } from '@mui/icons-material'
 
@@ -138,6 +140,14 @@ const ReportLister = () => {
     XLSX.write(workBook, { bookType: 'xlsx', type: 'binary' })
     //Download
     XLSX.writeFile(workBook, `EventReport${exportDateTime}.xlsx`)
+
+    dispatch(
+      addNotifications({
+        id: v4().toString(),
+        type: 'success',
+        message: 'Report Downloding',
+      })
+    )
   }
 
   useEffect(() => {

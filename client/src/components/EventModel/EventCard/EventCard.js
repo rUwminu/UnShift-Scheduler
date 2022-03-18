@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import dayjs from 'dayjs'
+import { v4 } from 'uuid'
 import moment from 'moment'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { gql, useMutation } from '@apollo/client'
-import dayjs from 'dayjs'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { closeSelectedEvent } from '../../../redux/action/eventAction'
-import { toggleNotifyTagOpen } from '../../../redux/action/notifyAction'
+import { addNotifications } from '../../../redux/action/notifyAction'
 
 import { SmallCalender } from '../../index'
 
@@ -61,14 +62,21 @@ const EventCard = () => {
     },
     update() {
       dispatch(
-        toggleNotifyTagOpen({
-          isSuccess: true,
-          info: 'Schedule Updated',
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Schedule Updated',
         })
       )
     },
     onError(err) {
-      console.log(err)
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Update',
+        })
+      )
     },
   })
 
@@ -80,14 +88,21 @@ const EventCard = () => {
     },
     update(_, { data }) {
       dispatch(
-        toggleNotifyTagOpen({
-          isSuccess: true,
-          info: 'Schedule Updated',
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Schedule Updated',
         })
       )
     },
     onError(err) {
-      console.log(err)
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Update',
+        })
+      )
     },
   })
 
@@ -99,13 +114,22 @@ const EventCard = () => {
     },
     update() {
       setIsRescheduled({ ...isRescheduled, isDrop: false, isReschedule: false })
-      toggleNotifyTagOpen({
-        isSuccess: true,
-        info: 'Plan Rescheduled',
-      })
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Schedule Rescheduled',
+        })
+      )
     },
     onError(err) {
-      console.log(err)
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Reschedule',
+        })
+      )
     },
   })
 
@@ -121,14 +145,21 @@ const EventCard = () => {
         remark: '',
       })
       dispatch(
-        toggleNotifyTagOpen({
-          isSuccess: true,
-          info: 'Schedule Cancelled',
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Schedule Cancelled',
         })
       )
     },
     onError(err) {
-      console.log(err)
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Error Cancelling',
+        })
+      )
     },
   })
 
@@ -140,14 +171,21 @@ const EventCard = () => {
     },
     update() {
       dispatch(
-        toggleNotifyTagOpen({
-          isSuccess: true,
-          info: 'Schedule Deleted',
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Schedule Deleted',
         })
       )
     },
     onError(err) {
-      console.log(err)
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Delete',
+        })
+      )
     },
   })
 
@@ -227,9 +265,10 @@ const EventCard = () => {
       })
     } else {
       dispatch(
-        toggleNotifyTagOpen({
-          isSuccess: false,
-          info: 'Reschedule To Same Date',
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Reschedule To Same Date',
         })
       )
     }

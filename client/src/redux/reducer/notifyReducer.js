@@ -1,18 +1,13 @@
-import {
-  TOGGLE_NOTIFY_RESET,
-  TOGGLE_NOTIFY_OPEN,
-} from '../constant/notifyConstants'
+import { ADD_NOTIFY, REMOVE_NOTIFY } from '../constant/notifyConstants'
 
 export const notifyReducer = (state = {}, action) => {
   switch (action.type) {
-    case TOGGLE_NOTIFY_RESET:
-      return { ...state, isShow: false, isSuccess: null, info: '' }
-    case TOGGLE_NOTIFY_OPEN:
+    case ADD_NOTIFY:
+      return { ...state, notifyList: [...state.notifyList, action.payload] }
+    case REMOVE_NOTIFY:
       return {
         ...state,
-        isShow: true,
-        isSuccess: action.payload.isSuccess,
-        info: action.payload.info,
+        notifyList: state.notifyList.filter((x) => x.id !== action.payload),
       }
     default:
       return state

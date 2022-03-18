@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { v4 } from 'uuid'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
@@ -7,6 +8,7 @@ import { gql, useMutation } from '@apollo/client'
 
 // Redux Action
 import { signin } from '../../redux/action/userAction'
+import { addNotifications } from '../../redux/action/notifyAction'
 
 // Svg
 import { DatePicker } from '../../assets/index'
@@ -30,6 +32,13 @@ const LoginPage = () => {
   const [loginUser] = useMutation(LOGIN_USER, {
     update(_, { data: { login: userData } }) {
       dispatch(signin(userData))
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Welcome User!',
+        })
+      )
     },
     onError(err) {
       setIsError(err.graphQLErrors[0].extensions.errors)
@@ -42,6 +51,13 @@ const LoginPage = () => {
       if (userEmail) {
         setIsRegister(true)
       }
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Register Completed',
+        })
+      )
     },
     onError(err) {
       setIsError(err.graphQLErrors[0].extensions.errors)

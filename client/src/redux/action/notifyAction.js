@@ -1,24 +1,9 @@
-import { TOGGLE_MODEL_CLOSE } from '../constant/eventConstants'
-import {
-  TOGGLE_NOTIFY_RESET,
-  TOGGLE_NOTIFY_OPEN,
-} from '../constant/notifyConstants'
+import { ADD_NOTIFY, REMOVE_NOTIFY } from '../constant/notifyConstants'
 
-var initialTimer
+export const addNotifications = (data) => (dispatch) => {
+  dispatch({ type: ADD_NOTIFY, payload: data })
+}
 
-export const toggleNotifyTagOpen = (data) => (dispatch) => {
-  clearTimeout(initialTimer)
-
-  dispatch({
-    type: TOGGLE_NOTIFY_OPEN,
-    payload: {
-      isSuccess: data.isSuccess,
-      info: data.info,
-    },
-  })
-
-  initialTimer = window.setTimeout(
-    () => dispatch({ type: TOGGLE_NOTIFY_RESET }),
-    5000
-  )
+export const removeNotifications = (id) => (dispatch) => {
+  dispatch({ type: REMOVE_NOTIFY, payload: id })
 }

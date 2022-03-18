@@ -21,18 +21,26 @@ import {
   ReportPage,
   InfoPage,
   ErrorPage,
+  TestPage,
 } from './pages/index'
-import { MainWrapper, Header, NotifyTag, EventCard } from './components/index'
+import {
+  MainWrapper,
+  NotifyWrapper,
+  Header,
+  EventCard,
+} from './components/index'
 
 function App() {
   const userSignIn = useSelector((state) => state.userSignIn)
   const { user } = userSignIn
 
   const httpLink = new HttpLink({
+    //uri: 'https://unshift-scheduler-api.herokuapp.com/graphql',
     uri: 'http://192.168.98.59:4040/graphql',
   })
 
   const wsLink = new WebSocketLink({
+    //uri: 'wss://unshift-scheduler-api.herokuapp.com/graphql',
     uri: 'ws://192.168.98.59:4040/graphql',
     options: {
       reconnect: true,
@@ -57,9 +65,7 @@ function App() {
   )
 
   const client = new ApolloClient({
-    cache: new InMemoryCache({
-      addTypename: false,
-    }),
+    cache: new InMemoryCache(),
     link: splitLink,
     credentials: 'include',
   })
@@ -68,38 +74,47 @@ function App() {
     <ApolloProvider client={client}>
       <BrowserRouter>
         <MainWrapper className="App">
-          <NotifyTag />
-          <Header />
-          <Routes path="/" element={<Guestlayout />}>
-            <Route path={`login`} element={<LoginPage />} />
+          <NotifyWrapper>
+            <Header />
+            <Routes path="/" element={<Guestlayout />}>
+              <Route path={`login`} element={<LoginPage />} />
 
-            <Route
-              path={`/`}
-              element={
-                <PrivateRoute>
-                  <CalenderPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/report`}
-              element={
-                <PrivateRoute>
-                  <ReportPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`/info/type`}
-              element={
-                <PrivateRoute>
-                  <InfoPage />
-                </PrivateRoute>
-              }
-            />
-            <Route path="*" element={<ErrorPage />} />
-          </Routes>
-          <EventCard />
+              <Route
+                path={`/`}
+                element={
+                  <PrivateRoute>
+                    <CalenderPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/report`}
+                element={
+                  <PrivateRoute>
+                    <ReportPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/info/type`}
+                element={
+                  <PrivateRoute>
+                    <InfoPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`/test`}
+                element={
+                  <PrivateRoute>
+                    <TestPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="*" element={<ErrorPage />} />
+            </Routes>
+            <EventCard />
+          </NotifyWrapper>
         </MainWrapper>
       </BrowserRouter>
     </ApolloProvider>

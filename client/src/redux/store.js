@@ -58,9 +58,7 @@ const initialState = {
     },
   },
   notifyInfo: {
-    isShow: false,
-    isSuccess: null,
-    info: '',
+    notifyList: [],
   },
 }
 

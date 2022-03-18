@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { v4 } from 'uuid'
 import dayjs from 'dayjs'
 import tw from 'twin.macro'
 import styled from 'styled-components'
@@ -7,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // Redux Action
 import { toggleEventCardClose } from '../../../redux/action/eventAction'
-import { toggleNotifyTagOpen } from '../../../redux/action/notifyAction'
+import { addNotifications } from '../../../redux/action/notifyAction'
 
 // MUi icons
 import {
@@ -67,18 +68,19 @@ const EventAdd = () => {
     },
     update() {
       dispatch(
-        toggleNotifyTagOpen({
-          isSuccess: true,
-          info: 'Schedule Created',
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Schedule Created',
         })
       )
     },
     onError(err) {
       dispatch(
-        toggleNotifyTagOpen({
-          isShow: true,
-          isSuccess: false,
-          info: 'Error Create Event',
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Create Event',
         })
       )
     },

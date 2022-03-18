@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import _ from 'lodash'
+import { v4 } from 'uuid'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
@@ -11,7 +12,7 @@ import {
   updateSelfContactBook,
   deleteSelfContactBook,
 } from '../../../redux/action/userAction'
-import { toggleNotifyTagOpen } from '../../../redux/action/notifyAction'
+import { addNotifications } from '../../../redux/action/notifyAction'
 
 // mui icons
 import {
@@ -62,12 +63,22 @@ const MyContact = () => {
     },
     update(_, { data: updatedData }) {
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: true, info: 'Contact Updated' })
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Detail Updated',
+        })
       )
       dispatch(updateSelfContactBook(updatedData.updateExistCustomer))
     },
     onError(err) {
-      dispatch(toggleNotifyTagOpen({ isSuccess: false, info: 'Error Update' }))
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Update',
+        })
+      )
     },
   })
 
@@ -79,12 +90,22 @@ const MyContact = () => {
     },
     update(_, { data: deletedData }) {
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: true, info: 'Contact Deleted' })
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Contact Deleted',
+        })
       )
       dispatch(deleteSelfContactBook(deletedData.deleteExistCustomer.id))
     },
     onError(err) {
-      dispatch(toggleNotifyTagOpen({ isSuccess: false, info: 'Error Delete' }))
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Delete',
+        })
+      )
     },
   })
 
@@ -234,14 +255,24 @@ const ContactAddCard = ({ setSearchValue, setIsAddOpen, isAddOpen, user }) => {
         personalcontact: '',
         address: '',
       })
-      dispatch(toggleNotifyTagOpen({ isSuccess: true, info: 'Contact Added' }))
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Contact Added',
+        })
+      )
 
       setSearchValue('')
       setIsAddOpen(false)
     },
     onError(err) {
       dispatch(
-        toggleNotifyTagOpen({ isSuccess: false, info: 'Error Create Contact' })
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Error Create',
+        })
       )
     },
   })
