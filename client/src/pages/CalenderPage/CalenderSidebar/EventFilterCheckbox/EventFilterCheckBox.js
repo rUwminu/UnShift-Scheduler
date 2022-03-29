@@ -105,7 +105,7 @@ const BoxContainer = styled.div`
         items-center
         justify-start
         w-full
-        py-1
+        min-h-[2.2rem]
         pl-[0.7rem]
         cursor-pointer
 

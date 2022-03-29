@@ -12,3 +12,6 @@ export { default as InfoPage } from './InfoPage/InfoPage'
 
 // Error Page'
 export { default as ErrorPage } from './ErrorPage/ErrorPage'
+
+// Testing Page Mix component
+export { default as TestPage } from './TestPage/TestPage'

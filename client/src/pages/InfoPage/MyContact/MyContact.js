@@ -154,7 +154,7 @@ const MyContact = () => {
   }, [allContactData])
 
   return (
-    <MainContainer>
+    <MainContainer className={`${isAddOpen && 're-high'}`}>
       <div className="form-header">
         <div className="form-header-left">
           <h1 className="form-title" onClick={() => setIsOtherListOpen(false)}>
@@ -818,6 +818,10 @@ const MainContainer = styled.div`
     flex-col
     items-start
     justify-start
+
+    transition-all
+    duration-500
+    ease-in-out
   `}
   animation: slideInFromRight 0.5s ease alternate forwards;
 
@@ -1349,6 +1353,12 @@ const MainContainer = styled.div`
         font-semibold
       `}
     }
+  }
+
+  &.re-high {
+    ${tw`
+      min-h-[30rem]
+    `}
   }
 `
 
