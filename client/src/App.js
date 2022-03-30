@@ -9,6 +9,7 @@ import {
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { useSelector } from 'react-redux'
+import { SERVER_IP, SERVER_PORT } from './port.config'
 
 // Route Layout
 import Guestlayout from './utils/GuestLayout'
@@ -36,12 +37,12 @@ function App() {
 
   const httpLink = new HttpLink({
     //uri: 'https://unshift-scheduler-api.herokuapp.com/graphql',
-    uri: 'http://192.168.98.59:4040/graphql',
+    uri: `http://${SERVER_IP}:${SERVER_PORT}/graphql`,
   })
 
   const wsLink = new WebSocketLink({
     //uri: 'wss://unshift-scheduler-api.herokuapp.com/graphql',
-    uri: 'ws://192.168.98.59:4040/graphql',
+    uri: `ws://${SERVER_IP}:${SERVER_PORT}/graphql`,
     options: {
       reconnect: true,
       connectionParams: {
