@@ -82,6 +82,7 @@ const NotifyCard = ({ notify }) => {
       } ${isExit && 'inactive'}`}
       onMouseEnter={() => handleRemoveTimer()}
       onMouseLeave={() => handleStartTimer()}
+      onClick={() => handleCloseNotification()}
     >
       <p>{message}</p>
       {type === 'success' ? (

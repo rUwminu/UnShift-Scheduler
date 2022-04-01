@@ -10,6 +10,7 @@ import {
   USER_DELETE_CONTACT_BOOK,
   USER_UPDATE_PROFILE,
   USER_SIGNOUT,
+  PUBSUB_USER_UPDATE_LIST,
 } from '../constant/userConstant'
 
 export const userSignInReducer = (state = {}, action) => {
@@ -30,6 +31,8 @@ export const userSignInReducer = (state = {}, action) => {
 }
 
 export const userContactBookReducer = (state = {}, action) => {
+  let isExist
+
   switch (action.type) {
     case USER_CONTACT_BOOK:
       return { ...state, allCustomerContact: action.payload }
@@ -58,6 +61,22 @@ export const userContactBookReducer = (state = {}, action) => {
       return { ...state, allUsers: action.payload }
     case USER_SIGNOUT:
       return { ...state, allCustomerContact: [], allUsers: [] }
+    case PUBSUB_USER_UPDATE_LIST:
+      isExist =
+        state.allUsers.length > 0
+          ? state.allUsers.some((usr) => usr.id === action.payload.id)
+          : false
+
+      if (isExist) {
+        return {
+          ...state,
+          allUsers: state.allUsers.map((usr) =>
+            usr.id === action.payload.id ? action.payload : usr
+          ),
+        }
+      }
+
+      return { ...state, allUsers: [action.payload, ...state.allUsers] }
     default:
       return state
   }

@@ -10,9 +10,10 @@ import { useSelector } from 'react-redux'
 // Form Components
 import MyProfile from './MyProfile/MyProfile'
 import MyContact from './MyContact/MyContact'
+import MyUser from './MyUser/MyUser'
 
 // Material ui icons
-import { AssignmentInd, Bookmarks } from '@mui/icons-material'
+import { AssignmentInd, Group, Bookmarks } from '@mui/icons-material'
 
 const InfoPage = () => {
   const [isMobile, setIsMobile] = useState()
@@ -72,6 +73,20 @@ const InfoPage = () => {
               </h2>
             </Link>
 
+            {user.isManager && (
+              <Link
+                to="/info/type?name=users"
+                className={`option-item ${optionType === 'users' && 'active'} ${
+                  isMobile && 'icon-box'
+                }`}
+              >
+                <Group className="option-icon" />
+                <h2 className={`${isMobile ? 'hidden' : 'inline-flex'}`}>
+                  My Users
+                </h2>
+              </Link>
+            )}
+
             <Link
               to="/info/type?name=contact"
               className={`option-item ${optionType === 'contact' && 'active'} ${
@@ -88,6 +103,7 @@ const InfoPage = () => {
         <FormContainer>
           {optionType === 'profile' && <MyProfile />}
           {optionType === 'contact' && <MyContact />}
+          {optionType === 'users' && <MyUser />}
         </FormContainer>
       </div>
     </MainContainer>

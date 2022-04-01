@@ -11,6 +11,7 @@ import {
   USER_DELETE_CONTACT_BOOK,
   USER_UPDATE_PROFILE,
   USER_SIGNOUT,
+  PUBSUB_USER_UPDATE_LIST,
 } from '../constant/userConstant'
 import { RESET_EVENT_DETAIL } from '../constant/eventConstants'
 
@@ -58,6 +59,10 @@ export const getSingleUser = (data) => (dispatch) => {
 
 export const getAllUsers = (data) => (dispatch) => {
   dispatch({ type: ALL_USER_LIST, payload: data })
+}
+
+export const updateUserList = (data) => (dispatch) => {
+  dispatch({ type: PUBSUB_USER_UPDATE_LIST, payload: data })
 }
 
 export const getSelfContactBook = (data) => (dispatch) => {
