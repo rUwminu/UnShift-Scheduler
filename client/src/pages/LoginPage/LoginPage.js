@@ -65,6 +65,34 @@ const LoginPage = () => {
     variables: inputValue,
   })
 
+  const [resetUser] = useMutation(RESET_PASSWORD_USER, {
+    update(_, { data: { register: userEmail } }) {
+      if (userEmail) {
+        setIsRegister(true)
+      }
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'success',
+          message: 'Password Reset To 123456',
+        })
+      )
+    },
+    onError(err) {
+      dispatch(
+        addNotifications({
+          id: v4().toString(),
+          type: 'danger',
+          message: 'Please Insert Correct Email',
+        })
+      )
+      setIsError(err.graphQLErrors[0].extensions.errors)
+    },
+    variables: {
+      email: inputValue.email,
+    },
+  })
+
   useEffect(() => {
     if (user) navigate('/')
   }, [user, navigate])
@@ -174,6 +202,14 @@ const LoginPage = () => {
           {isError && isError.fieldErr && (
             <div className={`err-box`}>! {isError.fieldErr}</div>
           )}
+          {isRegister && (
+            <div>
+              Forgot Password?{' '}
+              <span className="reset-btn" onClick={() => resetUser()}>
+                Reset Here!
+              </span>
+            </div>
+          )}
           <div className={`btn`} onClick={() => handleSubmitForm()}>
             {isRegister ? 'Login' : 'Register'}
           </div>
@@ -278,6 +314,14 @@ const REGISTER_NEW_USER = gql`
     ) {
       id
       email
+    }
+  }
+`
+
+const RESET_PASSWORD_USER = gql`
+  mutation resetPassword($email: String!) {
+    resetPassword(email: $email) {
+      id
     }
   }
 `
@@ -438,6 +482,13 @@ const BoxContainer = styled.div`
             bg-blue-700
           `}
         }
+      }
+
+      .reset-btn {
+        ${tw`
+          text-red-700
+          cursor-pointer
+        `}
       }
     }
   }

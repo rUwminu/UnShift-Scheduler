@@ -537,7 +537,9 @@ const GET_ALL_OTHER_USER = gql`
   query getUsers {
     getUsers {
       id
+      email
       username
+      isManager
     }
   }
 `
